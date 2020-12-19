@@ -81,7 +81,7 @@ public class EasyOpenCVExample extends LinearOpMode
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
         /*
-         * An enum to define the skystone position hi
+         * An enum to define the skystocne position hi
          */
         public enum RingPosition
         {

@@ -60,7 +60,7 @@ public class visiontest extends LinearOpMode
 
         /*
          * Specify the image processing pipeline we wish to invoke upon receipt
-         * of a frame from the camera. Note that switching pipelines on-the-fly
+         * of a frame frocm the camera. Note that switching pipelines on-the-fly
          * (while a streaming session is in flight) *IS* supported.
          */
         webcam.setPipeline(new SamplePipeline());
