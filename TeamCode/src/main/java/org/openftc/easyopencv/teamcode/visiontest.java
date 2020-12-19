@@ -25,8 +25,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -174,9 +176,10 @@ public class visiontest extends LinearOpMode
      * if you're doing something weird where you do need it synchronized with your OpMode thread,
      * then you will need to account for that accordingly.
      */
-    class SamplePipeline extends OpenCvPipeline
+    static class SamplePipeline extends OpenCvPipeline
     {
         boolean viewportPaused;
+        private OpenCvCamera webcam;
 
         /*
          * NOTE: if you wish to use additional Mat objects in your processing pipeline, it is

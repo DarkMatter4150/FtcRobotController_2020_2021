@@ -24,6 +24,7 @@ package org.openftc.easyopencv.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -39,39 +40,53 @@ import org.openftc.easyopencv.OpenCvPipeline;
 @TeleOp
 public class EasyOpenCVExample extends LinearOpMode
 {
-    OpenCvInternalCamera phoneCam;
+//    OpenCvInternalCamera phoneCam;
     SkystoneDeterminationPipeline pipeline;
+    OpenCvCamera webcam;
 
     @Override
     public void runOpMode()
     {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+//        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam1"), cameraMonitorViewId);
         pipeline = new SkystoneDeterminationPipeline();
-        phoneCam.setPipeline(pipeline);
-
+//        phoneCam.setPipeline(pipeline);
+        webcam.setPipeline(new visiontest.SamplePipeline());
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming
         // landscape orientation, though.
-        phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
-
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+//        phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                phoneCam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
-            }
-        });
+                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            }});
+//        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+//            @Override
+//            public void onOpened()
+//            {
+//                phoneCam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+//            }
+        }
 
         waitForStart();
 
         while (opModeIsActive())
         {
-            telemetry.addData("Analysis", pipeline.getAnalysis());
-            telemetry.addData("Position", pipeline.position);
+
+            telemetry.addData("Frame Count", webcam.getFrameCount());
+            telemetry.addData("FPS", String.format("%.2f", webcam.getFps()));
+            telemetry.addData("Total frame time ms", webcam.getTotalFrameTimeMs());
+            telemetry.addData("Pipeline time ms", webcam.getPipelineTimeMs());
+            telemetry.addData("Overhead time ms", webcam.getOverheadTimeMs());
+            telemetry.addData("Theoretical max FPS", webcam.getCurrentPipelineMaxFps());
             telemetry.update();
+
 
             // Don't burn CPU cycles busy-looping in this sample
             sleep(50);
@@ -81,7 +96,7 @@ public class EasyOpenCVExample extends LinearOpMode
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
         /*
-         * An enum to define the skystocne position hi
+         * An enum to define the skystone position hi
          */
         public enum RingPosition
         {
