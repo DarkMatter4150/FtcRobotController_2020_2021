@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.drivecontrol;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Transform2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
@@ -11,6 +12,7 @@ import com.spartronics4915.lib.T265Camera;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.misc.DataLogger;
+import org.firstinspires.ftc.teamcode.opmodes.StartingPosition;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.teamcode.drivecontrol.DriveModule.RotateModuleMode.DO_NOT_ROTATE_MODULES;
@@ -72,6 +74,15 @@ public class DriveController {
     double MAX_AUTO_ROTATE_FACTOR = 0.3; //was 0.5
     double MIN_AUTO_ROTATE_FACTOR = 0.1;
 
+    T265Camera slamra = new T265Camera(new Transform2d(), 0.1, hardwareMap.appContext);
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+    final int robotRadius = 9; // inches
+    TelemetryPacket packet = new TelemetryPacket();
+    Canvas field = packet.fieldOverlay();
+    T265Camera.CameraUpdate up;
+    Translation2d translationSLAM;
+    Rotation2d rotationSLAM;
+
 ////    //Vuforia field tracking tools:
 //    //This is the allowed distance to a target
 //    public final double ALLOWED_DISTANCE_TO_TARGET = 5; //todo change this value
@@ -86,6 +97,11 @@ public class DriveController {
 
         //todo: change to parameter
         robotPosition = startingPosition;
+
+        StartingPosition opMode = (StartingPosition) robot.opMode;
+        Pose2d startingPose =
+                new Pose2d(opMode.getStartingX(), opMode.getStartingY(), opMode.getStartingRotation());
+        slamra.setPose(startingPose);
 
         //vuforiaTracker = new FieldTracker(robot.hardwareMap, robot.telemetry, true, false);
 
@@ -121,9 +137,11 @@ public class DriveController {
         if (absHeadingMode) {
             if (joystick1.getMagnitude() == 0)
                 updateAbsRotation(joystick1, joystick2, ROBOT_ROTATION_SCALE_FACTOR_ABS);
-            else updateAbsRotation(joystick1, joystick2, ROBOT_ROTATION_WHILE_TRANS_SCALE_FACTOR_ABS);
+            else
+                updateAbsRotation(joystick1, joystick2, ROBOT_ROTATION_WHILE_TRANS_SCALE_FACTOR_ABS);
         } else {
-            if (joystick1.getMagnitude() == 0) update(joystick1, -joystick2.getX() * ROBOT_ROTATION_SCALE_FACTOR);
+            if (joystick1.getMagnitude() == 0)
+                update(joystick1, -joystick2.getX() * ROBOT_ROTATION_SCALE_FACTOR);
             else update(joystick1, -joystick2.getX() * ROBOT_ROTATION_WHILE_TRANS_SCALE_FACTOR);
         }
     }
@@ -136,6 +154,7 @@ public class DriveController {
         moduleRight.updateTarget(translationVector, rotationMagnitude);
         updateSLAMNav();
     }
+
     public void updateAbsRotation(Vector2d translationVector, Vector2d joystick2, double scaleFactor) {
         Angle targetAngle = joystick2.getAngle(); //was + .convertAngle(Angle.AngleType.NEG_180_TO_180_HEADING)
         if (joystick2.getMagnitude() > 0.1 && targetAngle.getDifference(robot.getRobotHeading()) > 3) {
@@ -158,7 +177,8 @@ public class DriveController {
         alignModules = true;
 
         //turns modules to correct positions for straight driving
-        if (alignModules) rotateModules(direction, false, DEFAULT_TIMEOUT_ROT_MODULES, linearOpMode);
+        if (alignModules)
+            rotateModules(direction, false, DEFAULT_TIMEOUT_ROT_MODULES, linearOpMode);
 
         //sets a flag in modules so that they will not try to correct rotation while driving
         if (fixModules) setRotateModuleMode(DO_NOT_ROTATE_MODULES);
@@ -211,7 +231,7 @@ public class DriveController {
 //    }
 
     //speed should be scalar from 0 to 1
-    public void driveWithRange (Vector2d direction, double stopAtDistance, boolean forward, boolean frontSensor, double speed, double timeout, boolean fixModules, boolean alignModules, LinearOpMode linearOpMode) {
+    public void driveWithRange(Vector2d direction, double stopAtDistance, boolean forward, boolean frontSensor, double speed, double timeout, boolean fixModules, boolean alignModules, LinearOpMode linearOpMode) {
         if (frontSensor) stopAtDistance = stopAtDistance + 10; //account for inset into robot
         double initalSpeed = speed;
 
@@ -245,12 +265,12 @@ public class DriveController {
 
     //defaults to fix modules and align modules both TRUE
     public void driveWithRange(Vector2d direction, double stopAtDistance, boolean forward, boolean frontSensor, double speed, double timeout, LinearOpMode linearOpMode) {
-        driveWithRange(direction, stopAtDistance, forward, frontSensor, speed, timeout,true, true, linearOpMode);
+        driveWithRange(direction, stopAtDistance, forward, frontSensor, speed, timeout, true, true, linearOpMode);
     }
 
     //speed should be scalar from 0 to 1
     public void driveWithTimeout(Vector2d direction, double cmDistance, double speed, double timeout, boolean fixModules, boolean alignModules, LinearOpMode linearOpMode) {
-        cmDistance = cmDistance/2.0; //BAD :(
+        cmDistance = cmDistance / 2.0; //BAD :(
         double startTime = System.currentTimeMillis();
         double initalSpeed = speed;
 
@@ -523,7 +543,7 @@ public class DriveController {
     //methods for path length tracking in autonomous (only useful for driving in straight lines)
 
     //new tracking method
-    public void updatePositionTracking (Telemetry telemetry) {
+    public void updatePositionTracking(Telemetry telemetry) {
 //        if (getVuforiaPosition() != null) {
 //            updatePositionVuforia();
 //            return;
@@ -538,16 +558,16 @@ public class DriveController {
 //            //use IMU for heading instead of encoders
 //            robotPosition.heading = robot.getRobotHeading();
 //        } else {
-            //orientation tracking with encoders
-            double arcLength = moduleRight.positionChange - moduleLeft.positionChange;
-            double angleChange = arcLength * 360 / 2.0 / Math.PI / WHEEL_TO_WHEEL_CM;
-            robotPosition.incrementHeading(angleChange);
+        //orientation tracking with encoders
+        double arcLength = moduleRight.positionChange - moduleLeft.positionChange;
+        double angleChange = arcLength * 360 / 2.0 / Math.PI / WHEEL_TO_WHEEL_CM;
+        robotPosition.incrementHeading(angleChange);
         //}
 
-        rightDisp.setX(rightDisp.getX() + WHEEL_TO_WHEEL_CM /2);
-        leftDisp.setX(leftDisp.getX() - WHEEL_TO_WHEEL_CM /2);
+        rightDisp.setX(rightDisp.getX() + WHEEL_TO_WHEEL_CM / 2);
+        leftDisp.setX(leftDisp.getX() - WHEEL_TO_WHEEL_CM / 2);
 
-        Vector2d robotCenterDisp = new Vector2d((rightDisp.getX() + leftDisp.getX())/2, (rightDisp.getY() + leftDisp.getY())/2);
+        Vector2d robotCenterDisp = new Vector2d((rightDisp.getX() + leftDisp.getX()) / 2, (rightDisp.getY() + leftDisp.getY()) / 2);
         robotCenterDisp = robotCenterDisp.rotateBy(robotPosition.heading.getAngle(Angle.AngleType.ZERO_TO_360_HEADING), Angle.Direction.CLOCKWISE); //make field centric using previous heading
         robotPosition.incrementX(robotCenterDisp.getX());
         robotPosition.incrementY(robotCenterDisp.getY());
@@ -596,15 +616,6 @@ public class DriveController {
         moduleLeft.resetEncoders();
     }
 
-    T265Camera slamra = new T265Camera(new Transform2d(), 0.1, hardwareMap.appContext);;
-    private final FtcDashboard dashboard = FtcDashboard.getInstance();
-    final int robotRadius = 9; // inches
-    TelemetryPacket packet = new TelemetryPacket();
-    Canvas field = packet.fieldOverlay();
-    T265Camera.CameraUpdate up;
-    Translation2d translationSLAM;
-    Rotation2d rotationSLAM;
-
     public void updateSLAMNav() {
         // We divide by 0.0254 to convert meters to inches
         up = slamra.getLastReceivedCameraUpdate();
@@ -613,10 +624,23 @@ public class DriveController {
 
         field.strokeCircle(translationSLAM.getX(), translationSLAM.getY(), robotRadius);
         double arrowX = rotationSLAM.getCos() * robotRadius, arrowY = rotationSLAM.getSin() * robotRadius;
-        double x1 = translationSLAM.getX() + arrowX  / 2, y1 = translationSLAM.getY() + arrowY / 2;
+        double x1 = translationSLAM.getX() + arrowX / 2, y1 = translationSLAM.getY() + arrowY / 2;
         double x2 = translationSLAM.getX() + arrowX, y2 = translationSLAM.getY() + arrowY;
         field.strokeLine(x1, y1, x2, y2);
 
         dashboard.sendTelemetryPacket(packet);
     }
+
+    public Rotation2d getRotation() {
+        return rotationSLAM;
+    }
+
+    public double getX() {
+        return translationSLAM.getX();
+    }
+
+    public double getY() {
+        return translationSLAM.getY();
+    }
+
 }
