@@ -34,11 +34,15 @@ repositories {
     maven {
         url "https://maven.0x778.tk"
     }
+    maven { url "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
+
+    mavenCentral()
 }
 
 dependencies {
     // This will get the latest compatible version
     implementation 'com.spartronics4915.lib:ftc265:2.1.2'
+    implementation 'org.openftc:rev-extensions-2:1.2'
 }
 
 allprojects {

@@ -75,14 +75,14 @@ public class DriveController {
     double MAX_AUTO_ROTATE_FACTOR = 0.3; //was 0.5
     double MIN_AUTO_ROTATE_FACTOR = 0.1;
 
-  /*  T265Camera slamra = new T265Camera(new Transform2d(), 0.1, hardwareMap.appContext);
+  T265Camera slamra = new T265Camera(new Transform2d(), 0, hardwareMap.appContext);
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
     final int robotRadius = 9; // inches
     TelemetryPacket packet = new TelemetryPacket();
     Canvas field = packet.fieldOverlay();
     T265Camera.CameraUpdate up;
     Translation2d translationSLAM;
-    Rotation2d rotationSLAM; */
+    Rotation2d rotationSLAM;
 
 ////    //Vuforia field tracking tools:
 //    //This is the allowed distance to a target
@@ -639,7 +639,7 @@ public class DriveController {
         moduleLeft.resetEncoders();
     }
 
-  /*  public void updateSLAMNav() {
+    public void updateSLAMNav() {
         // We divide by 0.0254 to convert meters to inches
         up = slamra.getLastReceivedCameraUpdate();
         translationSLAM = new Translation2d(up.pose.getTranslation().getX() / 0.0254, up.pose.getTranslation().getY() / 0.0254);
@@ -665,7 +665,7 @@ public class DriveController {
     public double getY() {
         return translationSLAM.getY();
     }
-    */
+
     public static boolean between(double i, double minValueInclusive, double maxValueInclusive) {
         if (i >= minValueInclusive && i <= maxValueInclusive)
             return true;
