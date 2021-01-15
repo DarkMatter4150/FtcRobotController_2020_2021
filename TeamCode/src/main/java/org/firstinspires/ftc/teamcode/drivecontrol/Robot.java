@@ -62,7 +62,7 @@ public class Robot {
 
 //        arm.set(opMode.hardwareMap.dcMotor.get("arm"));
 //        lift.set(opMode.hardwareMap.dcMotor.get("lift"));
-        flywheel.set(opMode.hardwareMap.dcMotor.get("flyWheel"));
+        flywheel.set(opMode.hardwareMap.dcMotor.get("flywheel"));
         intake.set(opMode.hardwareMap.dcMotor.get("intake"));
 
 
