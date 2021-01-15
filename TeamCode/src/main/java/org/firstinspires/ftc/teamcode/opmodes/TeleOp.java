@@ -59,6 +59,23 @@ public class TeleOp extends OpMode {
         joystick2 = new Vector2d(gamepad1.right_stick_x+((gamepad1.right_stick_x/Math.abs(gamepad1.right_stick_x))*0.1), -gamepad1.right_stick_y); //RIGHT joystick
         slowModeDrive = false;
 
+
+        //Gamepad 2
+        float leftStick2x = gamepad2.left_stick_x;
+        float leftStick2y = -gamepad2.left_stick_y;
+        float rightStick2x = gamepad2.right_stick_x;
+        float rightStick2y = -gamepad2.right_stick_y;
+        float leftTrigger2 = gamepad2.left_trigger;
+        float rightTrigger2 = gamepad2.right_trigger;
+        boolean aButton = gamepad2.a;
+        boolean bButton = gamepad2.b;
+        boolean xButton = gamepad2.x;
+        boolean yButton = gamepad2.y;
+
+        robot.setIntakePower(-leftTrigger2);
+        robot.setFlywheelPower(-rightTrigger2);
+
+
         telemetry.addData("Robot Heading: ", robot.getRobotHeading());
 
         telemetry.addData("Joystick 2 Angle (180 heading mode): ", joystick2.getAngleDouble(Angle.AngleType.NEG_180_TO_180_HEADING));

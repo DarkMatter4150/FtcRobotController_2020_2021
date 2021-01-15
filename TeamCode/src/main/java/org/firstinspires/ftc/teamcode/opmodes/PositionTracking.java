@@ -14,7 +14,7 @@ import com.spartronics4915.lib.T265Camera;
 import java.util.List;
 
 @Disabled
-@Autonomous(name="Test T265", group="Iterative Opmode")
+@Autonomous(name="Test C", group="Iterative Opmode")
 public class PositionTracking extends LinearOpMode
 {
     // We treat this like a singleton because there should only ever be one object per camera
