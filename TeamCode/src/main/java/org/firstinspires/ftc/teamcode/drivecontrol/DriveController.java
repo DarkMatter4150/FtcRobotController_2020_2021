@@ -75,14 +75,14 @@ public class DriveController {
     double MAX_AUTO_ROTATE_FACTOR = 0.3; //was 0.5
     double MIN_AUTO_ROTATE_FACTOR = 0.1;
 
-  T265Camera slamra = new T265Camera(new Transform2d(), 0, hardwareMap.appContext);
+  /* T265Camera slamra = new T265Camera(new Transform2d(), 0, hardwareMap.appContext);
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
     final int robotRadius = 9; // inches
     TelemetryPacket packet = new TelemetryPacket();
     Canvas field = packet.fieldOverlay();
     T265Camera.CameraUpdate up;
     Translation2d translationSLAM;
-    Rotation2d rotationSLAM;
+    Rotation2d rotationSLAM; */
 
 ////    //Vuforia field tracking tools:
 //    //This is the allowed distance to a target
@@ -99,9 +99,8 @@ public class DriveController {
         //todo: change to parameter
         robotPosition = startingPosition;
 
-     /*   StartingPosition opMode = (StartingPosition) robot.opMode;
-        Pose2d startingPose =
-                new Pose2d(opMode.getStartingX(), opMode.getStartingY(), opMode.getStartingRotation()); */
+        //StartingPosition opMode = (StartingPosition) robot.opMode;
+       // Pose2d startingPose = new Pose2d(opMode.getStartingX(), opMode.getStartingY(), opMode.getStartingRotation());
        // slamra.setPose(startingPose);
 
         //vuforiaTracker = new FieldTracker(robot.hardwareMap, robot.telemetry, true, false);
@@ -170,13 +169,15 @@ public class DriveController {
     //AUTONOMOUS METHODS
     //do NOT call in a loop
 
-    public void driveToLocation(double currentX, double currentY, double x, double y, double rotation, double speed, double tolerance) {
-
+    /* public void driveToLocation(double x, double y, double rotation, double speed, double tolerance) {
+        double currentX = getX();
+        double currentY = getY();
+        double theta = -getRotation().getDegrees();
         //TODO: Change currentX and currentY to getX() and getY()
         while (!(between(currentY,y-tolerance,y+tolerance)) || !(between(currentX,x-tolerance,x+tolerance))) {
 
             robot.updateBulkData();
-            //updateSLAMNav();
+            updateSLAMNav();
             updateTracking();
 
             double goToAngle = Math.atan2((y-currentY),(x-currentX));
@@ -190,7 +191,7 @@ public class DriveController {
 
 
 
-    }
+    } */
 
     //speed should be scalar from 0 to 1
     public void drive(Vector2d direction, double cmDistance, double speed, boolean fixModules, boolean alignModules, LinearOpMode linearOpMode) {
@@ -639,7 +640,7 @@ public class DriveController {
         moduleLeft.resetEncoders();
     }
 
-    public void updateSLAMNav() {
+    /* public void updateSLAMNav() {
         // We divide by 0.0254 to convert meters to inches
         up = slamra.getLastReceivedCameraUpdate();
         translationSLAM = new Translation2d(up.pose.getTranslation().getX() / 0.0254, up.pose.getTranslation().getY() / 0.0254);
@@ -663,8 +664,8 @@ public class DriveController {
     }
 
     public double getY() {
-        return translationSLAM.getY();
-    }
+        return -translationSLAM.getY();
+    } */
 
     public static boolean between(double i, double minValueInclusive, double maxValueInclusive) {
         if (i >= minValueInclusive && i <= maxValueInclusive)

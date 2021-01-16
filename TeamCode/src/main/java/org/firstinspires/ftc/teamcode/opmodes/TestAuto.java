@@ -15,12 +15,12 @@ public class TestAuto extends LinearOpMode implements StartingPosition {
 
     @Override
     public double getStartingX() {
-        return 15;
+        return 0*.0254;
     }
 
     @Override
     public double getStartingY() {
-        return 15;
+        return 0*-.0254;
     }
 
     @Override
@@ -44,6 +44,7 @@ public class TestAuto extends LinearOpMode implements StartingPosition {
         //drive 20 cm to the right (while facing forward)
         //robot.driveController.drive(Vector2d.FORWARD, 100 , 1, this);
         //robot.driveController.rotateRobot(Angle.RIGHT, this);
+        /*
         robot.driveController.rotateModules(Vector2d.FORWARD, false, 2000, this);
         sleep(500);
         robot.driveController.rotateModules(Vector2d.LEFT, false, 2000, this);
@@ -57,7 +58,9 @@ public class TestAuto extends LinearOpMode implements StartingPosition {
         robot.driveController.drive(Vector2d.UNIT_CIRCLE_60, 50 , .5, this);
         robot.driveController.drive(Vector2d.RIGHT, 50 , .5, this);
         robot.driveController.drive(Vector2d.UNIT_CIRCLE_120, 50 , .5, this);
-        robot.driveController.rotateModules(Vector2d.FORWARD, false, 2000, this);
+        robot.driveController.rotateModules(Vector2d.FORWARD, false, 2000, this); */
+
+        //robot.driveController.driveToLocation(0,0,0,1,1);
 
         //robot.driveController.drive(Vector2d.RIGHT, 200, 1, this);
         //robot.driveController.updateUsingJoysticks(Vector2d.RIGHT.scale(Math.sqrt(2)), new Vector2d(0,0), false);
