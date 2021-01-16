@@ -25,6 +25,7 @@ public class TeleOp extends OpMode {
     private boolean slow = false;
     private boolean claw = false;
     private boolean pusherThing = true;
+    private boolean boxLifter = true;
     private double boxTimer = 0;
     private double pusherTimer = 0;
     private ElapsedTime timer = new ElapsedTime();
@@ -87,6 +88,11 @@ public class TeleOp extends OpMode {
             pusherThing = !pusherThing;
             robot.setPusherThing(pusherThing);
             pusherTimer = timer.milliseconds();
+        }
+        if (bButton && timer.milliseconds() - boxTimer > 250) {
+            boxLifter = !boxLifter;
+            robot.setBoxLifter(boxLifter);
+            boxTimer = timer.milliseconds();
         }
 
 
