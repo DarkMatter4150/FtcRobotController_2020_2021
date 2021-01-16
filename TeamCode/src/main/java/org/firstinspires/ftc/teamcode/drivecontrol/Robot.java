@@ -52,7 +52,7 @@ public class Robot {
         this.hardwareMap = opMode.hardwareMap;
         this.telemetry = opMode.telemetry;
         this.opMode = opMode;
-       //driveController = new DriveController(this, startingPosition, debuggingMode);
+        driveController = new DriveController(this, startingPosition, debuggingMode);
 
         imu = opMode.hardwareMap.get(BNO055IMU.class, "imu 1");
 
@@ -62,7 +62,7 @@ public class Robot {
 
 //        arm.set(opMode.hardwareMap.dcMotor.get("arm"));
 //        lift.set(opMode.hardwareMap.dcMotor.get("lift"));
-        flywheel.set(opMode.hardwareMap.dcMotor.get("flyWheel"));
+        flywheel.set(opMode.hardwareMap.dcMotor.get("flywheel"));
         intake.set(opMode.hardwareMap.dcMotor.get("intake"));
 
 
@@ -112,25 +112,25 @@ public class Robot {
     }
 
     public static class BoxLifterPos {
-        static double OPEN = 0.83d; //TODO figure values
-        static double CLOSED = 1.0d;
+        static double DOWN = 0.45d; //TODO figure values
+        static double UP = 0.0d;
     }
 
     /**
      * Sets claw position to open or closed based on the boolean input.
      *
-     * @param open Boolean variable to open/close the claw.
+     * @param down Boolean variable to open/close the claw.
      */
-    public void setBoxLifter(boolean open) {
-        if (open) {
-            boxLifter.setPosition(BoxLifterPos.OPEN);
+    public void setBoxLifter(boolean down) {
+        if (down) {
+            boxLifter.setPosition(BoxLifterPos.DOWN);
         } else {
-            boxLifter.setPosition(BoxLifterPos.CLOSED);
+            boxLifter.setPosition(BoxLifterPos.UP);
         }
     }
 
     public static class PusherThingPos {
-        static double IN = 0.83d; //TODO figure values
+        static double IN = 0.75d; //TODO figure values
         static double OUT = 1.0d;
     }
 
