@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
 import org.firstinspires.ftc.teamcode.drivecontrol.Vector2d;
@@ -20,6 +21,13 @@ public class TeleOp extends OpMode {
 
     double loopStartTime = 0;
     double loopEndTime = 0;
+
+    private boolean slow = false;
+    private boolean claw = false;
+    private boolean pusherThing = true;
+    private double boxTimer = 0;
+    private double pusherTimer = 0;
+    private ElapsedTime timer = new ElapsedTime();
 
     //hungry hippo (1 servo, 2 positions)
     //foundation grabber - latch (2 servos, 2 positions)
@@ -74,6 +82,12 @@ public class TeleOp extends OpMode {
 
         robot.setIntakePower(-leftTrigger2);
         robot.setFlywheelPower(-rightTrigger2);
+
+        if (aButton && timer.milliseconds() - pusherTimer > 250) {
+            pusherThing = !pusherThing;
+            robot.setPusherThing(pusherThing);
+            pusherTimer = timer.milliseconds();
+        }
 
 
         telemetry.addData("Robot Heading: ", robot.getRobotHeading());
