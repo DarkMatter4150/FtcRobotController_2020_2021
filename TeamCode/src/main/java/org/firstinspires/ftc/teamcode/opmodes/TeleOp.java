@@ -84,7 +84,7 @@ public class TeleOp extends OpMode {
         robot.setIntakePower(-leftTrigger2);
         robot.setFlywheelPower(-rightTrigger2);
 
-        if (aButton && timer.milliseconds() - pusherTimer > 250) {
+        if (aButton && timer.milliseconds() - pusherTimer > 250 && (boxLifter || pusherThing)) {
             pusherThing = !pusherThing;
             robot.setPusherThing(pusherThing);
             pusherTimer = timer.milliseconds();
