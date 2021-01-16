@@ -112,7 +112,7 @@ public class Robot {
     }
 
     public static class BoxLifterPos {
-        static double DOWN = 0.45d; //TODO figure values
+        static double DOWN = 0.45d; //When down you can't actuate the pusher or else box lifter fails
         static double UP = 0.0d;
     }
 
@@ -130,7 +130,7 @@ public class Robot {
     }
 
     public static class PusherThingPos {
-        static double IN = 0.75d; //TODO figure values
+        static double IN = 0.75d;
         static double OUT = 1.0d;
     }
 
