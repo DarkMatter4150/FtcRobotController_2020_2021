@@ -75,14 +75,14 @@ public class DriveController {
     double MAX_AUTO_ROTATE_FACTOR = 0.3; //was 0.5
     double MIN_AUTO_ROTATE_FACTOR = 0.1;
 
-    T265Camera slamra = new T265Camera(new Transform2d(), 0.1, hardwareMap.appContext);
+  /* T265Camera slamra = new T265Camera(new Transform2d(), 0, hardwareMap.appContext);
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
     final int robotRadius = 9; // inches
     TelemetryPacket packet = new TelemetryPacket();
     Canvas field = packet.fieldOverlay();
     T265Camera.CameraUpdate up;
     Translation2d translationSLAM;
-    Rotation2d rotationSLAM;
+    Rotation2d rotationSLAM; */
 
 ////    //Vuforia field tracking tools:
 //    //This is the allowed distance to a target
@@ -99,10 +99,9 @@ public class DriveController {
         //todo: change to parameter
         robotPosition = startingPosition;
 
-        StartingPosition opMode = (StartingPosition) robot.opMode;
-        Pose2d startingPose =
-                new Pose2d(opMode.getStartingX(), opMode.getStartingY(), opMode.getStartingRotation());
-        slamra.setPose(startingPose);
+        //StartingPosition opMode = (StartingPosition) robot.opMode;
+       // Pose2d startingPose = new Pose2d(opMode.getStartingX(), opMode.getStartingY(), opMode.getStartingRotation());
+       // slamra.setPose(startingPose);
 
         //vuforiaTracker = new FieldTracker(robot.hardwareMap, robot.telemetry, true, false);
 
@@ -153,7 +152,7 @@ public class DriveController {
     public void update(Vector2d translationVector, double rotationMagnitude) {
         moduleLeft.updateTarget(translationVector, rotationMagnitude);
         moduleRight.updateTarget(translationVector, rotationMagnitude);
-        updateSLAMNav();
+        //updateSLAMNav();
     }
 
     public void updateAbsRotation(Vector2d translationVector, Vector2d joystick2, double scaleFactor) {
@@ -169,6 +168,30 @@ public class DriveController {
 
     //AUTONOMOUS METHODS
     //do NOT call in a loop
+
+    /* public void driveToLocation(double x, double y, double rotation, double speed, double tolerance) {
+        double currentX = getX();
+        double currentY = getY();
+        double theta = -getRotation().getDegrees();
+        //TODO: Change currentX and currentY to getX() and getY()
+        while (!(between(currentY,y-tolerance,y+tolerance)) || !(between(currentX,x-tolerance,x+tolerance))) {
+
+            robot.updateBulkData();
+            updateSLAMNav();
+            updateTracking();
+
+            double goToAngle = Math.atan2((y-currentY),(x-currentX));
+            Vector2d goToVector = new Vector2d(goToAngle, goToAngle);
+            goToVector = goToVector.scale(Math.sqrt(speed));
+
+            updateUsingJoysticks(goToVector, Vector2d.ZERO, false);
+        }
+        update(Vector2d.ZERO, 0);
+        setRotateModuleMode(ROTATE_MODULES); //reset mode
+
+
+
+    } */
 
     //speed should be scalar from 0 to 1
     public void drive(Vector2d direction, double cmDistance, double speed, boolean fixModules, boolean alignModules, LinearOpMode linearOpMode) {
@@ -190,7 +213,7 @@ public class DriveController {
 
         while (getDistanceTraveled() < cmDistance && /*System.currentTimeMillis() - startTime < DRIVE_TIMEOUT && */linearOpMode.opModeIsActive()) {
             robot.updateBulkData();
-            updateSLAMNav();
+            //updateSLAMNav();
             updateTracking();
             //slows down drive power in certain range
             if (cmDistance - getDistanceTraveled() < START_DRIVE_SLOWDOWN_AT_CM) {
@@ -203,8 +226,8 @@ public class DriveController {
             linearOpMode.telemetry.addData("Driving robot", "");
             linearOpMode.telemetry.addData("Distance Traveled", getDistanceTraveled());
             linearOpMode.telemetry.addData("CM Distance", cmDistance);
-            linearOpMode.telemetry.addData("SLAM Pos", translationSLAM);
-            linearOpMode.telemetry.addData("SLAM Rot", rotationSLAM);
+            //linearOpMode.telemetry.addData("SLAM Pos", translationSLAM);
+            //linearOpMode.telemetry.addData("SLAM Rot", rotationSLAM);
             linearOpMode.telemetry.update();
 
             updatePositionTracking(robot.telemetry); //update position tracking
@@ -319,7 +342,7 @@ public class DriveController {
             //at the end, all three speeds will be min speed (different for each)
             //in between, the speeds will scale linearly depending on distance from target position
             robot.updateBulkData();
-            updateSLAMNav();
+            //updateSLAMNav();
             updatePositionTracking(linearOpMode.telemetry);
 
             Vector2d translationDirection = robotPosition.getDirectionTo(targetPosition);
@@ -492,7 +515,7 @@ public class DriveController {
         double absHeadingDiff = robot.getRobotHeading().getDifference(targetAngle);
         while (absHeadingDiff > ALLOWED_MODULE_ROT_ERROR && linearOpMode.opModeIsActive() && iterations < MAX_ITERATIONS_ROBOT_ROTATE /*&& System.currentTimeMillis() - startTime < ROTATE_ROBOT_TIMEOUT*/) {
             robot.updateBulkData();
-            updateSLAMNav();
+            //updateSLAMNav();
             absHeadingDiff = robot.getRobotHeading().getDifference(targetAngle);
             double rotMag = RobotUtil.scaleVal(absHeadingDiff, 0, 25, 0, power); //was max power 1 - WAS 0.4 max power
 
@@ -522,7 +545,7 @@ public class DriveController {
         double startTime = System.currentTimeMillis();
         do {
             robot.updateBulkData();
-            updateSLAMNav();
+            //updateSLAMNav();
             updateTracking();
             moduleLeftDifference = moduleLeft.getCurrentOrientation().getDifference(direction.getAngle()); //was getRealAngle() (don't ask)
             moduleRightDifference = moduleRight.getCurrentOrientation().getDifference(direction.getAngle());
@@ -617,7 +640,7 @@ public class DriveController {
         moduleLeft.resetEncoders();
     }
 
-    public void updateSLAMNav() {
+    /* public void updateSLAMNav() {
         // We divide by 0.0254 to convert meters to inches
         up = slamra.getLastReceivedCameraUpdate();
         translationSLAM = new Translation2d(up.pose.getTranslation().getX() / 0.0254, up.pose.getTranslation().getY() / 0.0254);
@@ -641,7 +664,14 @@ public class DriveController {
     }
 
     public double getY() {
-        return translationSLAM.getY();
+        return -translationSLAM.getY();
+    } */
+
+    public static boolean between(double i, double minValueInclusive, double maxValueInclusive) {
+        if (i >= minValueInclusive && i <= maxValueInclusive)
+            return true;
+        else
+            return false;
     }
 
 }
