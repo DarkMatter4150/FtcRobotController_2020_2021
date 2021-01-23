@@ -12,12 +12,47 @@
 // Custom definitions may go here
 
 // Include common definitions from above.
-apply from: '../build.common.gradle'
+/* apply from: '../build.common.gradle'
 
 repositories {
+    jcenter()
+
+    maven { url = "https://maven.0x778.tk" }
     maven { url = "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
 }
 
 dependencies {
+    // This will get the latest compatible version
+    implementation 'com.spartronics4915.lib:ftc265:2.1.2'
+    implementation 'org.openftc:rev-extensions-2:1.2'
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+}
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+android {
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+}
+*/
+apply from: '../build.common.gradle'
+
+repositories {
+    jcenter()
+
+    maven {
+        url = "https://maven.0x778.tk"
+    }
+    maven { url = "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
+
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.spartronics4915.lib:ftc265:2.1.2'
+    implementation 'org.openftc:rev-extensions-2:1.2'
 }
