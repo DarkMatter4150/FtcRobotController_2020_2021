@@ -21,7 +21,9 @@ public class TestCameraT265 extends OpMode
 
     @Override
     public void init() {
+        if (slamra == null) {
             slamra = new T265Camera(new Transform2d(), 0.1, hardwareMap.appContext);
+        }
     }
 
     @Override
