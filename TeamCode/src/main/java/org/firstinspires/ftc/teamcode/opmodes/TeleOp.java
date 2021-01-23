@@ -81,8 +81,10 @@ public class TeleOp extends OpMode {
         boolean xButton = gamepad2.x;
         boolean yButton = gamepad2.y;
 
-        robot.setIntakePower(-leftTrigger2);
+        robot.setIntakePower(leftTrigger2);
+        robot.setConveyorPower(-leftTrigger2);
         robot.setFlywheelPower(-rightTrigger2);
+
 
         if (aButton && timer.milliseconds() - pusherTimer > 250 && (boxLifter || pusherThing)) {
             pusherThing = !pusherThing;
