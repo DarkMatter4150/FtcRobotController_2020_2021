@@ -9,24 +9,9 @@ import org.firstinspires.ftc.teamcode.drivecontrol.Vector2d;
 
 @Autonomous(name = "Diff Swerve Test Auto", group = "Linear Opmode")
 
-public class TestAuto extends LinearOpMode implements StartingPosition {
+public class TestAuto extends LinearOpMode {
     Robot robot;
     public boolean willResetIMU = true;
-
-    @Override
-    public double getStartingX() {
-        return 0*.0254;
-    }
-
-    @Override
-    public double getStartingY() {
-        return 0*-.0254;
-    }
-
-    @Override
-    public Rotation2d getStartingRotation() {
-        return new Rotation2d();
-    }
 
     @Override
     public void runOpMode() throws InterruptedException {
