@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.spartronics4915.lib.T265Camera;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -48,7 +49,7 @@ public class Robot {
 
     SCARAController controller;
 
-    public Robot(OpMode opMode, Position startingPosition, boolean isAuto, boolean debuggingMode) {
+    public Robot(OpMode opMode, Position startingPosition, T265Camera slamra, boolean isAuto, boolean debuggingMode) {
         this.hardwareMap = opMode.hardwareMap;
         this.telemetry = opMode.telemetry;
         this.opMode = opMode;
@@ -77,12 +78,12 @@ public class Robot {
 
     //defaults to debugging mode off, starting position of 0, 0
     public Robot(OpMode opMode, boolean isAuto) {
-        this(opMode, new Position(0, 0, new Angle(0, Angle.AngleType.ZERO_TO_360_HEADING)), isAuto, false);
+        this(opMode, new Position(0, 0, new Angle(0, Angle.AngleType.ZERO_TO_360_HEADING)), null, isAuto, false);
     }
 
     //defaults to starting position of 0, 0
     public Robot(OpMode opMode, boolean isAuto, boolean debuggingMode) {
-        this(opMode, new Position(0, 0, new Angle(0, Angle.AngleType.ZERO_TO_360_HEADING)), isAuto, debuggingMode);
+        this(opMode, new Position(0, 0, new Angle(0, Angle.AngleType.ZERO_TO_360_HEADING)), null, isAuto, debuggingMode);
     }
 
     public void updateBulkData() {
