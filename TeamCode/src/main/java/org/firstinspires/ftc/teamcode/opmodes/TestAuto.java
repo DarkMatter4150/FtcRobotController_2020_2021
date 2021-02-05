@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
 import org.firstinspires.ftc.teamcode.drivecontrol.Vector2d;
 
-@Autonomous(name = "Diff Swerve Test Auto", group = "Linear Opmode")
+@Autonomous(name = "Diff Swerve Test Auto 1", group = "Linear Opmode")
 
 public class TestAuto extends LinearOpMode {
     Robot robot;
@@ -21,6 +21,8 @@ public class TestAuto extends LinearOpMode {
         waitForStart();
         long startTime = System.currentTimeMillis();
         long subtractTime = 0;
+
+        robot.driveController.rotateModules(Vector2d.LEFT, false, 2000, this);
         //simple sequence to demonstrate the three main autonomous primitives
 
         //rotate modules to face to the right
