@@ -17,6 +17,7 @@ public class DriveModule {
     //module specific drive motors
     public ExpansionHubMotor motor1; //top motor
     public ExpansionHubMotor motor2; //bottom motor
+    public ExpansionHubMotor encoderOrientation;
 
     double lastM1Encoder;
     double lastM2Encoder;
@@ -27,7 +28,7 @@ public class DriveModule {
     public boolean takingShortestPath = false;
     public boolean reversed = false;
 
-    enum RotateModuleMode {
+    public enum RotateModuleMode {
         DO_NOT_ROTATE_MODULES, ROTATE_MODULES
     }
     public RotateModuleMode rotateModuleMode = RotateModuleMode.ROTATE_MODULES;
@@ -36,8 +37,11 @@ public class DriveModule {
     // a MODULE rev is when the orientation of the module changes by 360 degrees
     // a WHEEL rev is when the wheel drives a distance equal to its circumference
 
-    public final double TICKS_PER_MODULE_REV = 1014; //20 * (double)(60)/14 * (double)(48)/15 * (double)(82)/22; //ticks per MODULE revolution
+    public final double TICKS_PER_MODULE_REV = 1024;//8192; //20 * (double)(60)/14 * (double)(48)/15 * (double)(82)/22; //ticks per MODULE revolution
     public final double DEGREES_PER_TICK = 360/TICKS_PER_MODULE_REV;
+
+    public final double TICKS_PER_MODULE_REV_ORIENT = 8192; //20 * (double)(60)/14 * (double)(48)/15 * (double)(82)/22; //ticks per MODULE revolution
+    public final double DEGREES_PER_TICK_ORIENT = 360/TICKS_PER_MODULE_REV_ORIENT;
 
     public final double TICKS_PER_WHEEL_REV = 1 * TICKS_PER_MODULE_REV * 18/60; //ticks per WHEEL revolution
 
@@ -49,7 +53,7 @@ public class DriveModule {
     public final double ANGLE_OF_MAX_MODULE_ROTATION_POWER = 60;
 
     //if module is within this number of degrees from its target orientation, no pivot power will be applied
-    public final double ALLOWED_MODULE_ORIENTATION_ERROR = 5;
+    public final double ALLOWED_MODULE_ORIENTATION_ERROR = 10;
 
     //TODO: tune this variable (see commented out section in TeleOp)
     //was 1.7
@@ -71,6 +75,7 @@ public class DriveModule {
     private double distanceTraveled; //distance traveled (delta s) since initial encoder state
     private double lastMotor1Encoder;
     private double lastMotor2Encoder;
+    private double lastorientEncoder;
 
     public double positionChange;
 
@@ -83,11 +88,13 @@ public class DriveModule {
         if (moduleSide == ModuleSide.RIGHT) {
             motor1 = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("rightTopMotor");
             motor2 = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("rightBottomMotor");
+            encoderOrientation = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("flywheel");
             motor1.setDirection(DcMotorSimple.Direction.REVERSE);
             positionVector = new Vector2d((double)18/2, 0); //points from robot center to right module
         } else {
             motor1 = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("leftTopMotor");
             motor2 = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("leftBottomMotor");
+            encoderOrientation = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("conveyor");
             motor1.setDirection(DcMotorSimple.Direction.REVERSE);
             positionVector = new Vector2d((double)-18/2, 0); //points from robot center to left module
         }
@@ -95,15 +102,18 @@ public class DriveModule {
         //set run mode to NOT use encoders for velocity PID regulation
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        encoderOrientation.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //motors will brake when zero power is applied (rather than coast)
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        encoderOrientation.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //lastM1Encoder = robot.bulkData2.getMotorCurrentPosition(motor1);
         //lastM2Encoder = robot.bulkData2.getMotorCurrentPosition(motor2);
         lastM1Encoder = 0;
         lastM2Encoder = 0;
+        lastorientEncoder = 0;
 
         if (debuggingMode) {
             dataLogger = new DataLogger(moduleSide + "ModuleLog");
@@ -358,14 +368,28 @@ public class DriveModule {
         motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        encoderOrientation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        encoderOrientation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     //returns module orientation relative to ROBOT (not field) in degrees and NEG_180_TO_180_HEADING type
     public Angle getCurrentOrientation() {
+        //double rawAngle = (double)(360/8192) * (double)robot.bulkData2.getMotorCurrentPosition(encoderOrientation);
+
+        /*robot.telemetry.addData(moduleSide + "Orientation Encoder", robot.bulkData2.getMotorCurrentPosition(encoderOrientation));
+        double rawAngle = (double)(robot.bulkData2.getMotorCurrentPosition(encoderOrientation)) * DEGREES_PER_TICK_ORIENT *1; //motor2-motor1 makes ccw positive (?)
+        return new Angle(rawAngle, Angle.AngleType.ZERO_TO_360_HEADING);*/
+        double rawAngleORIENT = (double)(robot.bulkData2.getMotorCurrentPosition(encoderOrientation)) * DEGREES_PER_TICK_ORIENT;
+        Angle rawAngleORIENTAngle = new Angle(rawAngleORIENT, Angle.AngleType.ZERO_TO_360_HEADING);
+
+
         robot.telemetry.addData(moduleSide + "Motor 1 Encoder", robot.bulkData1.getMotorCurrentPosition(motor1));
         robot.telemetry.addData(moduleSide + "Motor 2 Encoder", robot.bulkData1.getMotorCurrentPosition(motor2));
+        robot.telemetry.addData(moduleSide + "Angle Orient ", rawAngleORIENTAngle);
+        robot.telemetry.addData(moduleSide + "Raw Angle Orient ", rawAngleORIENT);
         double rawAngle = (double)(robot.bulkData1.getMotorCurrentPosition(motor2) + robot.bulkData1.getMotorCurrentPosition(motor1))/2.0 * DEGREES_PER_TICK; //motor2-motor1 makes ccw positive (?)
-        return new Angle(rawAngle, Angle.AngleType.ZERO_TO_360_HEADING);
+        robot.telemetry.addData(moduleSide + "Raw Angle  ", rawAngle);
+        return new Angle(rawAngleORIENT, Angle.AngleType.ZERO_TO_360_HEADING);
     }
 
 
@@ -376,10 +400,15 @@ public class DriveModule {
     public Vector2d updatePositionTracking (Telemetry telemetry) {
         double newM1Encoder = robot.bulkData1.getMotorCurrentPosition(motor1);
         double newM2Encoder = robot.bulkData1.getMotorCurrentPosition(motor2);
+        double newOrientEncoder = robot.bulkData2.getMotorCurrentPosition(encoderOrientation);
 
         //angles are in radians
-        Angle startingAngleObj = new Angle((lastM1Encoder + lastM2Encoder)/2.0 * DEGREES_PER_TICK, Angle.AngleType.ZERO_TO_360_HEADING);
-        Angle finalAngleObj = new Angle((newM1Encoder + newM2Encoder)/2.0 * DEGREES_PER_TICK, Angle.AngleType.ZERO_TO_360_HEADING);
+        //Angle startingAngleObj = new Angle((lastM1Encoder + lastM2Encoder)/2.0 * DEGREES_PER_TICK, Angle.AngleType.ZERO_TO_360_HEADING);
+        //Angle finalAngleObj = new Angle((newM1Encoder + newM2Encoder)/2.0 * DEGREES_PER_TICK, Angle.AngleType.ZERO_TO_360_HEADING);
+
+        Angle startingAngleObj = new Angle(lastorientEncoder* DEGREES_PER_TICK_ORIENT, Angle.AngleType.ZERO_TO_360_HEADING);
+        Angle finalAngleObj = new Angle(newOrientEncoder* DEGREES_PER_TICK_ORIENT, Angle.AngleType.ZERO_TO_360_HEADING);
+
         double averageAngle = Math.toRadians(Angle.getAverageAngle(startingAngleObj, finalAngleObj).getAngle(Angle.AngleType.ZERO_TO_360_CARTESIAN)); //was 180 heading
 
         double startingPosition = (lastM1Encoder - lastM2Encoder)/2.0  * CM_PER_TICK;

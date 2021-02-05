@@ -40,9 +40,9 @@ public class Robot {
 
     //BULK DATA (RevExtensions2)
     public RevBulkData bulkData1;
-   // RevBulkData bulkData2;
+    public RevBulkData bulkData2;
     ExpansionHubEx expansionHub1;
-   // ExpansionHubEx expansionHub2;
+    ExpansionHubEx expansionHub2;
 
     //data logger
     DataLogger dataLogger;
@@ -70,9 +70,9 @@ public class Robot {
 
         //bulk data
         expansionHub1 = hardwareMap.get(ExpansionHubEx.class, "Control Hub");
-        //expansionHub2 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
+        expansionHub2 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
         bulkData1 = expansionHub1.getBulkInputData();
-        //bulkData2 = expansionHub2.getBulkInputData();
+        bulkData2 = expansionHub2.getBulkInputData();
 
         dataLogger = new DataLogger("UltimateGoalRobot");
     }
@@ -89,7 +89,7 @@ public class Robot {
 
     public void updateBulkData() {
         bulkData1 = expansionHub1.getBulkInputData();
-        //bulkData2 = expansionHub2.getBulkInputData();
+        bulkData2 = expansionHub2.getBulkInputData();
     }
 
     /**
