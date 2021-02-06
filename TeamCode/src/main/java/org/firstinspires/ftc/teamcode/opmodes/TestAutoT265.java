@@ -47,8 +47,13 @@ public class TestAutoT265 extends LinearOpMode {
         slamra.start();
 
         //Actual OpMode
+        driveToPosition(30,30,.5,false,true,5,this);
+        while (opModeIsActive()) {
+            robot.updateBulkData();
+            updateSLAMNav();
+        }
 
-
+        slamra.stop();
 
     }
 
@@ -117,7 +122,7 @@ public class TestAutoT265 extends LinearOpMode {
         robot.driveController.resetDistanceTraveled();
         robot.driveController.updateTracking(); //ADDED
 
-        while (!(between(currentX,currentX-maxError,currentX+maxError)) && !(between(currentY,currentY-maxError,currentY+maxError)) && linearOpMode.opModeIsActive()) {
+        while (!(between(currentX,X-maxError,X+maxError)) && !(between(currentY,Y-maxError,Y+maxError)) && linearOpMode.opModeIsActive()) {
             robot.updateBulkData();
             updateSLAMNav();
             robot.driveController.updateTracking();
@@ -167,6 +172,10 @@ public class TestAutoT265 extends LinearOpMode {
         field.strokeLine(x1, y1, x2, y2);
 
         dashboard.sendTelemetryPacket(packet);
+
+        telemetry.addData("currentX", currentX);
+        telemetry.addData("currentY", currentY);
+        telemetry.addData("currentTheta", currentTheta);
 
         currentX = currentX + translation.getX();
         currentY = currentY + translation.getY();
