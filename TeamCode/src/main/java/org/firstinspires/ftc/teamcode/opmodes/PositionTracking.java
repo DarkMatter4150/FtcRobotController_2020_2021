@@ -23,35 +23,35 @@ public class PositionTracking extends LinearOpMode {
     public boolean willResetIMU = true;
     // We treat this like a singleton because there should only ever be one object per camera
     //T265Camera slamra = null;
-    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+    //private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    final int robotRadius = 9; // inches
-    TelemetryPacket packet = new TelemetryPacket();
-    Canvas field = packet.fieldOverlay();
-    Translation2d translationSLAM = new Translation2d();
-    Rotation2d rotationSLAM = new Rotation2d();
+    //final int robotRadius = 9; // inches
+    //TelemetryPacket packet = new TelemetryPacket();
+    //Canvas field = packet.fieldOverlay();
+   // Translation2d translationSLAM = new Translation2d();
+   // Rotation2d rotationSLAM = new Rotation2d();
 
-    Pose2d startingPose = new Pose2d((0*0.0254), (0*0.0254), new Rotation2d());
+   //Pose2d startingPose = new Pose2d((0*0.0254), (0*0.0254), new Rotation2d());
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         waitForStart();
-        driveToLocation(0,25,0,1,1);
+        //driveToLocation(0,25,0,1,1);
 
 
     }
 
     public void driveToLocation(double x, double y, double rotation, double speed, double tolerance) {
-        updateSLAMNav();
-        double currentX = translationSLAM.getX();
+        //updateSLAMNav();
+    /*    double currentX = translationSLAM.getX();
         double currentY = -translationSLAM.getY();
         double theta = -rotationSLAM.getDegrees();
         //TODO: Change currentX and currentY to getX() and getY()
         while (!(between(currentY,y-tolerance,y+tolerance)) || !(between(currentX,x-tolerance,x+tolerance))) {
 
             //robot.updateBulkData();
-            updateSLAMNav();
+            //updateSLAMNav();
 
             double goToAngle = Math.atan2((y-currentY),(x-currentX));
             Vector2d goToVector = new Vector2d(goToAngle, goToAngle);
@@ -63,7 +63,7 @@ public class PositionTracking extends LinearOpMode {
             telemetry.addData("Y", getY());
             telemetry.addData("Rot", getRotation());
         }
-        robot.driveController.update(Vector2d.ZERO, 0);
+        robot.driveController.update(Vector2d.ZERO, 0);*/
 
 
 
@@ -76,7 +76,7 @@ public class PositionTracking extends LinearOpMode {
             return false;
     }
 
-    public void updateSLAMNav() {
+    /*public void updateSLAMNav() {
         // We divide by 0.0254 to convert meters to inches
         T265Camera slamra = new T265Camera(new Transform2d(), 0, hardwareMap.appContext);
         T265Camera.CameraUpdate up;
@@ -105,6 +105,6 @@ public class PositionTracking extends LinearOpMode {
 
     public double getY() {
         return -translationSLAM.getY();
-    }
+    }*/
 
 }

@@ -133,6 +133,7 @@ public class DriveController {
     //converts joystick vectors to parameters for update() method
     //called every loop cycle in TeleOp
     public void updateUsingJoysticks(Vector2d joystick1, Vector2d joystick2, boolean absHeadingMode) {
+        robot.updateBulkData();
         if (absHeadingMode) {
             if (joystick1.getMagnitude() == 0)
                 updateAbsRotation(joystick1, joystick2, ROBOT_ROTATION_SCALE_FACTOR_ABS);
@@ -149,6 +150,7 @@ public class DriveController {
     //note: positive rotationMagnitude is CCW rotation
     //this method is for "power-based rotation mode"
     public void update(Vector2d translationVector, double rotationMagnitude) {
+        robot.updateBulkData();
         moduleLeft.updateTarget(translationVector, rotationMagnitude);
         moduleRight.updateTarget(translationVector, rotationMagnitude);
         //updateSLAMNav();
@@ -666,11 +668,5 @@ public class DriveController {
         return -translationSLAM.getY();
     } */
 
-    public static boolean between(double i, double minValueInclusive, double maxValueInclusive) {
-        if (i >= minValueInclusive && i <= maxValueInclusive)
-            return true;
-        else
-            return false;
-    }
 
 }

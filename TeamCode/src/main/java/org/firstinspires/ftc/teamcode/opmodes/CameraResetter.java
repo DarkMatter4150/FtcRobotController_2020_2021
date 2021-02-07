@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Transform2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
@@ -11,10 +10,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.spartronics4915.lib.T265Camera;
 
-import static org.firstinspires.ftc.teamcode.opmodes.TestCameraT265.slamra;
-
-@TeleOp(name="Test T265", group="Iterative Opmode")
-public class TestCameraT265 extends OpMode
+@TeleOp(name="T265 Resetter", group="Iterative Opmode")
+public class CameraResetter extends OpMode
 {
     // We treat this like a singleton because there should only ever be one object per camera
     public static T265Camera slamra = null;
@@ -23,6 +20,10 @@ public class TestCameraT265 extends OpMode
 
     @Override
     public void init() {
+            slamra = new T265Camera(new Transform2d(), 0.1, hardwareMap.appContext);
+            slamra.start();
+            slamra.stop();
+            slamra = null;
             slamra = new T265Camera(new Transform2d(), 0.1, hardwareMap.appContext);
     }
 
@@ -64,6 +65,7 @@ public class TestCameraT265 extends OpMode
 
     @Override
     public void stop() {
+        slamra.stop();
     }
 
 }

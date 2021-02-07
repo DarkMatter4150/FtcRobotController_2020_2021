@@ -37,7 +37,7 @@ public class SimpleTracking {
      * Constants used to calculate module and robot position and orientation.  These should be moved
      * to the robot constants class to avoid duplication with DriveModule
      */
-    private static final double TICKS_PER_MODULE_REV = 1014;//10 * (double)(60)/14 * (double)(48)/15 * (double)(82)/22; //ticks per MODULE revolution
+    private static final double TICKS_PER_MODULE_REV = 8192;//1014;//10 * (double)(60)/14 * (double)(48)/15 * (double)(82)/22; //ticks per MODULE revolution
 
     private static final double TICKS_PER_WHEEL_REV = 10 * (double)(60)/14 * (double)(48)/15 * (double)(82)/22 * (double)(14)/60; //ticks per WHEEL revolution
 
@@ -83,10 +83,10 @@ public class SimpleTracking {
 
     // this is just for testing
     public void setModuleOrientation(Robot robot) {
-        leftTopMotorPosition = robot.bulkData1.getMotorCurrentPosition(robot.driveController.moduleLeft.motor1);
-        leftBottomMotorPosition = robot.bulkData1.getMotorCurrentPosition(robot.driveController.moduleLeft.motor2);
-        rightTopMotorPosition = robot.bulkData1.getMotorCurrentPosition(robot.driveController.moduleRight.motor1);
-        rightBottomMotorPosition = robot.bulkData1.getMotorCurrentPosition(robot.driveController.moduleRight.motor2);
+        leftTopMotorPosition = robot.bulkData2.getMotorCurrentPosition(robot.driveController.moduleLeft.encoderOrientation);
+        leftBottomMotorPosition = robot.bulkData2.getMotorCurrentPosition(robot.driveController.moduleLeft.encoderOrientation);
+        rightTopMotorPosition = robot.bulkData2.getMotorCurrentPosition(robot.driveController.moduleRight.encoderOrientation);
+        rightBottomMotorPosition = robot.bulkData2.getMotorCurrentPosition(robot.driveController.moduleRight.encoderOrientation);
 
         //calculate the current orientations of the wheel modules in degrees, 0 is forward, positive clockwise viewed from the top
         double leftOrientation = (((leftTopMotorPosition + leftBottomMotorPosition) / (2 * TICKS_PER_MODULE_REV))
@@ -112,10 +112,8 @@ public class SimpleTracking {
         rightBottomMotorPosition = robot.bulkData1.getMotorCurrentPosition(robot.driveController.moduleRight.motor2);
 
         //calculate the current orientations of the wheel modules in degrees, 0 is forward, positive clockwise viewed from the top
-        double leftOrientation = (((leftTopMotorPosition + leftBottomMotorPosition) / (2 * TICKS_PER_MODULE_REV))
-                - Math.floor((leftTopMotorPosition + leftBottomMotorPosition) / (2 * TICKS_PER_MODULE_REV))) * 360;
-        double rightOrientation = (((rightTopMotorPosition + rightBottomMotorPosition) / (2 * TICKS_PER_MODULE_REV))
-                - Math.floor((rightTopMotorPosition + rightBottomMotorPosition) / (2 * TICKS_PER_MODULE_REV))) * 360;
+        double leftOrientation = robot.bulkData2.getMotorCurrentPosition(robot.driveController.moduleLeft.encoderOrientation)*360/8192;
+        double rightOrientation = robot.bulkData2.getMotorCurrentPosition(robot.driveController.moduleRight.encoderOrientation)*360/8192;
 
         /*
          * Calculate the current rotation distance of the wheel modules.  This is the total rotation distance the wheel
