@@ -389,6 +389,8 @@ public class DriveModule {
         robot.telemetry.addData(moduleSide + "Raw Angle Orient ", rawAngleORIENT);
         double rawAngle = (double)(robot.bulkData1.getMotorCurrentPosition(motor2) + robot.bulkData1.getMotorCurrentPosition(motor1))/2.0 * DEGREES_PER_TICK; //motor2-motor1 makes ccw positive (?)
         robot.telemetry.addData(moduleSide + "Raw Angle  ", rawAngle);
+        Angle rawAngleAngle = new Angle(rawAngle, Angle.AngleType.ZERO_TO_360_HEADING);
+        robot.telemetry.addData(moduleSide + "Raw Angle Angle ", rawAngleAngle);
         return new Angle(rawAngleORIENT, Angle.AngleType.ZERO_TO_360_HEADING);
     }
 

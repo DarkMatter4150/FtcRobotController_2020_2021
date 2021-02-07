@@ -18,35 +18,41 @@ import org.firstinspires.ftc.teamcode.drivecontrol.Vector2d;
 
 import static org.firstinspires.ftc.teamcode.drivecontrol.DriveModule.RotateModuleMode.DO_NOT_ROTATE_MODULES;
 import static org.firstinspires.ftc.teamcode.drivecontrol.DriveModule.RotateModuleMode.ROTATE_MODULES;
+import static org.firstinspires.ftc.teamcode.opmodes.TestCameraT265.slamra;
 
-@Autonomous(name = "Diff Swerve Test Auto", group = "Linear Opmode")
+@Autonomous(name = "T265 Test Auto", group = "Linear Opmode")
 
 public class TestAutoT265 extends LinearOpMode {
     Robot robot;
     public boolean willResetIMU = true;
 
-    private static T265Camera slamra = null;
-
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
+
+    double startingX = 0;
+    double startingY = 0;
+    double startingTheta = 0;
 
     double currentX = 0;
     double currentY = 0;
     double currentTheta = 0;
-
     @Override
     public void runOpMode() throws InterruptedException {
 
         //Init
         robot = new Robot(this, true);
         robot.initIMU();
-        slamra = new T265Camera(new Transform2d(), 0.1, hardwareMap.appContext);
 
 
         //Beginning
         waitForStart();
-        slamra.start();
 
         //Actual OpMode
+        driveToPosition(30,30,.5,true,false,2,this);
+
+        while (opModeIsActive()) {
+            updateSLAMNav();
+            robot.updateBulkData();
+        }
 
 
 
@@ -117,24 +123,53 @@ public class TestAutoT265 extends LinearOpMode {
         robot.driveController.resetDistanceTraveled();
         robot.driveController.updateTracking(); //ADDED
 
-        while (!(between(currentX,currentX-maxError,currentX+maxError)) && !(between(currentY,currentY-maxError,currentY+maxError)) && linearOpMode.opModeIsActive()) {
-            robot.updateBulkData();
-            updateSLAMNav();
-            robot.driveController.updateTracking();
-            //slows down drive power in certain range
-            //updateTracking(); //WAS MOVED ABOVE
-            denominatorMath = ((X-currentX)*(X-currentX)+(Y-currentY)*(Y-currentY));
-            yPos = (Y-currentY)/Math.sqrt(denominatorMath);
-            xPos = (X-currentX)/Math.sqrt(denominatorMath);
-            direction = new Vector2d(xPos,yPos);
+        while (linearOpMode.opModeIsActive()) {
+            if (!(between(currentX, X - maxError, X + maxError))) {
+                    robot.updateBulkData();
+                    updateSLAMNav();
+                    robot.driveController.updateTracking();
+                    //slows down drive power in certain range
+                    //updateTracking(); //WAS MOVED ABOVE
+                    denominatorMath = ((X-currentX)*(X-currentX)+(Y-currentY)*(Y-currentY));
+                    yPos = (Y-currentY)/Math.sqrt(denominatorMath);
+                    xPos = (X-currentX)/Math.sqrt(denominatorMath);
+                    direction = new Vector2d(xPos,yPos);
 
-            linearOpMode.telemetry.addData("Driving robot", "");
-            linearOpMode.telemetry.addData("Current X: ", currentX);
-            linearOpMode.telemetry.addData("Current Y: ", currentY);
-            linearOpMode.telemetry.addData("Current Theta: ", currentTheta);
-            linearOpMode.telemetry.update();
+                    linearOpMode.telemetry.addData("Driving robot", "");
+                    linearOpMode.telemetry.addData("Current X: ", currentX);
+                    linearOpMode.telemetry.addData("Current Y: ", currentY);
+                    linearOpMode.telemetry.addData("Current Theta: ", currentTheta);
+                    linearOpMode.telemetry.update();
+                    robot.driveController.updatePositionTracking(telemetry); //update position tracking
+                    robot.driveController.update(direction, 0);
 
-            robot.driveController.updatePositionTracking(telemetry); //update position tracking
+                }
+            else {
+                if (!(between(currentY,Y-maxError,Y+maxError))) {
+                    robot.updateBulkData();
+                    updateSLAMNav();
+                    robot.driveController.updateTracking();
+                    //slows down drive power in certain range
+                    //updateTracking(); //WAS MOVED ABOVE
+                    denominatorMath = ((X-currentX)*(X-currentX)+(Y-currentY)*(Y-currentY));
+                    yPos = (Y-currentY)/Math.sqrt(denominatorMath);
+                    xPos = (X-currentX)/Math.sqrt(denominatorMath);
+                    direction = new Vector2d(xPos,yPos);
+
+                    linearOpMode.telemetry.addData("Driving robot", "");
+                    linearOpMode.telemetry.addData("Current X: ", currentX);
+                    linearOpMode.telemetry.addData("Current Y: ", currentY);
+                    linearOpMode.telemetry.addData("Current Theta: ", currentTheta);
+                    linearOpMode.telemetry.update();
+
+                    robot.driveController.updatePositionTracking(telemetry); //update position tracking
+                    robot.driveController.update(direction, 0);
+                }
+                else {
+                    break;
+                }
+
+            }
         }
         robot.driveController.update(Vector2d.ZERO, 0);
         robot.driveController.setRotateModuleMode(ROTATE_MODULES); //reset mode
@@ -154,7 +189,6 @@ public class TestAutoT265 extends LinearOpMode {
         Canvas field = packet.fieldOverlay();
 
         T265Camera.CameraUpdate up = slamra.getLastReceivedCameraUpdate();
-        if (up == null) return;
 
         // We divide by 0.0254 to convert meters to inches
         Translation2d translation = new Translation2d(up.pose.getTranslation().getX() / 0.0254, up.pose.getTranslation().getY() / 0.0254);
@@ -168,9 +202,14 @@ public class TestAutoT265 extends LinearOpMode {
 
         dashboard.sendTelemetryPacket(packet);
 
-        currentX = currentX + translation.getX();
-        currentY = currentY + translation.getY();
-        currentTheta = currentTheta + rotation.getDegrees();
+        currentX = startingX + -translation.getY();
+        currentY = startingY + translation.getX();
+        currentTheta = startingTheta + rotation.getDegrees();
+
+        telemetry.addData("X", currentX);
+        telemetry.addData("Y", currentY);
+        telemetry.addData("Rotation", currentTheta);
+        telemetry.update();
     }
 
 }
