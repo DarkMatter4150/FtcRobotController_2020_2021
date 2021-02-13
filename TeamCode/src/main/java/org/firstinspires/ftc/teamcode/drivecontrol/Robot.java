@@ -158,7 +158,7 @@ public class Robot {
     public void setFlywheelPower(float power) {
         flywheel.setPower(power);
     }
-    public void setIntakePower(float power) { intake.setPower(power); }
+    public void setIntakePower(float power) { intake.setPower(-power); }
     public void setConveyorPower(float power) {conveyor.setPower(power);}
 
     public void initIMU() {
