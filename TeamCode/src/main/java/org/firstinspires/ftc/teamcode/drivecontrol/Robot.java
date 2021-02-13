@@ -159,7 +159,7 @@ public class Robot {
         flywheel.setPower(power);
     }
     public void setIntakePower(float power) { intake.setPower(power); }
-    public void setConveyorPower(float power) {intake.setPower(power);}
+    public void setConveyorPower(float power) {conveyor.setPower(power);}
 
     public void initIMU() {
         //this.IMUReversed = reversed;
