@@ -110,8 +110,8 @@ public class TeleOp extends OpMode {
 
         //slow mode/range stuffs
         if (gamepad1.left_trigger > 0.1) {
-           // joystick1 = joystick1.scale(0.3);
-           // joystick2 = joystick2.scale(0.4); //was 0.3
+            // joystick1 = joystick1.scale(0.3);
+            // joystick2 = joystick2.scale(0.4); //was 0.3
             joystick1 = joystick1.scale((1-Math.abs(gamepad1.left_trigger))*.75);
             joystick2 = joystick2.scale(1-Math.abs(gamepad1.left_trigger));
             slowModeDrive = true;
