@@ -28,6 +28,7 @@ public class Robot {
     BreakoutMotor lift = new BreakoutMotor();
     BreakoutMotor flywheel = new BreakoutMotor();
     BreakoutMotor intake = new BreakoutMotor();
+    BreakoutMotor conveyor = new BreakoutMotor();
 
     Telemetry telemetry;
     HardwareMap hardwareMap;
@@ -64,6 +65,7 @@ public class Robot {
 //        lift.set(opMode.hardwareMap.dcMotor.get("lift"));
         flywheel.set(opMode.hardwareMap.dcMotor.get("flywheel"));
         intake.set(opMode.hardwareMap.dcMotor.get("intake"));
+        conveyor.set(opMode.hardwareMap.dcMotor.get("conveyor"));
 
 
         //bulk data
@@ -156,9 +158,8 @@ public class Robot {
     public void setFlywheelPower(float power) {
         flywheel.setPower(power);
     }
-    public void setIntakePower(float power) {
-        intake.setPower(power);
-    }
+    public void setIntakePower(float power) { intake.setPower(power); }
+    public void setConveyorPower(float power) {intake.setPower(power);}
 
     public void initIMU() {
         //this.IMUReversed = reversed;

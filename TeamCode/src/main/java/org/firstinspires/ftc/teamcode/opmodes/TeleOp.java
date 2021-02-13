@@ -81,8 +81,10 @@ public class TeleOp extends OpMode {
         boolean xButton = gamepad2.x;
         boolean yButton = gamepad2.y;
 
-        robot.setIntakePower(-leftTrigger2);
+        robot.setIntakePower(leftTrigger2);
+        robot.setConveyorPower(-leftTrigger2);
         robot.setFlywheelPower(-rightTrigger2);
+
 
         if (aButton && timer.milliseconds() - pusherTimer > 250 && (boxLifter || pusherThing)) {
             pusherThing = !pusherThing;
@@ -108,8 +110,8 @@ public class TeleOp extends OpMode {
 
         //slow mode/range stuffs
         if (gamepad1.left_trigger > 0.1) {
-           // joystick1 = joystick1.scale(0.3);
-           // joystick2 = joystick2.scale(0.4); //was 0.3
+            // joystick1 = joystick1.scale(0.3);
+            // joystick2 = joystick2.scale(0.4); //was 0.3
             joystick1 = joystick1.scale((1-Math.abs(gamepad1.left_trigger))*.75);
             joystick2 = joystick2.scale(1-Math.abs(gamepad1.left_trigger));
             slowModeDrive = true;
