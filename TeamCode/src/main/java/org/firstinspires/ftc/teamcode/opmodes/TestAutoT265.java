@@ -15,6 +15,8 @@ import com.spartronics4915.lib.T265Camera;
 
 import org.firstinspires.ftc.teamcode.coyote.geometry.Pose;
 import org.firstinspires.ftc.teamcode.coyote.path.Path;
+import org.firstinspires.ftc.teamcode.coyote.path.PathPoint;
+import org.firstinspires.ftc.teamcode.drivecontrol.Angle;
 import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
 import org.firstinspires.ftc.teamcode.drivecontrol.RobotUtil;
 import org.firstinspires.ftc.teamcode.drivecontrol.Vector2d;
@@ -54,7 +56,14 @@ public class TestAutoT265 extends LinearOpMode {
         waitForStart();
 
         //Actual OpMode
-        driveToPosition(30,30,.5,true,false,2,this);
+        //driveToPosition2(75,72,.5,true,false,5,this);
+
+        Path path = new Path().addPoint(new PathPoint(-5, 5)).addPoint(new PathPoint(35,100)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        followCurvePath(path, 0.1, this);
+        //robot.driveController.rotateRobot(new Angle(0, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
+        //robot.driveController.rotateRobot(new Angle(90,Angle.AngleType.NEG_180_TO_180_CARTESIAN),.5, this);
+        //robot.driveController.rotateRobot(new Angle(0,Angle.AngleType.NEG_180_TO_180_CARTESIAN),.5, this);
+        //robot.driveController.rotateModules(Vector2d.FORWARD,false, 2000, this);
 
 
         while (opModeIsActive()) {
@@ -174,6 +183,8 @@ public class TestAutoT265 extends LinearOpMode {
                     robot.driveController.update(direction, 0);
                 }
                 else {
+                    robot.driveController.update(Vector2d.ZERO, 0);
+                    robot.driveController.setRotateModuleMode(ROTATE_MODULES); //reset mode
                     break;
                 }
 
@@ -212,7 +223,7 @@ public class TestAutoT265 extends LinearOpMode {
 
         currentX = startingX + -translation.getY();
         currentY = startingY + translation.getX();
-        currentTheta = startingTheta + rotation.getDegrees();
+        currentTheta = startingTheta - rotation.getDegrees();
         currentPose = new Pose(currentX, currentY, currentTheta);
 
         telemetry.addData("X", currentX);
@@ -222,43 +233,51 @@ public class TestAutoT265 extends LinearOpMode {
     }
 
 
-    public void followCurvePath(Path path, LinearOpMode linearOpMode) {
+    public void followCurvePath(Path path, double speed, LinearOpMode linearOpMode) {
         this.current_path = path;
-
 
         while (linearOpMode.opModeIsActive()) {
 
-            updateSLAMNav();
-            robot.updateBulkData();
+            if (!path.isComplete()) {
+                updateSLAMNav();
+                robot.updateBulkData();
 
-            // Get our lookahead point
-            path.update(currentPose);
-            Pose lookahead_pose = path.getFollowPose();
+                // Get our lookahead point
+                path.update(currentPose);
+                Pose lookahead_pose = path.getFollowPose();
 
-            // Get the distance to our lookahead point
-            double distance = Math.hypot(lookahead_pose.x-currentPose.x, lookahead_pose.y-currentPose.y);
- 
-            double speed;
-            // Find our drive speed based on distance
-            if (distance < current_path.getFollowCircle().radius) {
-                speed = Range.clip((distance / 8) + 0.1, 0, 1);
-            } else {
-                speed = 1;
+                // Get the distance to our lookahead point
+                double distance = Math.hypot(lookahead_pose.x-currentPose.x, lookahead_pose.y-currentPose.y);
+
+                double speedFinal;
+                // Find our drive speed based on distance
+                if (distance < current_path.getFollowCircle().radius) {
+                    speedFinal = Range.clip((distance / 8) + 0.1, 0, 1)*speed;
+                } else {
+                    speedFinal = speed;
+                }
+
+                // Find our turn speed based on angle difference
+                double headingg = path.getHeadingGoal(Path.HeadingMethod.CONSTANT_ANGLE,currentPose);
+                double turn_speed = Range.clip(Math.abs(currentPose.angle -lookahead_pose.angle) / (Math.PI/4) + 0.1, 0, 1);
+
+                // Drive towards the lookahead point
+                driveUsingPurePursuit(lookahead_pose, speedFinal, turn_speed, linearOpMode);
+            }
+            else {
+                robot.driveController.update(Vector2d.ZERO, 0);//mvmt_a);
+                break;
             }
 
-            // Find our turn speed based on angle difference
-            double turn_speed = Range.clip(Math.abs(currentPose.angle -lookahead_pose.angle) / (Math.PI/4) + 0.1, 0, 1);
-
-            // Drive towards the lookahead point
-            driveUsingPurePursuit(lookahead_pose, speed, turn_speed, linearOpMode);
         }
+        robot.driveController.update(Vector2d.ZERO, 0);//mvmt_a);
 
     }
 
     public void driveUsingPurePursuit(Pose pose, double drive_speed, double turn_speed, LinearOpMode linearOpMode) {
 
         // Find the angle to the pose
-        Vector2d directionPP = new Vector2d((pose.x-currentPose.x), (pose.y-currentPose.y)).scale(drive_speed);
+        Vector2d directionPP = new Vector2d((pose.x - currentPose.x), (pose.y-currentPose.y)).scale(drive_speed);
 
         // Find movement vector to drive towards that point
         double mvmt_a = -Math.signum(Range.clip((pose.angle - currentPose.angle - (Math.PI/2)), -1, 1)) * turn_speed;
@@ -275,7 +294,56 @@ public class TestAutoT265 extends LinearOpMode {
         linearOpMode.telemetry.update();
 
         robot.driveController.updatePositionTracking(telemetry); //update position tracking
-        robot.driveController.update(directionPP, mvmt_a);
+        robot.driveController.update(directionPP, mvmt_a*.4);
+
+    }
+
+
+
+
+    public void driveToPosition2(double X, double Y, double speed, boolean fixModules, boolean alignModules, double maxError, LinearOpMode linearOpMode) {
+        updateSLAMNav();
+        double denominatorMath = ((X - currentX) * (X - currentX) + (Y - currentY) * (Y - currentY));
+        double yPos = (Y - currentY) / Math.sqrt(denominatorMath);
+        double xPos = (X - currentX) / Math.sqrt(denominatorMath);
+        Vector2d direction = new Vector2d(xPos, yPos);
+        double initalSpeed = speed;
+
+
+        alignModules = true;
+
+        //turns modules to correct positions for straight driving
+        if (alignModules)
+            robot.driveController.rotateModules(direction, false, robot.driveController.DEFAULT_TIMEOUT_ROT_MODULES, linearOpMode);
+
+        //sets a flag in modules so that they will not try to correct rotation while driving
+        if (fixModules) robot.driveController.setRotateModuleMode(DO_NOT_ROTATE_MODULES);
+        else robot.driveController.setRotateModuleMode(ROTATE_MODULES); //reset mode
+
+        robot.driveController.resetDistanceTraveled();
+        robot.driveController.updateTracking(); //ADDED
+
+        while (linearOpMode.opModeIsActive()) {
+            robot.updateBulkData();
+            updateSLAMNav();
+            robot.driveController.updateTracking();
+            //slows down drive power in certain range
+            //updateTracking(); //WAS MOVED ABOVE
+            denominatorMath = ((X - currentX) * (X - currentX) + (Y - currentY) * (Y - currentY));
+            yPos = (Y - currentY) / Math.sqrt(denominatorMath);
+            xPos = (X - currentX) / Math.sqrt(denominatorMath);
+            direction = new Vector2d(xPos, yPos);
+
+            linearOpMode.telemetry.addData("Driving robot", "");
+            linearOpMode.telemetry.addData("Current X: ", currentX);
+            linearOpMode.telemetry.addData("Current Y: ", currentY);
+            linearOpMode.telemetry.addData("Current Theta: ", currentTheta);
+            linearOpMode.telemetry.update();
+            robot.driveController.updatePositionTracking(telemetry); //update position tracking
+            robot.driveController.update(direction, 0);
+
+
+        }
 
     }
 
