@@ -366,9 +366,9 @@ public class DriveModule {
     public void resetEncoders () {
         motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        encoderOrientation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        encoderOrientation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         encoderOrientation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
