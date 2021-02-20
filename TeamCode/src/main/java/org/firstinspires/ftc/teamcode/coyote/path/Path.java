@@ -42,7 +42,7 @@ public class Path {
 
     RecoveryMethod recovery_method = RecoveryMethod.FIRST_UNPASSED_POINT;
 
-    HeadingMethod heading_method = HeadingMethod.TOWARDS_FOLLOW_POINT;
+    public HeadingMethod heading_method = HeadingMethod.TOWARDS_FOLLOW_POINT;
 
     public Path addPoint(PathPoint point) {
         points.add(point);
