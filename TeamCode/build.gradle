@@ -53,6 +53,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.spartronics4915.lib:ftc265:2.1.2'
+    implementation 'com.spartronics4915.lib:ftc265:2.1.7'
     implementation 'org.openftc:rev-extensions-2:1.2'
+    implementation 'com.arcrobotics:ftclib:1.1.6'
+    implementation 'com.arcrobotics.ftclib:vision:1.1.0'
 }

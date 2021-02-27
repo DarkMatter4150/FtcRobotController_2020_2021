@@ -1,17 +1,16 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import org.firstinspires.ftc.teamcode.drivecontrol.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.drivecontrol.Angle;
+import org.firstinspires.ftc.teamcode.drivecontrol.PIDController;
 import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
 import org.firstinspires.ftc.teamcode.drivecontrol.Vector2d;
 
-import org.firstinspires.ftc.teamcode.drivecontrol.Angle;
 
-
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "TeleOp")
-public class TeleOp extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp Test", group = "TeleOp")
+public class Test extends OpMode {
     Robot robot;
     public final double DEADBAND_MAG_NORMAL = 0.1;
     public final double DEADBAND_MAG_SLOW_MODE = 0.03;
@@ -23,9 +22,9 @@ public class TeleOp extends OpMode {
     double lastError = 0;
     double errorSum = 0;
     double errorChange = 0;
-    boolean usePIDforMovement = true;
+    boolean usePIDforMovement = false;
 
-    PIDController pidDrive = new PIDController(15, 2, 3);
+    PIDController pidDrive = new PIDController(5, 2, 1);
 
     boolean absHeadingMode = false;
 
@@ -113,7 +112,6 @@ public class TeleOp extends OpMode {
             robot.setIntakePower(-1);
             robot.setConveyorPower(1);
         }
-
 
 
         if (aButton && timer.milliseconds() - pusherTimer > 250 && (boxLifter || pusherThing)) {
