@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+ package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -13,6 +14,7 @@ import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.qualcomm.robotcore.util.Range;
 import com.spartronics4915.lib.T265Camera;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.coyote.geometry.Pose;
 import org.firstinspires.ftc.teamcode.coyote.path.Path;
 import org.firstinspires.ftc.teamcode.coyote.path.PathPoint;
@@ -26,10 +28,13 @@ import java.util.Vector;
 import static org.firstinspires.ftc.teamcode.drivecontrol.DriveModule.RotateModuleMode.DO_NOT_ROTATE_MODULES;
 import static org.firstinspires.ftc.teamcode.drivecontrol.DriveModule.RotateModuleMode.ROTATE_MODULES;
 import static org.firstinspires.ftc.teamcode.opmodes.TestCameraT265.slamra;
-
+@Config
 @Autonomous(name = "T265 Test Auto", group = "Linear Opmode")
 
 public class TestAutoT265 extends LinearOpMode {
+
+    public static double SPEED = .5;
+    public static double PVALUE = .05;
     Robot robot;
     public boolean willResetIMU = true;
 
@@ -65,8 +70,24 @@ public class TestAutoT265 extends LinearOpMode {
         //Actual OpMode
         //driveToPosition2(75,72,.5,true,false,5,this);
 
-        Path path = new Path().addPoint(new PathPoint(-5, 5)).addPoint(new PathPoint(35,100)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
-        followCurvePath(path, 1, this);
+        Path path = new Path().addPoint(new PathPoint(-10, 10)).addPoint(new PathPoint(-10,55)).addPoint(new PathPoint(25,68)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        followCurvePath(path, .8*Math.sqrt(2), 0.08, this);
+        robot.driveController.rotateRobot(new Angle(-100, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
+        robot.driveController.rotateRobot(new Angle(0, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
+
+        path = new Path().addPoint(new PathPoint(35, 35)).addPoint(new PathPoint(27, 30)).headingMethod(Path.HeadingMethod.AWAY_FROM_PATH_END);
+        followCurvePath(path, .8*Math.sqrt(2), 0.08, this);
+        sleep(1000);
+
+        path = new Path().addPoint(new PathPoint(35, 35)).addPoint(new PathPoint(35, 55)).addPoint(new PathPoint(25, 68)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        followCurvePath(path, .8*Math.sqrt(2), 0.08, this);
+        robot.driveController.rotateRobot(new Angle(-90, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
+        robot.driveController.rotateRobot(new Angle(0, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
+
+        path = new Path().addPoint(new PathPoint(-10, 53)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        followCurvePath(path, .8*Math.sqrt(2), 0.08, this);
+        sleep(250);
+        robot.driveController.rotateRobot(new Angle(-90, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
         //robot.driveController.rotateRobot(new Angle(0, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
         //robot.driveController.rotateRobot(new Angle(90,Angle.AngleType.NEG_180_TO_180_CARTESIAN),.5, this);
         //robot.driveController.rotateRobot(new Angle(0,Angle.AngleType.NEG_180_TO_180_CARTESIAN),.5, this);
@@ -146,6 +167,8 @@ public class TestAutoT265 extends LinearOpMode {
 
         robot.driveController.resetDistanceTraveled();
         robot.driveController.updateTracking(); //ADDED
+        robot.driveController.update(Vector2d.FORWARD, 0);
+        robot.driveController.setRotateModuleMode(ROTATE_MODULES);
 
         while (linearOpMode.opModeIsActive()) {
             if (!(between(currentX, X - maxError, X + maxError))) {
@@ -240,7 +263,7 @@ public class TestAutoT265 extends LinearOpMode {
     }
 
 
-    public void followCurvePath(Path path, double speed, LinearOpMode linearOpMode) {
+    public void followCurvePath(Path path, double speed, double pvalue, LinearOpMode linearOpMode) {
         this.current_path = path;
 
         while (linearOpMode.opModeIsActive()) {
@@ -269,7 +292,7 @@ public class TestAutoT265 extends LinearOpMode {
                 double turn_speed = Range.clip(Math.abs(currentPose.angle -lookahead_pose.angle) / (Math.PI/4) + 0.1, 0, 1);
 
                 // Drive towards the lookahead point
-                driveUsingPurePursuit(lookahead_pose, path, speedFinal, turn_speed, linearOpMode);
+                driveUsingPurePursuit(lookahead_pose, path, speedFinal, turn_speed, pvalue, linearOpMode);
             }
             else {
                 robot.driveController.update(Vector2d.ZERO, 0);//mvmt_a);
@@ -281,14 +304,14 @@ public class TestAutoT265 extends LinearOpMode {
 
     }
 
-    public void driveUsingPurePursuit(Pose pose, Path path, double drive_speed, double turn_speed, LinearOpMode linearOpMode) {
+    public void driveUsingPurePursuit(Pose pose, Path path, double drive_speed, double turn_speed, double pvalue, LinearOpMode linearOpMode) {
 
         // Find the angle to the pose
         Vector2d directionPP = new Vector2d((pose.x - currentPose.x), (pose.y-currentPose.y)).normalize(drive_speed);
 
         // Find movement vector to drive towards that point
         double mvmt_a = -Math.signum(Range.clip((pose.angle - currentPose.angle - (Math.PI/2)), -1, 1)) * turn_speed;
-        mvmt_a = mvmt_a * pidController(path.getHeadingGoal(path.heading_method,pose), currentPose.angle,0.4,0,0);
+        mvmt_a = mvmt_a *pvalue;//- pidController(path.getHeadingGoal(path.heading_method,pose), currentPose.angle,.0000000000004,0,0);
 
 
 
@@ -315,7 +338,73 @@ public class TestAutoT265 extends LinearOpMode {
         errorSum += error;
         double correction = Kp*error + Ki*errorSum + Kd*errorChange;
         lastError = error;
+       TelemetryPacket packet = new TelemetryPacket();
+        packet.put("Correction", correction);
+        dashboard.sendTelemetryPacket(packet);
         return correction;
+    }
+
+    public void fourRingAuto() {
+        Path path = new Path().addPoint(new PathPoint(-10, 10)).addPoint(new PathPoint(-10,70)).addPoint(new PathPoint(25,108)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        followCurvePath(path, .8*Math.sqrt(2), 0.08, this);
+        robot.driveController.rotateRobot(new Angle(-100, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
+        robot.driveController.rotateRobot(new Angle(0, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
+
+        path = new Path().addPoint(new PathPoint(35, 35)).addPoint(new PathPoint(27, 30)).headingMethod(Path.HeadingMethod.AWAY_FROM_PATH_END);
+        followCurvePath(path, .8*Math.sqrt(2), 0.08, this);
+        sleep(1000);
+
+        path = new Path().addPoint(new PathPoint(35, 35)).addPoint(new PathPoint(35, 90)).addPoint(new PathPoint(25, 108)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        followCurvePath(path, .8*Math.sqrt(2), 0.08, this);
+        robot.driveController.rotateRobot(new Angle(-90, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
+        robot.driveController.rotateRobot(new Angle(0, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
+
+        path = new Path().addPoint(new PathPoint(-10, 53)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        followCurvePath(path, .8*Math.sqrt(2), 0.08, this);
+        sleep(250);
+        robot.driveController.rotateRobot(new Angle(-90, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
+    }
+
+    public void oneRingAuto() {
+        Path path = new Path().addPoint(new PathPoint(-10, 10)).addPoint(new PathPoint(-10,70)).addPoint(new PathPoint(0,88)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        followCurvePath(path, .8*Math.sqrt(2), 0.08, this);
+        robot.driveController.rotateRobot(new Angle(-100, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
+        robot.driveController.rotateRobot(new Angle(0, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
+
+        path = new Path().addPoint(new PathPoint(35, 35)).addPoint(new PathPoint(27, 30)).headingMethod(Path.HeadingMethod.AWAY_FROM_PATH_END);
+        followCurvePath(path, .8*Math.sqrt(2), 0.08, this);
+        sleep(1000);
+
+        path = new Path().addPoint(new PathPoint(35, 35)).addPoint(new PathPoint(35, 55)).addPoint(new PathPoint(0, 88)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        followCurvePath(path, .8*Math.sqrt(2), 0.08, this);
+        robot.driveController.rotateRobot(new Angle(-90, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
+        robot.driveController.rotateRobot(new Angle(0, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
+
+        path = new Path().addPoint(new PathPoint(-10, 53)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        followCurvePath(path, .8*Math.sqrt(2), 0.08, this);
+        sleep(250);
+        robot.driveController.rotateRobot(new Angle(-90, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
+    }
+
+    public void zeroRingAuto() {
+        Path path = new Path().addPoint(new PathPoint(-10, 10)).addPoint(new PathPoint(-10,55)).addPoint(new PathPoint(25,68)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        followCurvePath(path, .8*Math.sqrt(2), 0.08, this);
+        robot.driveController.rotateRobot(new Angle(-100, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
+        robot.driveController.rotateRobot(new Angle(0, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
+
+        path = new Path().addPoint(new PathPoint(35, 35)).addPoint(new PathPoint(27, 30)).headingMethod(Path.HeadingMethod.AWAY_FROM_PATH_END);
+        followCurvePath(path, .8*Math.sqrt(2), 0.08, this);
+        sleep(1000);
+
+        path = new Path().addPoint(new PathPoint(35, 35)).addPoint(new PathPoint(35, 55)).addPoint(new PathPoint(25, 68)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        followCurvePath(path, .8*Math.sqrt(2), 0.08, this);
+        robot.driveController.rotateRobot(new Angle(-90, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
+        robot.driveController.rotateRobot(new Angle(0, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
+
+        path = new Path().addPoint(new PathPoint(-10, 53)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        followCurvePath(path, .8*Math.sqrt(2), 0.08, this);
+        sleep(250);
+        robot.driveController.rotateRobot(new Angle(-90, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
     }
 
 
