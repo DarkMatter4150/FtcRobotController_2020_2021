@@ -151,7 +151,6 @@ public class AutoHelper {
 
     public static void updateSLAMNav(Telemetry telemetry, FtcDashboard dashboard,
                                      double startingX, double startingY, double startingTheta,
-                                     Double currentX, Double currentY, Double currentTheta,
                                      Pose currentPose) {
         final int robotRadius = 9; // inches
 
@@ -172,14 +171,13 @@ public class AutoHelper {
 
         dashboard.sendTelemetryPacket(packet);
 
-        currentX = startingX + -translation.getY();
-        currentY = startingY + translation.getX();
-        currentTheta = startingTheta - rotation.getDegrees();
-        currentPose = new Pose(currentX, currentY, currentTheta);
+        currentPose.x = startingX + -translation.getY();
+        currentPose.y = startingY + translation.getX();
+        currentPose.angle = startingTheta - rotation.getDegrees();
 
-        telemetry.addData("X", currentX);
-        telemetry.addData("Y", currentY);
-        telemetry.addData("Rotation", currentTheta);
+        telemetry.addData("X", currentPose.x);
+        telemetry.addData("Y", currentPose.y);
+        telemetry.addData("Rotation", currentPose.angle);
         telemetry.update();
     }
 
@@ -193,7 +191,7 @@ public class AutoHelper {
         while (linearOpMode.opModeIsActive()) {
 
             if (!path.isComplete()) {
-                updateSLAMNav(telemetry, dashboard, startingX, startingY, startingTheta, currentX, currentY, currentTheta, currentPose);
+                updateSLAMNav(telemetry, dashboard, startingX, startingY, startingTheta, currentPose);
                 robot.updateBulkData();
 
                 // Get our lookahead point
@@ -243,7 +241,7 @@ public class AutoHelper {
         // Update actual motor powers with our movement vector
 
         robot.updateBulkData();
-        updateSLAMNav(telemetry, dashboard, startingX, startingY, startingTheta, currentX, currentY, currentTheta, currentPose);
+        updateSLAMNav(telemetry, dashboard, startingX, startingY, startingTheta, currentPose);
         robot.driveController.updateTracking();
         linearOpMode.telemetry.addData("Driving robot", "");
         linearOpMode.telemetry.addData("Current X: ", currentX);
