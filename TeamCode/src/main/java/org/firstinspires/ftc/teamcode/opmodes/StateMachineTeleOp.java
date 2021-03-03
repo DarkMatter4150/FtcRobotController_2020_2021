@@ -75,6 +75,7 @@ public class StateMachineTeleOp extends OpMode {
     private boolean boxLifter = true;
     private double boxTimer = 0;
     private double pusherTimer = 0;
+    private double clawTimer = 0;
     private ElapsedTime timer = new ElapsedTime();
     public Path current_path;
 
@@ -127,6 +128,8 @@ public class StateMachineTeleOp extends OpMode {
         boolean bButton = gamepad2.b;
         boolean xButton = gamepad2.x;
         boolean yButton = gamepad2.y;
+        boolean xButton1 = gamepad1.x;
+        boolean rightBumper2 = gamepad2.right_bumper;
         boolean dPad1right = gamepad1.dpad_right;
         boolean dPad1left = gamepad1.dpad_left;
         boolean dPad2right = gamepad2.dpad_right;
@@ -160,12 +163,13 @@ public class StateMachineTeleOp extends OpMode {
                         robot.setIntakePower(leftTrigger2);
                         robot.setConveyorPower(-leftTrigger2);
                         robot.setFlywheelPower((float) (-rightTrigger2*.8));
+                        robot.setArmPower(rightStick2y);
 
                         if (xButton) {
                             robot.setFlywheelPower(-1);
                         }
                         else {
-                            robot.setFlywheelPower((float) (-rightTrigger2*.78));
+                            robot.setFlywheelPower((float) (-rightTrigger2*.9));
                         }
 
                         if (yButton) {
@@ -184,6 +188,12 @@ public class StateMachineTeleOp extends OpMode {
                             robot.setBoxLifter(boxLifter);
                             boxTimer = timer.milliseconds();
                         }
+
+                    if (rightBumper2 && timer.milliseconds() - clawTimer > 250) {
+                        claw = !claw;
+                        robot.setClaw(claw);
+                        clawTimer = timer.milliseconds();
+                    }
 
 
                         telemetry.addData("Robot Heading: ", robot.getRobotHeading());
@@ -336,9 +346,6 @@ public class StateMachineTeleOp extends OpMode {
 
     public void followCurvePath(Path path, double speed, double pvalue) {
         this.current_path = path;
-
-        while (true) {
-
             if (!path.isComplete()) {
                 updateSLAMNav();
                 robot.updateBulkData();
@@ -367,11 +374,8 @@ public class StateMachineTeleOp extends OpMode {
             }
             else {
                 robot.driveController.update(Vector2d.ZERO, 0);//mvmt_a);
-                break;
             }
-
-        }
-        robot.driveController.update(Vector2d.ZERO, 0);//mvmt_a);
+        //robot.driveController.update(Vector2d.ZERO, 0);//mvmt_a);
 
     }
 
