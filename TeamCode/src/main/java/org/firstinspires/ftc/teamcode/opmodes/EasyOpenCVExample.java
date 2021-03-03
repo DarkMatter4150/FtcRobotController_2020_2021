@@ -67,7 +67,7 @@ public class EasyOpenCVExample extends LinearOpMode
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(640,360, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                webcam.startStreaming(640,360, OpenCvCameraRotation.UPRIGHT);
             }
         });
 
@@ -88,7 +88,16 @@ public class EasyOpenCVExample extends LinearOpMode
 
         }
 
-        double average = values.stream().mapToDouble(a -> a).average().orElse(-1);
+        double average = 0;
+
+        try {
+            average = values.stream().mapToDouble(a -> a).average().orElse(-1);
+        }
+        catch(Exception e) {
+            telemetry.addData("Error Caught: ", "1");
+        }
+
+
         telemetry.addData("Average", average);
 
         if(average == -1){
@@ -124,7 +133,7 @@ public class EasyOpenCVExample extends LinearOpMode
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(160,    150);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(485,    210);
 
         static final int REGION_WIDTH = 100;
         static final int REGION_HEIGHT = 75;

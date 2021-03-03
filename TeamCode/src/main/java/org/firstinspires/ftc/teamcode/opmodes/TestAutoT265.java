@@ -62,6 +62,7 @@ public class TestAutoT265 extends LinearOpMode {
         //Init
         robot = new Robot(this, true);
         robot.initIMU();
+        robot.setClaw(false);
 
 
         //Beginning
@@ -70,11 +71,31 @@ public class TestAutoT265 extends LinearOpMode {
         //Actual OpMode
         //driveToPosition2(75,72,.5,true,false,5,this);
 
-        Path path = new Path().addPoint(new PathPoint(-10, 10)).addPoint(new PathPoint(-10,55)).addPoint(new PathPoint(25,68)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
-        followCurvePath(path, .8*Math.sqrt(2), 0.08, this);
-        robot.driveController.rotateRobot(new Angle(-100, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
-        robot.driveController.rotateRobot(new Angle(0, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
-
+        Path path = new Path().addPoint(new PathPoint(-10, 10)).addPoint(new PathPoint(-10, 55)).addPoint(new PathPoint(27,73 )).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        followCurvePath(path, 1*Math.sqrt(2), 0.5, this);
+        robot.setArmPower(-1);
+        sleep(1250);
+        robot.setArmPower(0);
+        robot.setClaw(true);
+        robot.setArmPower(1);
+        sleep(1000);
+        robot.setArmPower(0);
+        path = new Path().addPoint(new PathPoint(10, 73)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        followCurvePath(path, 1*Math.sqrt(2), 0.4, this);
+        robot.driveController.rotateRobot(new Angle(90, Angle.AngleType.NEG_180_TO_180_HEADING),.9, this);
+        path = new Path().addPoint(new PathPoint(25, 35)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE).constantHeading(90);
+        followCurvePath(path, 1*Math.sqrt(2), 0.5, this);
+        robot.setArmPower(-1);
+        sleep(1250);
+        robot.setArmPower(0);
+        robot.driveController.rotateRobot(new Angle(70, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        robot.setClaw(false);
+        robot.setArmPower(1);
+        sleep(1000);
+        robot.setArmPower(0);
+        //robot.driveController.rotateRobot(new Angle(-100, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        //robot.driveController.rotateRobot(new Angle(0, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        /*
         path = new Path().addPoint(new PathPoint(35, 35)).addPoint(new PathPoint(27, 30)).headingMethod(Path.HeadingMethod.AWAY_FROM_PATH_END);
         followCurvePath(path, .8*Math.sqrt(2), 0.08, this);
         sleep(1000);
@@ -91,7 +112,7 @@ public class TestAutoT265 extends LinearOpMode {
         //robot.driveController.rotateRobot(new Angle(0, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
         //robot.driveController.rotateRobot(new Angle(90,Angle.AngleType.NEG_180_TO_180_CARTESIAN),.5, this);
         //robot.driveController.rotateRobot(new Angle(0,Angle.AngleType.NEG_180_TO_180_CARTESIAN),.5, this);
-        //robot.driveController.rotateModules(Vector2d.FORWARD,false, 2000, this);
+        //robot.driveController.rotateModules(Vector2d.FORWARD,false, 2000, this); */
 
 
         while (opModeIsActive()) {

@@ -57,11 +57,11 @@ public class Robot {
 
         imu = opMode.hardwareMap.get(BNO055IMU.class, "imu 1");
 
-//        claw.set(opMode.hardwareMap.servo.get("claw"));
+        claw.set(opMode.hardwareMap.servo.get("claw"));
         pusherThing.set(opMode.hardwareMap.servo.get("pusherThing"));
         boxLifter.set(opMode.hardwareMap.servo.get("boxLifter"));
 
-//        arm.set(opMode.hardwareMap.dcMotor.get("arm"));
+        arm.set(opMode.hardwareMap.dcMotor.get("arm"));
 //        lift.set(opMode.hardwareMap.dcMotor.get("lift"));
         flywheel.set(opMode.hardwareMap.dcMotor.get("flywheel"));
         intake.set(opMode.hardwareMap.dcMotor.get("intake"));
@@ -96,7 +96,7 @@ public class Robot {
      * Claw positions, open and closed
      */
     public static class ClawPos {
-        static double OPEN = 0.83d; //TODO figure values
+        static double OPEN = 0.2d; //TODO figure values
         static double CLOSED = 1.0d;
     }
 
@@ -112,10 +112,21 @@ public class Robot {
             claw.setPosition(ClawPos.CLOSED);
         }
     }
+    public void moveArm(float power) {
+        int currentPosition = arm.getCurrentPosition();
+        int target = currentPosition + (int)(power*52);
+        arm.setTargetPosition(target);
+        arm.setMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (target < currentPosition) {
+            arm.setPower(-1);
+        } else {
+            arm.setPower(1);
+        }
+    }
 
     public static class BoxLifterPos {
-        static double DOWN = 0.45d; //When down you can't actuate the pusher or else box lifter fails
-        static double UP = 0.0d;
+        static double DOWN = 0.55d; //When down you can't actuate the pusher or else box lifter fails
+        static double UP = 0.1d;
     }
 
     /**
@@ -133,7 +144,7 @@ public class Robot {
 
     public static class PusherThingPos {
         static double IN = 0.75d;
-        static double OUT = 1.0d;
+        static double OUT = 0.98d;
     }
 
     /**

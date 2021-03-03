@@ -15,9 +15,9 @@ public class DriveModule {
     DataLogger dataLogger;
 
     //module specific drive motors
-    public ExpansionHubMotor motor1; //top motor
-    public ExpansionHubMotor motor2; //bottom motor
-    public ExpansionHubMotor encoderOrientation;
+    public DcMotor motor1; //top motor
+    public DcMotor motor2; //bottom motor
+    public DcMotor encoderOrientation;
 
     double lastM1Encoder;
     double lastM2Encoder;
@@ -86,15 +86,15 @@ public class DriveModule {
         this.moduleSide = moduleSide;
         this.debuggingMode = debuggingMode;
         if (moduleSide == ModuleSide.RIGHT) {
-            motor1 = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("rightTopMotor");
-            motor2 = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("rightBottomMotor");
-            encoderOrientation = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("flywheel");
+            motor1 = robot.hardwareMap.dcMotor.get("rightTopMotor");
+            motor2 = robot.hardwareMap.dcMotor.get("rightBottomMotor");
+            encoderOrientation = robot.hardwareMap.dcMotor.get("flywheel");
             motor1.setDirection(DcMotorSimple.Direction.REVERSE);
             positionVector = new Vector2d((double)18/2, 0); //points from robot center to right module
         } else {
-            motor1 = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("leftTopMotor");
-            motor2 = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("leftBottomMotor");
-            encoderOrientation = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("conveyor");
+            motor1 = robot.hardwareMap.dcMotor.get("leftTopMotor");
+            motor2 = robot.hardwareMap.dcMotor.get("leftBottomMotor");
+            encoderOrientation = robot.hardwareMap.dcMotor.get("conveyor");
             motor1.setDirection(DcMotorSimple.Direction.REVERSE);
             positionVector = new Vector2d((double)-18/2, 0); //points from robot center to left module
         }
