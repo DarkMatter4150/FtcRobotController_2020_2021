@@ -71,21 +71,21 @@ public class TestAutoT265 extends LinearOpMode {
         //driveToPosition2(75,72,.5,true,false,5,this);
 
         Path path = new Path().addPoint(new PathPoint(-10, 10)).addPoint(new PathPoint(-10,55)).addPoint(new PathPoint(25,68)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
-        AutoHelper.followCurvePath(path, .8*Math.sqrt(2), 0.08, this, robot, telemetry, dashboard, startingX, startingY, startingTheta, currentX, currentY, currentTheta, currentPose);
+        AutoHelper.followCurvePath(path, .8*Math.sqrt(2), 0.08, this, robot, telemetry, dashboard, startingX, startingY, startingTheta, currentPose);
         robot.driveController.rotateRobot(new Angle(-100, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
         robot.driveController.rotateRobot(new Angle(0, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
 
         path = new Path().addPoint(new PathPoint(35, 35)).addPoint(new PathPoint(27, 30)).headingMethod(Path.HeadingMethod.AWAY_FROM_PATH_END);
-        AutoHelper.followCurvePath(path, .8*Math.sqrt(2), 0.08, this, robot, telemetry, dashboard, startingX, startingY, startingTheta, currentX, currentY, currentTheta, currentPose);
+        AutoHelper.followCurvePath(path, .8*Math.sqrt(2), 0.08, this, robot, telemetry, dashboard, startingX, startingY, startingTheta, currentPose);
         sleep(1000);
 
         path = new Path().addPoint(new PathPoint(35, 35)).addPoint(new PathPoint(35, 55)).addPoint(new PathPoint(25, 68)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
-        AutoHelper.followCurvePath(path, .8*Math.sqrt(2), 0.08, this, robot, telemetry, dashboard, startingX, startingY, startingTheta, currentX, currentY, currentTheta, currentPose);
+        AutoHelper.followCurvePath(path, .8*Math.sqrt(2), 0.08, this, robot, telemetry, dashboard, startingX, startingY, startingTheta, currentPose);
         robot.driveController.rotateRobot(new Angle(-90, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
         robot.driveController.rotateRobot(new Angle(0, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
 
         path = new Path().addPoint(new PathPoint(-10, 53)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
-        AutoHelper.followCurvePath(path, .8*Math.sqrt(2), 0.08, this, robot, telemetry, dashboard, startingX, startingY, startingTheta, currentX, currentY, currentTheta, currentPose);
+        AutoHelper.followCurvePath(path, .8*Math.sqrt(2), 0.08, this, robot, telemetry, dashboard, startingX, startingY, startingTheta, currentPose);
         sleep(250);
         robot.driveController.rotateRobot(new Angle(-90, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
         //robot.driveController.rotateRobot(new Angle(0, Angle.AngleType.NEG_180_TO_180_HEADING),.5, this);
@@ -95,7 +95,7 @@ public class TestAutoT265 extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-            AutoHelper.updateSLAMNav(telemetry, dashboard, startingX, startingY, startingTheta, currentX, currentY, currentTheta, currentPose);
+            AutoHelper.updateSLAMNav(telemetry, dashboard, startingX, startingY, startingTheta, currentPose);
             robot.updateBulkData();
         }
 

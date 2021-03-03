@@ -185,7 +185,7 @@ public class AutoHelper {
     public static void followCurvePath(Path path, double speed, double pvalue, LinearOpMode linearOpMode,
                                        Robot robot, Telemetry telemetry, FtcDashboard dashboard,
                                        double startingX, double startingY, double startingTheta,
-                                       Double currentX, Double currentY, Double currentTheta, Pose currentPose) {
+                                       Pose currentPose) {
         Path current_path = path;
 
         while (linearOpMode.opModeIsActive()) {
@@ -214,7 +214,7 @@ public class AutoHelper {
                 double turn_speed = Range.clip(Math.abs(currentPose.angle - lookahead_pose.angle) / (Math.PI / 4) + 0.1, 0, 1);
 
                 // Drive towards the lookahead point
-                driveUsingPurePursuit(lookahead_pose, path, speedFinal, turn_speed, pvalue, linearOpMode, robot, telemetry, dashboard, startingX, startingY, startingTheta, currentX, currentY, currentTheta, currentPose);
+                driveUsingPurePursuit(lookahead_pose, path, speedFinal, turn_speed, pvalue, linearOpMode, robot, telemetry, dashboard, startingX, startingY, startingTheta, currentPose);
             } else {
                 robot.driveController.update(Vector2d.ZERO, 0);//mvmt_a);
                 break;
@@ -228,7 +228,7 @@ public class AutoHelper {
     public static void driveUsingPurePursuit(Pose pose, Path path, double drive_speed, double turn_speed, double pvalue, LinearOpMode linearOpMode,
                                              Robot robot, Telemetry telemetry, FtcDashboard dashboard,
                                              double startingX, double startingY, double startingTheta,
-                                             Double currentX, Double currentY, Double currentTheta, Pose currentPose) {
+                                             Pose currentPose) {
 
         // Find the angle to the pose
         Vector2d directionPP = new Vector2d((pose.x - currentPose.x), (pose.y - currentPose.y)).normalize(drive_speed);
@@ -244,9 +244,9 @@ public class AutoHelper {
         updateSLAMNav(telemetry, dashboard, startingX, startingY, startingTheta, currentPose);
         robot.driveController.updateTracking();
         linearOpMode.telemetry.addData("Driving robot", "");
-        linearOpMode.telemetry.addData("Current X: ", currentX);
-        linearOpMode.telemetry.addData("Current Y: ", currentY);
-        linearOpMode.telemetry.addData("Current Theta: ", currentTheta);
+        linearOpMode.telemetry.addData("Current X: ", currentPose.x);
+        linearOpMode.telemetry.addData("Current Y: ", currentPose.y);
+        linearOpMode.telemetry.addData("Current Theta: ", currentPose.angle);
         linearOpMode.telemetry.update();
 
         robot.driveController.updatePositionTracking(telemetry); //update position tracking
