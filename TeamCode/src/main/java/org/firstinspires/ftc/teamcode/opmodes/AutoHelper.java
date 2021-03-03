@@ -150,7 +150,7 @@ public class AutoHelper {
     }
 
     public static void updateSLAMNav(Telemetry telemetry, FtcDashboard dashboard,
-                                     double startingX, double startingY, double startingTheta,
+                                     Pose startingPose,
                                      Pose currentPose) {
         final int robotRadius = 9; // inches
 
@@ -171,9 +171,9 @@ public class AutoHelper {
 
         dashboard.sendTelemetryPacket(packet);
 
-        currentPose.x = startingX + -translation.getY();
-        currentPose.y = startingY + translation.getX();
-        currentPose.angle = startingTheta - rotation.getDegrees();
+        currentPose.x = startingPose.x + -translation.getY();
+        currentPose.y = startingPose.y + translation.getX();
+        currentPose.angle = startingPose.angle - rotation.getDegrees();
 
         telemetry.addData("X", currentPose.x);
         telemetry.addData("Y", currentPose.y);
@@ -184,14 +184,14 @@ public class AutoHelper {
 
     public static void followCurvePath(Path path, double speed, double pvalue, LinearOpMode linearOpMode,
                                        Robot robot, Telemetry telemetry, FtcDashboard dashboard,
-                                       double startingX, double startingY, double startingTheta,
+                                       Pose startingPose,
                                        Pose currentPose) {
         Path current_path = path;
 
         while (linearOpMode.opModeIsActive()) {
 
             if (!path.isComplete()) {
-                updateSLAMNav(telemetry, dashboard, startingX, startingY, startingTheta, currentPose);
+                updateSLAMNav(telemetry, dashboard, startingPose, currentPose);
                 robot.updateBulkData();
 
                 // Get our lookahead point
@@ -214,7 +214,7 @@ public class AutoHelper {
                 double turn_speed = Range.clip(Math.abs(currentPose.angle - lookahead_pose.angle) / (Math.PI / 4) + 0.1, 0, 1);
 
                 // Drive towards the lookahead point
-                driveUsingPurePursuit(lookahead_pose, path, speedFinal, turn_speed, pvalue, linearOpMode, robot, telemetry, dashboard, startingX, startingY, startingTheta, currentPose);
+                driveUsingPurePursuit(lookahead_pose, path, speedFinal, turn_speed, pvalue, linearOpMode, robot, telemetry, dashboard, startingPose, currentPose);
             } else {
                 robot.driveController.update(Vector2d.ZERO, 0);//mvmt_a);
                 break;
@@ -227,7 +227,7 @@ public class AutoHelper {
 
     public static void driveUsingPurePursuit(Pose pose, Path path, double drive_speed, double turn_speed, double pvalue, LinearOpMode linearOpMode,
                                              Robot robot, Telemetry telemetry, FtcDashboard dashboard,
-                                             double startingX, double startingY, double startingTheta,
+                                             Pose startingPose,
                                              Pose currentPose) {
 
         // Find the angle to the pose
@@ -241,7 +241,7 @@ public class AutoHelper {
         // Update actual motor powers with our movement vector
 
         robot.updateBulkData();
-        updateSLAMNav(telemetry, dashboard, startingX, startingY, startingTheta, currentPose);
+        updateSLAMNav(telemetry, dashboard, startingPose, currentPose);
         robot.driveController.updateTracking();
         linearOpMode.telemetry.addData("Driving robot", "");
         linearOpMode.telemetry.addData("Current X: ", currentPose.x);
