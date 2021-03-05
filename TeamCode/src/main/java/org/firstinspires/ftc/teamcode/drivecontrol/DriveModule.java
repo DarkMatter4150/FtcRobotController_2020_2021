@@ -88,7 +88,7 @@ public class DriveModule {
         if (moduleSide == ModuleSide.RIGHT) {
             motor1 = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("rightTopMotor");
             motor2 = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("rightBottomMotor");
-            encoderOrientation = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("flywheel");
+            encoderOrientation = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("intake");
             motor1.setDirection(DcMotorSimple.Direction.REVERSE);
             positionVector = new Vector2d((double)18/2, 0); //points from robot center to right module
         } else {
