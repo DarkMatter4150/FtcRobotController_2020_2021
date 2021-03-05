@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -67,6 +68,13 @@ public class Robot {
         intake.set(opMode.hardwareMap.dcMotor.get("intake"));
         conveyor.set(opMode.hardwareMap.dcMotor.get("conveyor"));
 
+        RobotLog.i("-----------BILL ADDED--------------");
+        RobotLog.i("-----------BILL ADDED--------------");
+        RobotLog.i("-----------BILL ADDED--------------");
+        RobotLog.i("-----------BILL ADDED--------------");
+        RobotLog.i("-----------BILL ADDED--------------");
+        RobotLog.i("-----------BILL ADDED--------------");
+        hardwareMap.logDevices();
 
         //bulk data
         expansionHub1 = hardwareMap.get(ExpansionHubEx.class, "Control Hub");
