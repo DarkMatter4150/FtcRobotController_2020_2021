@@ -38,7 +38,7 @@ public class Path {
 
     double position_precision = 2;
 
-    double heading_precision = 2;
+    double heading_precision = 5;
 
     RecoveryMethod recovery_method = RecoveryMethod.FIRST_UNPASSED_POINT;
 

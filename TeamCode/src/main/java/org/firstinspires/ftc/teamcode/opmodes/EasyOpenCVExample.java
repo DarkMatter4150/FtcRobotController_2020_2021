@@ -21,11 +21,17 @@
 
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.coyote.geometry.Pose;
+import org.firstinspires.ftc.teamcode.coyote.path.Path;
+import org.firstinspires.ftc.teamcode.coyote.path.PathPoint;
+import org.firstinspires.ftc.teamcode.drivecontrol.Angle;
+import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -44,6 +50,16 @@ import java.util.OptionalDouble;
 @TeleOp
 public class EasyOpenCVExample extends LinearOpMode
 {
+    public static double SPEED = .5;
+    public static double PVALUE = .05;
+    Robot robot;
+    public boolean willResetIMU = true;
+
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+
+    Pose startingPose = new Pose(0, 0, 0);
+    Pose currentPose = new Pose().copy(startingPose);
+
     OpenCvCamera webcam;
     SkystoneDeterminationPipeline pipeline;
 
@@ -70,6 +86,11 @@ public class EasyOpenCVExample extends LinearOpMode
                 webcam.startStreaming(640,360, OpenCvCameraRotation.UPRIGHT);
             }
         });
+
+        //Init
+        robot = new Robot(this, true);
+        robot.initIMU();
+        robot.setClaw(false);
 
         waitForStart();
         ElapsedTime autoTimer = new ElapsedTime();
@@ -99,15 +120,27 @@ public class EasyOpenCVExample extends LinearOpMode
 
 
         telemetry.addData("Average", average);
-
+        telemetry.update();
+        sleep(1000);
+/*
         if(average == -1){
             //run park auto
         }else if (average > 2.5){
-            //run 1 ring auto
+            fourRingAuto();
         }else if (average > 0.5){
-            //run 1 ring auto
+            oneRingAuto();
         } else {
-            //run 0 ring auto
+            zeroRingAuto();
+        } */
+
+        if(pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR){
+            fourRingAuto();
+        }else if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE){
+            oneRingAuto();
+        }else if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.NONE){
+            zeroRingAuto();
+        } else {
+            telemetry.addData("No Rings: ", 0);
         }
 
     }
@@ -133,13 +166,13 @@ public class EasyOpenCVExample extends LinearOpMode
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(485,    210);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(465,    190);
 
-        static final int REGION_WIDTH = 120;
-        static final int REGION_HEIGHT = 100;
+        static final int REGION_WIDTH = 170;
+        static final int REGION_HEIGHT = 120;
 
-        final int FOUR_RING_THRESHOLD = 150;
-        final int ONE_RING_THRESHOLD = 135;
+        final int FOUR_RING_THRESHOLD = 140;
+        final int ONE_RING_THRESHOLD = 130;
 
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
@@ -219,5 +252,80 @@ public class EasyOpenCVExample extends LinearOpMode
         {
             return avg1;
         }
+    }
+
+    public void fourRingAuto() {
+        Path path = new Path().addPoint(new PathPoint(-10, 10)).addPoint(new PathPoint(-10, 55)).addPoint(new PathPoint(25,108)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.4, this, robot, telemetry, dashboard,  startingPose, currentPose);
+        robot.setArmPower(-1);
+        sleep(1250);
+        robot.setArmPower(0);
+        robot.setClaw(true);
+        robot.setArmPower(1);
+        sleep(1000);
+        robot.setArmPower(0);
+        path = new Path().addPoint(new PathPoint(10, 105)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.4, this, robot, telemetry, dashboard,  startingPose, currentPose);
+        robot.driveController.rotateRobot(new Angle(90, Angle.AngleType.NEG_180_TO_180_HEADING),.9, this);
+        path = new Path().addPoint(new PathPoint(25, 35)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE).constantHeading(90);
+        AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.5, this, robot, telemetry, dashboard,  startingPose, currentPose);
+        robot.setArmPower(-1);
+        sleep(1250);
+        robot.setArmPower(0);
+        robot.driveController.rotateRobot(new Angle(70, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        robot.setClaw(false);
+        robot.setArmPower(1);
+        sleep(1000);
+        robot.setArmPower(0);
+    }
+
+    public void oneRingAuto() {
+        Path path = new Path().addPoint(new PathPoint(-10, 10)).addPoint(new PathPoint(-10, 55)).addPoint(new PathPoint(-5,87 )).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.3, this, robot, telemetry, dashboard,  startingPose, currentPose);
+        robot.setArmPower(-1);
+        sleep(1250);
+        robot.setArmPower(0);
+        robot.setClaw(true);
+        robot.setArmPower(1);
+        sleep(1000);
+        robot.setArmPower(0);
+        path = new Path().addPoint(new PathPoint(-10, 87)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.3, this, robot, telemetry, dashboard,  startingPose, currentPose);
+        robot.driveController.rotateRobot(new Angle(90, Angle.AngleType.NEG_180_TO_180_HEADING),.9, this);
+        path = new Path().addPoint(new PathPoint(0, 35)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE).constantHeading(90);
+        AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.3, this, robot, telemetry, dashboard,  startingPose, currentPose);
+        robot.setArmPower(-1);
+        sleep(800);
+        robot.setArmPower(0);
+        robot.driveController.rotateRobot(new Angle(50, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        robot.setClaw(false);
+        robot.setArmPower(1);
+        sleep(1000);
+        robot.setArmPower(0);
+    }
+
+    public void zeroRingAuto() {
+        Path path = new Path().addPoint(new PathPoint(-10, 10)).addPoint(new PathPoint(-10, 55)).addPoint(new PathPoint(27,73 )).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.4, this, robot, telemetry, dashboard,  startingPose, currentPose);
+        robot.setArmPower(-1);
+        sleep(1250);
+        robot.setArmPower(0);
+        robot.setClaw(true);
+        robot.setArmPower(1);
+        sleep(1000);
+        robot.setArmPower(0);
+        path = new Path().addPoint(new PathPoint(10, 73)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.4, this, robot, telemetry, dashboard,  startingPose, currentPose);
+        robot.driveController.rotateRobot(new Angle(90, Angle.AngleType.NEG_180_TO_180_HEADING),.9, this);
+        path = new Path().addPoint(new PathPoint(25, 35)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE).constantHeading(90);
+        AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.5, this, robot, telemetry, dashboard,  startingPose, currentPose);
+        robot.setArmPower(-1);
+        sleep(1250);
+        robot.setArmPower(0);
+        robot.driveController.rotateRobot(new Angle(70, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        robot.setClaw(false);
+        robot.setArmPower(1);
+        sleep(1000);
+        robot.setArmPower(0);
     }
 }
