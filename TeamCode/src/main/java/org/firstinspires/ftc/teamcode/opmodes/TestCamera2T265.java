@@ -56,10 +56,11 @@ public class TestCamera2T265 extends OpMode
 
         dashboard.sendTelemetryPacket(packet);
 
-        telemetry.addData("X", translation.getX());
-        telemetry.addData("Y", translation.getY());
+        telemetry.addData("X", -translation.getY());
+        telemetry.addData("Y", translation.getX());
         telemetry.addData("Rotation", rotation.getDegrees());
         telemetry.update();
+
     }
 
     @Override

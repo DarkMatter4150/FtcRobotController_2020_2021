@@ -27,7 +27,7 @@ public class FlywheelPIDTesting extends LinearOpMode {
 
     public static double TESTING_SPEED = 0.9 * MOTOR_MAX_RPM;
 
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(30, 0, 2, 15);
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(50, 1, 1, 15);
 
     private double lastKp = 0.0;
     private double lastKi = 0.0;

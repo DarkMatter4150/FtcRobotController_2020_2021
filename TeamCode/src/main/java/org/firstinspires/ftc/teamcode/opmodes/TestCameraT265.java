@@ -56,8 +56,8 @@ public class TestCameraT265 extends OpMode
         field.strokeLine(x1, y1, x2, y2);
 
         dashboard.sendTelemetryPacket(packet);
-        telemetry.addData("X", translation.getX());
-        telemetry.addData("Y", translation.getY());
+        telemetry.addData("X", -translation.getY());
+        telemetry.addData("Y", translation.getX());
         telemetry.addData("Rotation", rotation.getDegrees());
         telemetry.update();
     }

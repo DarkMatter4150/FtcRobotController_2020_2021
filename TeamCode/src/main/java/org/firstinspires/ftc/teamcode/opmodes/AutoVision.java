@@ -22,6 +22,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -47,8 +48,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.OptionalDouble;
 
-@TeleOp
-public class EasyOpenCVExample extends LinearOpMode
+@Autonomous
+public class AutoVision extends LinearOpMode
 {
     public static double SPEED = .5;
     public static double PVALUE = .05;
@@ -62,6 +63,7 @@ public class EasyOpenCVExample extends LinearOpMode
 
     OpenCvCamera webcam;
     SkystoneDeterminationPipeline pipeline;
+
 
     @Override
     public void runOpMode()
@@ -88,15 +90,17 @@ public class EasyOpenCVExample extends LinearOpMode
         });
 
         //Init
+        ArrayList<Integer> values = new ArrayList<Integer>();
         robot = new Robot(this, true);
         robot.initIMU();
         robot.setClaw(false);
+        
 
         waitForStart();
         ElapsedTime autoTimer = new ElapsedTime();
-        ArrayList<Integer> values = new ArrayList<Integer>();
 
-        while (opModeIsActive() && autoTimer.milliseconds() <= 2000)
+
+        while (opModeIsActive() && autoTimer.milliseconds() <= 1000)
         {
             telemetry.addData("Analysis", pipeline.getAnalysis());
             telemetry.addData("Position", pipeline.position);
@@ -141,6 +145,7 @@ public class EasyOpenCVExample extends LinearOpMode
             zeroRingAuto();
         } else {
             telemetry.addData("No Rings: ", 0);
+            fourRingAuto();
         }
 
     }
@@ -255,7 +260,7 @@ public class EasyOpenCVExample extends LinearOpMode
     }
 
     public void fourRingAuto() {
-        Path path = new Path().addPoint(new PathPoint(-10, 10)).addPoint(new PathPoint(-10, 55)).addPoint(new PathPoint(25,108)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        Path path = new Path().addPoint(new PathPoint(-10, 10)).addPoint(new PathPoint(-10, 55)).addPoint(new PathPoint(18,112)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
         AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.4, this, robot, telemetry, dashboard,  startingPose, currentPose);
         robot.setArmPower(-1);
         sleep(1250);
@@ -264,23 +269,40 @@ public class EasyOpenCVExample extends LinearOpMode
         robot.setArmPower(1);
         sleep(1000);
         robot.setArmPower(0);
-        path = new Path().addPoint(new PathPoint(10, 105)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+
+
+        path = new Path().addPoint(new PathPoint(-6, 50)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
         AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.4, this, robot, telemetry, dashboard,  startingPose, currentPose);
-        robot.driveController.rotateRobot(new Angle(90, Angle.AngleType.NEG_180_TO_180_HEADING),.9, this);
-        path = new Path().addPoint(new PathPoint(25, 35)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE).constantHeading(90);
-        AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.5, this, robot, telemetry, dashboard,  startingPose, currentPose);
-        robot.setArmPower(-1);
-        sleep(1250);
-        robot.setArmPower(0);
-        robot.driveController.rotateRobot(new Angle(70, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
-        robot.setClaw(false);
-        robot.setArmPower(1);
+        robot.driveController.rotateRobot(new Angle(45, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        robot.driveController.rotateRobot(new Angle(4, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        robot.setBoxLifter(true);
+        robot.setFlywheelPower((float)-0.85);
+        sleep(1500);
+        robot.setPusherThing(true);
         sleep(1000);
-        robot.setArmPower(0);
+        robot.setFlywheelPower(0);
+        robot.setPusherThing(false);
+        sleep(2000);
+
+        robot.driveController.rotateRobot(new Angle(45, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        robot.driveController.rotateRobot(new Angle(-1, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        robot.setBoxLifter(true);
+        robot.setFlywheelPower((float)-0.85);
+        sleep(1500);
+        robot.setPusherThing(true);
+        sleep(1000);
+        robot.setFlywheelPower(0);
+        robot.setPusherThing(false);
+        sleep(2000);
+
+
+        path = new Path().addPoint(new PathPoint(-6, 63)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.4, this, robot, telemetry, dashboard,  startingPose, currentPose);
+        robot.driveController.rotateRobot(new Angle(-84, Angle.AngleType.NEG_180_TO_180_HEADING),.9, this);
     }
 
     public void oneRingAuto() {
-        Path path = new Path().addPoint(new PathPoint(-10, 10)).addPoint(new PathPoint(-10, 55)).addPoint(new PathPoint(-5,87 )).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        Path path = new Path().addPoint(new PathPoint(-10, 10)).addPoint(new PathPoint(-10, 55)).addPoint(new PathPoint(-12,82)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
         AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.3, this, robot, telemetry, dashboard,  startingPose, currentPose);
         robot.setArmPower(-1);
         sleep(1250);
@@ -289,23 +311,40 @@ public class EasyOpenCVExample extends LinearOpMode
         robot.setArmPower(1);
         sleep(1000);
         robot.setArmPower(0);
-        path = new Path().addPoint(new PathPoint(-10, 87)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
-        AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.3, this, robot, telemetry, dashboard,  startingPose, currentPose);
-        robot.driveController.rotateRobot(new Angle(90, Angle.AngleType.NEG_180_TO_180_HEADING),.9, this);
-        path = new Path().addPoint(new PathPoint(0, 35)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE).constantHeading(90);
-        AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.3, this, robot, telemetry, dashboard,  startingPose, currentPose);
-        robot.setArmPower(-1);
-        sleep(800);
-        robot.setArmPower(0);
-        robot.driveController.rotateRobot(new Angle(50, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
-        robot.setClaw(false);
-        robot.setArmPower(1);
+
+
+        path = new Path().addPoint(new PathPoint(-6, 50)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.4, this, robot, telemetry, dashboard,  startingPose, currentPose);
+        robot.driveController.rotateRobot(new Angle(45, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        robot.driveController.rotateRobot(new Angle(4, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        robot.setBoxLifter(true);
+        robot.setFlywheelPower((float)-0.85);
+        sleep(1500);
+        robot.setPusherThing(true);
         sleep(1000);
-        robot.setArmPower(0);
+        robot.setFlywheelPower(0);
+        robot.setPusherThing(false);
+        sleep(2000);
+
+        robot.driveController.rotateRobot(new Angle(45, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        robot.driveController.rotateRobot(new Angle(-1, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        robot.setBoxLifter(true);
+        robot.setFlywheelPower((float)-0.85);
+        sleep(1500);
+        robot.setPusherThing(true);
+        sleep(1000);
+        robot.setFlywheelPower(0);
+        robot.setPusherThing(false);
+        sleep(2000);
+
+
+        path = new Path().addPoint(new PathPoint(-6, 63)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.4, this, robot, telemetry, dashboard,  startingPose, currentPose);
+        robot.driveController.rotateRobot(new Angle(-84, Angle.AngleType.NEG_180_TO_180_HEADING),.9, this);
     }
 
     public void zeroRingAuto() {
-        Path path = new Path().addPoint(new PathPoint(-10, 10)).addPoint(new PathPoint(-10, 55)).addPoint(new PathPoint(27,73 )).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        Path path = new Path().addPoint(new PathPoint(-10, 10)).addPoint(new PathPoint(-10, 55)).addPoint(new PathPoint(18,71)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
         AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.4, this, robot, telemetry, dashboard,  startingPose, currentPose);
         robot.setArmPower(-1);
         sleep(1250);
@@ -314,18 +353,35 @@ public class EasyOpenCVExample extends LinearOpMode
         robot.setArmPower(1);
         sleep(1000);
         robot.setArmPower(0);
-        path = new Path().addPoint(new PathPoint(10, 73)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+
+
+        path = new Path().addPoint(new PathPoint(-6, 50)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
         AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.4, this, robot, telemetry, dashboard,  startingPose, currentPose);
-        robot.driveController.rotateRobot(new Angle(90, Angle.AngleType.NEG_180_TO_180_HEADING),.9, this);
-        path = new Path().addPoint(new PathPoint(25, 35)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE).constantHeading(90);
-        AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.5, this, robot, telemetry, dashboard,  startingPose, currentPose);
-        robot.setArmPower(-1);
-        sleep(1250);
-        robot.setArmPower(0);
-        robot.driveController.rotateRobot(new Angle(70, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
-        robot.setClaw(false);
-        robot.setArmPower(1);
+        robot.driveController.rotateRobot(new Angle(45, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        robot.driveController.rotateRobot(new Angle(4, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        robot.setBoxLifter(true);
+        robot.setFlywheelPower((float)-0.85);
+        sleep(1500);
+        robot.setPusherThing(true);
         sleep(1000);
-        robot.setArmPower(0);
+        robot.setFlywheelPower(0);
+        robot.setPusherThing(false);
+        sleep(2000);
+
+        robot.driveController.rotateRobot(new Angle(45, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        robot.driveController.rotateRobot(new Angle(-1, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        robot.setBoxLifter(true);
+        robot.setFlywheelPower((float)-0.85);
+        sleep(1500);
+        robot.setPusherThing(true);
+        sleep(1000);
+        robot.setFlywheelPower(0);
+        robot.setPusherThing(false);
+        sleep(2000);
+
+
+        path = new Path().addPoint(new PathPoint(-6, 63)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        AutoHelper.followCurvePath(path, 1*Math.sqrt(2), 0.4, this, robot, telemetry, dashboard,  startingPose, currentPose);
+        robot.driveController.rotateRobot(new Angle(-84, Angle.AngleType.NEG_180_TO_180_HEADING),.9, this);
     }
 }

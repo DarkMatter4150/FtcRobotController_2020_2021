@@ -71,7 +71,7 @@ public class StateMachineTeleOp extends OpMode {
 
     private boolean slow = false;
     private boolean claw = false;
-    private boolean pusherThing = true;
+    private boolean pusherThing = false;
     private boolean boxLifter = true;
     private double boxTimer = 0;
     private double pusherTimer = 0;
@@ -268,13 +268,13 @@ public class StateMachineTeleOp extends OpMode {
                 robotState = RobotState.MAIN;
                 break;
             case DRIVE_TO_POS_ONE:
-                Path path = new Path().addPoint(new PathPoint(20, 53)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
-                followCurvePath(path, .8*Math.sqrt(2), 0.08);
+                Path path = new Path().addPoint(new PathPoint(6.5, 57)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE).constantHeading(6);
+                followCurvePath(path, .8*Math.sqrt(2), 0.4);
                 robotState = RobotState.MAIN;
                 break;
             case DRIVE_TO_POS_TWO:
-                path = new Path().addPoint(new PathPoint(20, 0)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
-                followCurvePath(path, .8*Math.sqrt(2), 0.08);
+                path = new Path().addPoint(new PathPoint(-6.5, 59.5)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE).constantHeading(6);
+                followCurvePath(path, .8*Math.sqrt(2), 0.4);
                 robotState = RobotState.MAIN;
                 break;
                 default:
