@@ -62,14 +62,16 @@ public class EasyOpenCVExample extends LinearOpMode
         // out when the RC activity is in portrait. We do our actual image processing assuming
         // landscape orientation, though.
 
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                webcam.startStreaming(640,360, OpenCvCameraRotation.SIDEWAYS_LEFT);
-            }
-        });
+        // TODO Bill: Had to remove because the dependencies had to be removed from TeamCode:build.gradle
+        // TODO with those dependencies removed, it uses OpenCvCamera v1.3.2, instead of 1.4.1 which has this method
+//        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+//        {
+//            @Override
+//            public void onOpened()
+//            {
+//                webcam.startStreaming(640,360, OpenCvCameraRotation.SIDEWAYS_LEFT);
+//            }
+//        });
 
         waitForStart();
         ElapsedTime autoTimer = new ElapsedTime();
@@ -161,13 +163,15 @@ public class EasyOpenCVExample extends LinearOpMode
             Core.extractChannel(YCrCb, Cb, 1);
         }
 
-        @Override
-        public void init(Mat firstFrame)
-        {
-            inputToCb(firstFrame);
-
-            region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
-        }
+        // TODO Bill: Had to remove because the dependencies had to be removed from TeamCode:build.gradle
+        // TODO with those dependencies removed, it uses OpenCvPipeline v1.3.2, instead of 1.4.1 which has this method
+//        @Override
+//        public void init(Mat firstFrame)
+//        {
+//            inputToCb(firstFrame);
+//
+//            region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
+//        }
 
         @Override
         public Mat processFrame(Mat input)
