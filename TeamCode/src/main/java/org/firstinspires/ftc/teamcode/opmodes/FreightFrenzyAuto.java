@@ -1,31 +1,18 @@
-/*
- * Copyright (c) 2019 OpenFTC Team
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.coyote.geometry.Pose;
+import org.firstinspires.ftc.teamcode.coyote.path.Path;
+import org.firstinspires.ftc.teamcode.coyote.path.PathPoint;
+import org.firstinspires.ftc.teamcode.drivecontrol.Angle;
 import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -37,48 +24,37 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp
+import java.util.ArrayList;
+
+@Config
+@Autonomous(name = "Freight Frenzy Auto", group = "Linear Opmode")
 public class FreightFrenzyAuto extends LinearOpMode {
+
+    public static double SPEED = .5;
+    public static double PVALUE = .05;
+    public boolean willResetIMU = true;
+
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+
+    Pose startingPose = new Pose(0, 0, 0);
+    Pose currentPose = new Pose().copy(startingPose);
+
+    public Path current_path;
     OpenCvWebcam webcam;
     Robot robot;
 
     @Override
     public void runOpMode() {
 
-        robot = new Robot(this, false, false);
-        /*
-         * Instantiate an OpenCvCamera object for the camera we'll be using.
-         * In this sample, we're using a webcam. Note that you will need to
-         * make sure you have added the webcam to your configuration file and
-         * adjusted the name here to match what you named it in said config file.
-         *
-         * We pass it the view that we wish to use for camera monitor (on
-         * the RC phone). If no camera monitor is desired, use the alternate
-         * single-parameter constructor instead (commented out below)
-         */
+        robot = new Robot(this, true);
+        robot.initIMU();
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
-        // OR...  Do Not Activate the Camera Monitor View
-        //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
-
-        /*
-         * Specify the image processing pipeline we wish to invoke upon receipt
-         * of a frame from the camera. Note that switching pipelines on-the-fly
-         * (while a streaming session is in flight) *IS* supported.
-         */
         FreightFrenzyPipeline pipeline = new FreightFrenzyPipeline(320, telemetry);
         webcam.setPipeline(pipeline);
 
-        /*
-         * Open the connection to the camera device. New in v1.4.0 is the ability
-         * to open the camera asynchronously, and this is now the recommended way
-         * to do it. The benefits of opening async include faster init time, and
-         * better behavior when pressing stop during init (i.e. less of a chance
-         * of tripping the stuck watchdog)
-         *
-         * If you really want to open synchronously, the old method is still available.
-         */
         webcam.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -104,23 +80,59 @@ public class FreightFrenzyAuto extends LinearOpMode {
 
             @Override
             public void onError(int errorCode) {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
             }
         });
 
         telemetry.addLine("Waiting for start");
         telemetry.update();
 
-        /*
-         * Wait for the user to press start on the Driver Station
-         */
         waitForStart();
 
-        while (opModeIsActive()) {
+        ElapsedTime autoTimer = new ElapsedTime();
+
+        while (opModeIsActive() && autoTimer.milliseconds() <= 1000)
+        {
             telemetry.addData("Analysis: ", pipeline.getLocation());
             telemetry.update();
+
         }
+
+        FreightFrenzyPipeline.BarcodeLocation location = pipeline.getLocation();
+
+        if(location == FreightFrenzyPipeline.BarcodeLocation.LEFT){
+            leftAuto();
+        }else if (location == FreightFrenzyPipeline.BarcodeLocation.MIDDLE){
+            middleAuto();
+        }else if (location == FreightFrenzyPipeline.BarcodeLocation.RIGHT){
+            rightAuto();
+        } else {
+            telemetry.addLine("No Team Marker Detected");
+            leftAuto();
+        }
+
+    }
+
+    public void leftAuto() {
+        Path path = new Path().addPoint(new PathPoint(-10, 10)).addPoint(new PathPoint(-10, 55)).addPoint(new PathPoint(18,112)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        AutoHelper.followCurvePath(path, 1, 0.4, this, robot, telemetry, dashboard,  startingPose, currentPose);
+        robot.driveController.rotateRobot(new Angle(45, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        robot.setIntakePower(1);
+        sleep(1000);
+    }
+
+    public void middleAuto() {
+        Path path = new Path().addPoint(new PathPoint(-10, 10)).addPoint(new PathPoint(-10, 55)).addPoint(new PathPoint(18,112)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        AutoHelper.followCurvePath(path, 1, 0.4, this, robot, telemetry, dashboard,  startingPose, currentPose);
+        robot.driveController.rotateRobot(new Angle(45, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        robot.setIntakePower(1);
+        sleep(1000);
+    }
+
+    public void rightAuto() {
+        Path path = new Path().addPoint(new PathPoint(-10, 10)).addPoint(new PathPoint(-10, 55)).addPoint(new PathPoint(18,112)).headingMethod(Path.HeadingMethod.CONSTANT_ANGLE);
+        AutoHelper.followCurvePath(path, 1, 0.4, this, robot, telemetry, dashboard,  startingPose, currentPose);
+        robot.driveController.rotateRobot(new Angle(45, Angle.AngleType.NEG_180_TO_180_HEADING),1, this);
+        robot.setIntakePower(1);
+        sleep(1000);
     }
 }

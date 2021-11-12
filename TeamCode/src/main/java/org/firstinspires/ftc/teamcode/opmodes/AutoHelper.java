@@ -204,9 +204,9 @@ public class AutoHelper {
                 double speedFinal;
                 // Find our drive speed based on distance
                 if (distance < current_path.getFollowCircle().radius) {
-                    speedFinal = Range.clip((distance / 8) + 0.1, 0, 1) * speed;
+                    speedFinal = Range.clip((distance / 8) + 0.1, 0, 1) * (speed * Math.sqrt(2));
                 } else {
-                    speedFinal = speed;
+                    speedFinal = speed * Math.sqrt(2);
                 }
 
                 // Find our turn speed based on angle difference

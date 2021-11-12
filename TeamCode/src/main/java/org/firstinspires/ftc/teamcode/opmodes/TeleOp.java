@@ -20,8 +20,6 @@ public class TeleOp extends OpMode {
 
     double imuTarget = 0;
 
-    PIDController pidDrive = new PIDController(15, 2, 3);
-
     boolean absHeadingMode = false;
 
     double loopStartTime = 0;
@@ -43,6 +41,18 @@ public class TeleOp extends OpMode {
     //intake (2 motors, continuous)
     //arm (2 servos, continuous)
     //grabber (1 servo, 2 positions)
+
+    //Gamepad 1
+    float leftStick1x;
+    float leftStick1y;
+    float rightStick1x;
+    float rightStick1y;
+    float leftTrigger1;
+    float rightTrigger1;
+    boolean dpadLeft1;
+    boolean dpadRight1;
+
+    boolean dpadDown2;
 
     //Gamepad 2
     float leftStick2x;
@@ -83,16 +93,6 @@ public class TeleOp extends OpMode {
         robot.updateBulkData(); //read data once per loop, access it through robot class variable
         robot.driveController.updatePositionTracking(telemetry);
 
-        telemetry.addData("OS loop time: ", loopEndTime - loopStartTime);
-
-        telemetry.addData("Robot Heading: ", robot.getRobotHeading());
-        telemetry.addData("Joystick 2 Angle (180 heading mode): ", joystick2.getAngleDouble(Angle.AngleType.NEG_180_TO_180_HEADING));
-        telemetry.addData("Heading to joystick difference: ", joystick2.getAngle().getDifference(robot.getRobotHeading()));
-        telemetry.addData("Left Orientation: ", robot.driveController.moduleLeft.getCurrentOrientation());
-        telemetry.addData("Right Orientation: ", robot.driveController.moduleRight.getCurrentOrientation());
-
-        telemetry.update();
-
         leftStick2x = gamepad2.left_stick_x;
         leftStick2y = -gamepad2.left_stick_y;
         rightStick2x = gamepad2.right_stick_x;
@@ -103,6 +103,27 @@ public class TeleOp extends OpMode {
         bButton = gamepad2.b;
         xButton = gamepad2.x;
         yButton = gamepad2.y;
+        dpadLeft1 = gamepad1.dpad_left;
+        dpadRight1 = gamepad1.dpad_right;
+
+
+        leftStick1x = gamepad1.left_stick_x;
+        leftStick1y = gamepad1.left_stick_y;
+        rightStick1x = gamepad1.right_stick_x;
+        rightStick1y = gamepad1.right_stick_y;
+        leftTrigger1 = gamepad1.left_trigger;
+        rightTrigger1 = gamepad1.right_trigger;
+        dpadDown2 = gamepad2.dpad_down;
+
+        telemetry.addData("OS loop time: ", loopEndTime - loopStartTime);
+
+        telemetry.addData("Robot Heading: ", robot.getRobotHeading());
+        telemetry.addData("Joystick 2 Angle (180 heading mode): ", joystick2.getAngleDouble(Angle.AngleType.NEG_180_TO_180_HEADING));
+        telemetry.addData("Heading to joystick difference: ", joystick2.getAngle().getDifference(robot.getRobotHeading()));
+        telemetry.addData("Left Orientation: ", robot.driveController.moduleLeft.getCurrentOrientation());
+        telemetry.addData("Right Orientation: ", robot.driveController.moduleRight.getCurrentOrientation());
+
+        telemetry.update();
 
 
         //Swerve Driving Located in this method
@@ -117,16 +138,16 @@ public class TeleOp extends OpMode {
     }
 
     public void driveFunctions() {
-        joystick1 = new Vector2d(gamepad1.left_stick_x, -gamepad1.left_stick_y); //LEFT joystick
-        joystick2 = new Vector2d(gamepad1.right_stick_x+((gamepad1.right_stick_x/Math.abs(gamepad1.right_stick_x))*0.1), -gamepad1.right_stick_y); //RIGHT joystick
+        joystick1 = new Vector2d(leftStick1x, -leftStick1y); //LEFT joystick
+        joystick2 = new Vector2d(rightStick1x+((rightStick1x/Math.abs(rightStick1x))*0.1), -rightStick1y); //RIGHT joystick
         slowModeDrive = false;
 
         //slow mode/range stuffs
-        if (gamepad1.left_trigger > 0.1) {
+        if (leftTrigger1 > 0.1) {
             // joystick1 = joystick1.scale(0.3);
             // joystick2 = joystick2.scale(0.4); //was 0.3
-            joystick1 = joystick1.scale((1-Math.abs(gamepad1.left_trigger))*.75);
-            joystick2 = joystick2.scale(1-Math.abs(gamepad1.left_trigger));
+            joystick1 = joystick1.scale((1-Math.abs(leftTrigger1))*.75);
+            joystick2 = joystick2.scale(1-Math.abs(leftTrigger1));
             slowModeDrive = true;
         }
         robot.driveController.updateUsingJoysticks(
@@ -135,9 +156,9 @@ public class TeleOp extends OpMode {
                 absHeadingMode
         );
 
-        if (gamepad1.dpad_left) {
+        if (dpadLeft1) {
             robot.driveController.setDrivingStyle(true);
-        } else if (gamepad1.dpad_right) {
+        } else if (dpadRight1) {
             robot.driveController.setDrivingStyle(false);
         }
     }
@@ -164,22 +185,20 @@ public class TeleOp extends OpMode {
         //Duck Spinner Automatic
         if (yButton) {
             duckTimer = timer.milliseconds();
-            gamepad2.rumble(1000);
-            while (timer.milliseconds() - duckTimer < 1100 && !gamepad2.dpad_down) {
+            while (timer.milliseconds() - duckTimer < 1100 && !dpadDown2) {
                 float speed = (float) (.0009*(timer.milliseconds() - duckTimer)+.1);
                 robot.setDuckSpinnerPower(-speed);
             }
-            while (timer.milliseconds() - duckTimer < 1400 && timer.milliseconds() - duckTimer >= 1100 && !gamepad2.dpad_down) {
+            while (timer.milliseconds() - duckTimer < 1400 && timer.milliseconds() - duckTimer >= 1100 && !dpadDown2) {
                 robot.setDuckSpinnerPower(-1);
             }
-            while (timer.milliseconds() - duckTimer < 1450 && timer.milliseconds() - duckTimer >= 1400 && !gamepad2.dpad_down) {
+            while (timer.milliseconds() - duckTimer < 1450 && timer.milliseconds() - duckTimer >= 1400 && !dpadDown2) {
                 robot.setDuckSpinnerPower((float)0.1);
             }
         }
     }
     public Vector2d checkDeadband(Vector2d joystick, boolean slowMode) {
         if (joystick.getMagnitude() > (slowMode ? DEADBAND_MAG_SLOW_MODE : DEADBAND_MAG_NORMAL)) {
-            imuTarget = robot.getRobotHeading().getAngle();
         }
         else {
         }
