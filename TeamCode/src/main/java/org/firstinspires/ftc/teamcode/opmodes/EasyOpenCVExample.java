@@ -62,14 +62,14 @@ public class EasyOpenCVExample extends LinearOpMode
         // out when the RC activity is in portrait. We do our actual image processing assuming
         // landscape orientation, though.
 
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                webcam.startStreaming(640,360, OpenCvCameraRotation.SIDEWAYS_LEFT);
-            }
-        });
+//        webcam.openCameraDevice(new OpenCvCamera.AsyncCameraOpenListener()
+//        {
+//            @Override
+//            public void onOpened()
+//            {
+//                webcam.startStreaming(640,360, OpenCvCameraRotation.SIDEWAYS_LEFT);
+//            }
+//        });
 
         waitForStart();
         ElapsedTime autoTimer = new ElapsedTime();
@@ -161,13 +161,13 @@ public class EasyOpenCVExample extends LinearOpMode
             Core.extractChannel(YCrCb, Cb, 1);
         }
 
-        @Override
-        public void init(Mat firstFrame)
-        {
-            inputToCb(firstFrame);
-
-            region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
-        }
+//        @Override
+//        public void init(Mat firstFrame)
+//        {
+//            inputToCb(firstFrame);
+//
+//            region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
+//        }
 
         @Override
         public Mat processFrame(Mat input)

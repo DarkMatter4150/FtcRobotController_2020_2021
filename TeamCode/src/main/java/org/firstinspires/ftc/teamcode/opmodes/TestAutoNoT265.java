@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.coyote.path.Path;
 import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
 import org.firstinspires.ftc.teamcode.drivecontrol.Vector2d;
 
-@Autonomous(name = "Diff Swerve Test Auto 1", group = "Linear Opmode")
+@Autonomous(name = "Diff Swerve Test Auto 1_different name", group = "Linear Opmode")
 
 public class TestAutoNoT265 extends LinearOpMode {
     Robot robot;
