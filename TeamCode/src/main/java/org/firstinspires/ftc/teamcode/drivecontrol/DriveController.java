@@ -37,7 +37,9 @@ public class DriveController {
     double moduleLeftLastDistance;
     double moduleRightLastDistance;
 
-    final double WHEEL_TO_WHEEL_CM = 32.5; //in cm (was 18*2.54)
+
+    //TODO: Update For Skinny Swerve
+    final double WHEEL_TO_WHEEL_CM = 7.5*2.54; //in cm (was 18*2.54)
 
     //tolerance for module rotation (in degrees)
     public final double ALLOWED_MODULE_ROT_ERROR = 5;

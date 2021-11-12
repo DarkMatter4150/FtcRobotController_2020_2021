@@ -37,13 +37,13 @@ public class DriveModule {
     // a MODULE rev is when the orientation of the module changes by 360 degrees
     // a WHEEL rev is when the wheel drives a distance equal to its circumference
 
-    public final double TICKS_PER_MODULE_REV = 1024;//8192; //20 * (double)(60)/14 * (double)(48)/15 * (double)(82)/22; //ticks per MODULE revolution
+    public final double TICKS_PER_MODULE_REV = 8200;//8192; //20 * (double)(60)/14 * (double)(48)/15 * (double)(82)/22; //ticks per MODULE revolution
     public final double DEGREES_PER_TICK = 360/TICKS_PER_MODULE_REV;
 
     public final double TICKS_PER_MODULE_REV_ORIENT = 8192; //20 * (double)(60)/14 * (double)(48)/15 * (double)(82)/22; //ticks per MODULE revolution
     public final double DEGREES_PER_TICK_ORIENT = 360/TICKS_PER_MODULE_REV_ORIENT;
 
-    public final double TICKS_PER_WHEEL_REV = 1 * TICKS_PER_MODULE_REV * 18/60; //ticks per WHEEL revolution
+    public final double TICKS_PER_WHEEL_REV = 1 * TICKS_PER_MODULE_REV * 12/54; //ticks per WHEEL revolution
 
     public final double CM_WHEEL_DIAMETER = 2.5 * 2.54;
     public final double CM_PER_WHEEL_REV = CM_WHEEL_DIAMETER * Math.PI;
@@ -53,7 +53,7 @@ public class DriveModule {
     public final double ANGLE_OF_MAX_MODULE_ROTATION_POWER = 60;
 
     //if module is within this number of degrees from its target orientation, no pivot power will be applied
-    public final double ALLOWED_MODULE_ORIENTATION_ERROR = 10;
+    public final double ALLOWED_MODULE_ORIENTATION_ERROR = 5;
 
     //TODO: tune this variable (see commented out section in TeleOp)
     //was 1.7

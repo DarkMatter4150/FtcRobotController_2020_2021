@@ -38,6 +38,8 @@ public class TeleOp extends OpMode {
     private boolean boxLifter = true;
     private double boxTimer = 0;
     private double pusherTimer = 0;
+
+    private double duckTimer = 0;
     private ElapsedTime timer = new ElapsedTime();
 
     //hungry hippo (1 servo, 2 positions)
@@ -109,10 +111,6 @@ public class TeleOp extends OpMode {
             robot.setFlywheelPower((float) (-rightTrigger2*.78));
         }
 
-        if (yButton) {
-            robot.setIntakePower(-1);
-            robot.setConveyorPower(1);
-        }
 
 
         if (aButton && timer.milliseconds() - pusherTimer > 250 && (boxLifter || pusherThing)) {
@@ -124,6 +122,21 @@ public class TeleOp extends OpMode {
             boxLifter = !boxLifter;
             robot.setBoxLifter(boxLifter);
             boxTimer = timer.milliseconds();
+        }
+
+        if (yButton) {
+            duckTimer = timer.milliseconds();
+            gamepad2.rumble(1000);
+            while (timer.milliseconds() - duckTimer < 1100 && !gamepad2.dpad_down) {
+                float speed = (float) (.0009*(timer.milliseconds() - duckTimer)+.1);
+                robot.setFlywheelPower(-speed);
+            }
+            while (timer.milliseconds() - duckTimer < 1400 && timer.milliseconds() - duckTimer >= 1100 && !gamepad2.dpad_down) {
+                robot.setFlywheelPower(-1);
+            }
+            while (timer.milliseconds() - duckTimer < 1450 && timer.milliseconds() - duckTimer >= 1400 && !gamepad2.dpad_down) {
+                robot.setFlywheelPower((float)0.1);
+            }
         }
 
 
