@@ -99,13 +99,13 @@ public class Test extends OpMode {
 
         robot.setIntakePower(leftTrigger2);
         robot.setConveyorPower(-leftTrigger2);
-        robot.setFlywheelPower((float) (-rightTrigger2*.8));
+        robot.setDuckSpinnerPower((float) (-rightTrigger2*.8));
 
         if (xButton) {
-            robot.setFlywheelPower(-1);
+            robot.setDuckSpinnerPower(-1);
         }
         else {
-            robot.setFlywheelPower((float) (-rightTrigger2*.78));
+            robot.setDuckSpinnerPower((float) (-rightTrigger2*.78));
         }
 
         if (yButton) {
@@ -116,12 +116,12 @@ public class Test extends OpMode {
 
         if (aButton && timer.milliseconds() - pusherTimer > 250 && (boxLifter || pusherThing)) {
             pusherThing = !pusherThing;
-            robot.setPusherThing(pusherThing);
+            //robot.setPusherThing(pusherThing);
             pusherTimer = timer.milliseconds();
         }
         if (bButton && timer.milliseconds() - boxTimer > 250) {
             boxLifter = !boxLifter;
-            robot.setBoxLifter(boxLifter);
+            //robot.setBoxLifter(boxLifter);
             boxTimer = timer.milliseconds();
         }
 

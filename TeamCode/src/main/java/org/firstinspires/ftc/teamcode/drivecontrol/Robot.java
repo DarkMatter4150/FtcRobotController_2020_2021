@@ -20,13 +20,13 @@ import org.openftc.revextensions2.RevBulkData;
 public class Robot {
     public DriveController driveController;
     BNO055IMU imu;
-    BreakoutServo pusherThing = new BreakoutServo();
+//    BreakoutServo pusherThing = new BreakoutServo();
     BreakoutServo boxLifter = new BreakoutServo();
-    BreakoutServo claw = new BreakoutServo();
+//    BreakoutServo claw = new BreakoutServo();
 
     BreakoutMotor arm = new BreakoutMotor();
     BreakoutMotor lift = new BreakoutMotor();
-    BreakoutMotor flywheel = new BreakoutMotor();
+    BreakoutMotor duckSpinner = new BreakoutMotor();
     BreakoutMotor intake = new BreakoutMotor();
     BreakoutMotor conveyor = new BreakoutMotor();
 
@@ -58,12 +58,12 @@ public class Robot {
         imu = opMode.hardwareMap.get(BNO055IMU.class, "imu 1");
 
 //        claw.set(opMode.hardwareMap.servo.get("claw"));
-        pusherThing.set(opMode.hardwareMap.servo.get("pusherThing"));
+//        pusherThing.set(opMode.hardwareMap.servo.get("pusherThing"));
         boxLifter.set(opMode.hardwareMap.servo.get("boxLifter"));
 
 //        arm.set(opMode.hardwareMap.dcMotor.get("arm"));
-//        lift.set(opMode.hardwareMap.dcMotor.get("lift"));
-        flywheel.set(opMode.hardwareMap.dcMotor.get("flywheel"));
+        lift.set(opMode.hardwareMap.dcMotor.get("lift"));
+        duckSpinner.set(opMode.hardwareMap.dcMotor.get("duckSpinner"));
         intake.set(opMode.hardwareMap.dcMotor.get("intake"));
         conveyor.set(opMode.hardwareMap.dcMotor.get("conveyor"));
 
@@ -74,7 +74,7 @@ public class Robot {
         bulkData1 = expansionHub1.getBulkInputData();
         bulkData2 = expansionHub2.getBulkInputData();
 
-        dataLogger = new DataLogger("UltimateGoalRobot");
+        dataLogger = new DataLogger("FreightFrenzyRobot");
     }
 
     //defaults to debugging mode off, starting position of 0, 0
@@ -95,7 +95,7 @@ public class Robot {
     /**
      * Claw positions, open and closed
      */
-    public static class ClawPos {
+    public static class IntakeServoPos {
         static double OPEN = 0.83d; //TODO figure values
         static double CLOSED = 1.0d;
     }
@@ -105,49 +105,15 @@ public class Robot {
      *
      * @param open Boolean variable to open/close the claw.
      */
-    public void setClaw(boolean open) {
+    public void setIntakeServo(boolean open) {
         if (open) {
-            claw.setPosition(ClawPos.OPEN);
+            boxLifter.setPosition(IntakeServoPos.OPEN);
         } else {
-            claw.setPosition(ClawPos.CLOSED);
+            boxLifter.setPosition(IntakeServoPos.CLOSED);
         }
     }
 
-    public static class BoxLifterPos {
-        static double DOWN = 0.45d; //When down you can't actuate the pusher or else box lifter fails
-        static double UP = 0.0d;
-    }
 
-    /**
-     * Sets claw position to open or closed based on the boolean input.
-     *
-     * @param down Boolean variable to open/close the claw.
-     */
-    public void setBoxLifter(boolean down) {
-        if (down) {
-            boxLifter.setPosition(BoxLifterPos.DOWN);
-        } else {
-            boxLifter.setPosition(BoxLifterPos.UP);
-        }
-    }
-
-    public static class PusherThingPos {
-        static double IN = 0.75d;
-        static double OUT = 1.0d;
-    }
-
-    /**
-     * Sets claw position to open or closed based on the boolean input.
-     *
-     * @param in Boolean variable to open/close the claw.
-     */
-    public void setPusherThing(boolean in) {
-        if (in) {
-            pusherThing.setPosition(PusherThingPos.IN);
-        } else {
-            pusherThing.setPosition(PusherThingPos.OUT);
-        }
-    }
 
     public void setArmPower(float power) {
         arm.setPower(power);
@@ -155,8 +121,8 @@ public class Robot {
     public void setLiftPower(float power) {
         lift.setPower(power);
     }
-    public void setFlywheelPower(float power) {
-        flywheel.setPower(power);
+    public void setDuckSpinnerPower(float power) {
+        duckSpinner.setPower(power);
     }
     public void setIntakePower(float power) { intake.setPower(-power); }
     public void setConveyorPower(float power) {conveyor.setPower(power);}
@@ -211,17 +177,6 @@ public class Robot {
 //    public static double getXAngle(Orientation o) { return o.thirdAngle; }
 //    public static double wrapAngle(double angle) { return angle < 0 ? angle % (2 * Math.PI) + 2 * Math.PI : angle % (2 * Math.PI); }
 
-    //SERVOS
-    /*
-    public void intakeServoOpen(){
-        moveServo(intakeServo1, 0);
-        moveServo(intakeServo2, 1);
-    }
-    public void intakeServoClose(){
-        moveServo(intakeServo1, 1);
-        moveServo(intakeServo2, 0);
-    }
-    */
 
     //MOTORS
     public void moveMotor(DcMotor motor, double power) {

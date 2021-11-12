@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import static org.firstinspires.ftc.teamcode.opmodes.TestCameraT265.slamra;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -18,12 +20,9 @@ import org.firstinspires.ftc.teamcode.drivecontrol.PIDController;
 import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
 import org.firstinspires.ftc.teamcode.drivecontrol.Vector2d;
 
-import static java.lang.Thread.sleep;
-import static org.firstinspires.ftc.teamcode.opmodes.TestCameraT265.slamra;
 
-
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "State Machine TeleOp", group = "TeleOp")
-public class StateMachineTeleOp extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "FF State Machine TeleOp", group = "TeleOp")
+public class FFStateMachine extends OpMode {
 
     public enum RobotState {
         MAIN,
@@ -74,6 +73,7 @@ public class StateMachineTeleOp extends OpMode {
     private boolean boxLifter = true;
     private double boxTimer = 0;
     private double pusherTimer = 0;
+    private double duckTimer = 0;
     private ElapsedTime timer = new ElapsedTime();
     public Path current_path;
 
@@ -85,6 +85,20 @@ public class StateMachineTeleOp extends OpMode {
     //grabber (1 servo, 2 positions)
 
     double lastTime;
+
+    float leftStick2x = gamepad2.left_stick_x;
+    float leftStick2y = -gamepad2.left_stick_y;
+    float rightStick2x = gamepad2.right_stick_x;
+    float rightStick2y = -gamepad2.right_stick_y;
+    float leftTrigger2 = gamepad2.left_trigger;
+    float rightTrigger2 = gamepad2.right_trigger;
+    boolean aButton = gamepad2.a;
+    boolean bButton = gamepad2.b;
+    boolean xButton = gamepad2.x;
+    boolean yButton = gamepad2.y;
+    boolean dPad1right = gamepad1.dpad_right;
+    boolean dPad1left = gamepad1.dpad_left;
+    boolean dPad2right = gamepad2.dpad_right;
 
 
 
@@ -116,19 +130,7 @@ public class StateMachineTeleOp extends OpMode {
 
     public void loop() {
 
-        float leftStick2x = gamepad2.left_stick_x;
-        float leftStick2y = -gamepad2.left_stick_y;
-        float rightStick2x = gamepad2.right_stick_x;
-        float rightStick2y = -gamepad2.right_stick_y;
-        float leftTrigger2 = gamepad2.left_trigger;
-        float rightTrigger2 = gamepad2.right_trigger;
-        boolean aButton = gamepad2.a;
-        boolean bButton = gamepad2.b;
-        boolean xButton = gamepad2.x;
-        boolean yButton = gamepad2.y;
-        boolean dPad1right = gamepad1.dpad_right;
-        boolean dPad1left = gamepad1.dpad_left;
-        boolean dPad2right = gamepad2.dpad_right;
+
 
 
         loopStartTime = System.currentTimeMillis();
@@ -172,15 +174,9 @@ public class StateMachineTeleOp extends OpMode {
                             robot.setConveyorPower(1);
                         }
 
-
-                        if (aButton && timer.milliseconds() - pusherTimer > 250 && (boxLifter || pusherThing)) {
-                            pusherThing = !pusherThing;
-                            //robot.setPusherThing(pusherThing);
-                            pusherTimer = timer.milliseconds();
-                        }
                         if (bButton && timer.milliseconds() - boxTimer > 250) {
                             boxLifter = !boxLifter;
-                            //robot.setBoxLifter(boxLifter);
+                            robot.setIntakeServo(boxLifter);
                             boxTimer = timer.milliseconds();
                         }
 
@@ -392,6 +388,68 @@ public class StateMachineTeleOp extends OpMode {
         robot.driveController.updatePositionTracking(telemetry); //update position tracking
         robot.driveController.update(directionPP, mvmt_a);
 
+    }
+
+    public void driveFunctions() {
+        joystick1 = new Vector2d(gamepad1.left_stick_x, -gamepad1.left_stick_y); //LEFT joystick
+        joystick2 = new Vector2d(gamepad1.right_stick_x+((gamepad1.right_stick_x/Math.abs(gamepad1.right_stick_x))*0.1), -gamepad1.right_stick_y); //RIGHT joystick
+        slowModeDrive = false;
+
+        //slow mode/range stuffs
+        if (gamepad1.left_trigger > 0.1) {
+            // joystick1 = joystick1.scale(0.3);
+            // joystick2 = joystick2.scale(0.4); //was 0.3
+            joystick1 = joystick1.scale((1-Math.abs(gamepad1.left_trigger))*.75);
+            joystick2 = joystick2.scale(1-Math.abs(gamepad1.left_trigger));
+            slowModeDrive = true;
+        }
+        robot.driveController.updateUsingJoysticks(
+                checkDeadband(joystick1, slowModeDrive).scale(Math.sqrt(2)),
+                checkDeadband(joystick2, slowModeDrive).scale(Math.sqrt(2)),
+                absHeadingMode
+        );
+
+        if (gamepad1.dpad_left) {
+            robot.driveController.setDrivingStyle(true);
+        } else if (gamepad1.dpad_right) {
+            robot.driveController.setDrivingStyle(false);
+        }
+    }
+
+    public void manipulators() {
+        //Manipulators
+        robot.setIntakePower(leftTrigger2);
+        robot.setDuckSpinnerPower((float) (-rightTrigger2*.8));
+
+        if (xButton) {
+            robot.setDuckSpinnerPower(-1);
+        }
+        else {
+            robot.setDuckSpinnerPower((float) (-rightTrigger2*.78));
+        }
+
+        //Intake Servo
+        if (bButton && timer.milliseconds() - boxTimer > 250) {
+            boxLifter = !boxLifter;
+            robot.setIntakeServo(boxLifter);
+            boxTimer = timer.milliseconds();
+        }
+
+        //Duck Spinner Automatic
+        if (yButton) {
+            duckTimer = timer.milliseconds();
+            gamepad2.rumble(1000);
+            while (timer.milliseconds() - duckTimer < 1100 && !gamepad2.dpad_down) {
+                float speed = (float) (.0009*(timer.milliseconds() - duckTimer)+.1);
+                robot.setDuckSpinnerPower(-speed);
+            }
+            while (timer.milliseconds() - duckTimer < 1400 && timer.milliseconds() - duckTimer >= 1100 && !gamepad2.dpad_down) {
+                robot.setDuckSpinnerPower(-1);
+            }
+            while (timer.milliseconds() - duckTimer < 1450 && timer.milliseconds() - duckTimer >= 1400 && !gamepad2.dpad_down) {
+                robot.setDuckSpinnerPower((float)0.1);
+            }
+        }
     }
 
 }
