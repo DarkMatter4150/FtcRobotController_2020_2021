@@ -1,10 +1,12 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.ultimategoal;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
 import org.firstinspires.ftc.teamcode.drivecontrol.Vector2d;
 
+@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Test Tracking", group = "TeleOp")
 public class TestTracking extends OpMode {
     Robot robot;

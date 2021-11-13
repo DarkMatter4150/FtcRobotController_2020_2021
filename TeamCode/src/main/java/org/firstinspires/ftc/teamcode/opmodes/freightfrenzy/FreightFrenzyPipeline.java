@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -121,12 +121,11 @@ public class FreightFrenzyPipeline extends OpenCvPipeline {
                     location = BarcodeLocation.NONE;
                 }
 
-                /*
+
                 telemetry.addData("X value", boundRect[i].x);
                 telemetry.addData("X width", boundRect[i].width);
                 telemetry.addData("X height", boundRect[i].height);
                 telemetry.addData("pos", pos);
-                */
             }
 
         }

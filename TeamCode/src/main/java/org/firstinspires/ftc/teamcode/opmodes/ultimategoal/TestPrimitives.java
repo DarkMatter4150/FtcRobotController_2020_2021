@@ -1,12 +1,14 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.ultimategoal;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
 import org.firstinspires.ftc.teamcode.tracking.SimplePathFollow;
 import org.firstinspires.ftc.teamcode.tracking.SimpleTracking;
 
+@Disabled
 @Autonomous(name="Test Primitives", group="Linear Opmode")
 
 public class TestPrimitives extends LinearOpMode {

@@ -1,14 +1,15 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.ultimategoal;
 
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
 import org.firstinspires.ftc.teamcode.drivecontrol.Vector2d;
 
 @Autonomous(name = "Diff Swerve Test Auto 1", group = "Linear Opmode")
-
+@Disabled
 public class TestAuto extends LinearOpMode {
     Robot robot;
     public boolean willResetIMU = true;

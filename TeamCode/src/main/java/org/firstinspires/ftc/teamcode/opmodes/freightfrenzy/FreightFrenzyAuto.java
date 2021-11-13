@@ -1,30 +1,22 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.coyote.geometry.Pose;
 import org.firstinspires.ftc.teamcode.coyote.path.Path;
 import org.firstinspires.ftc.teamcode.coyote.path.PathPoint;
 import org.firstinspires.ftc.teamcode.drivecontrol.Angle;
+import org.firstinspires.ftc.teamcode.drivecontrol.AutoHelper;
 import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
-
-import java.util.ArrayList;
 
 @Config
 @Autonomous(name = "Freight Frenzy Auto", group = "Linear Opmode")

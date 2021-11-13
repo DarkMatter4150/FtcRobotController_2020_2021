@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy;
 
-import static org.firstinspires.ftc.teamcode.opmodes.TestCameraT265.slamra;
+import static org.firstinspires.ftc.teamcode.opmodes.ultimategoal.TestCameraT265.slamra;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;

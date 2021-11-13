@@ -1,37 +1,34 @@
- package org.firstinspires.ftc.teamcode.opmodes;
+ package org.firstinspires.ftc.teamcode.opmodes.ultimategoal;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
-import com.arcrobotics.ftclib.geometry.Transform2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.qualcomm.robotcore.util.Range;
 import com.spartronics4915.lib.T265Camera;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.coyote.geometry.Pose;
 import org.firstinspires.ftc.teamcode.coyote.path.Path;
 import org.firstinspires.ftc.teamcode.coyote.path.PathPoint;
 import org.firstinspires.ftc.teamcode.drivecontrol.Angle;
+import org.firstinspires.ftc.teamcode.drivecontrol.AutoHelper;
 import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
 import org.firstinspires.ftc.teamcode.drivecontrol.RobotUtil;
 import org.firstinspires.ftc.teamcode.drivecontrol.Vector2d;
 
-import java.util.Vector;
-
 import static org.firstinspires.ftc.teamcode.drivecontrol.DriveModule.RotateModuleMode.DO_NOT_ROTATE_MODULES;
 import static org.firstinspires.ftc.teamcode.drivecontrol.DriveModule.RotateModuleMode.ROTATE_MODULES;
-import static org.firstinspires.ftc.teamcode.opmodes.TestCameraT265.slamra;
+import static org.firstinspires.ftc.teamcode.opmodes.ultimategoal.TestCameraT265.slamra;
 
  @Config
  @Autonomous(name = "T265 Test Auto", group = "Linear Opmode")
- 
+ @Disabled
  public class TestAutoT265 extends LinearOpMode {
  
      public static double SPEED = .5;

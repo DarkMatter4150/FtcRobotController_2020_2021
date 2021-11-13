@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy;
 
 import org.firstinspires.ftc.teamcode.drivecontrol.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;

@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.ultimategoal;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -19,9 +20,9 @@ import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
 import org.firstinspires.ftc.teamcode.drivecontrol.Vector2d;
 
 import static java.lang.Thread.sleep;
-import static org.firstinspires.ftc.teamcode.opmodes.TestCameraT265.slamra;
+import static org.firstinspires.ftc.teamcode.opmodes.ultimategoal.TestCameraT265.slamra;
 
-
+@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "State Machine TeleOp", group = "TeleOp")
 public class StateMachineTeleOp extends OpMode {
 

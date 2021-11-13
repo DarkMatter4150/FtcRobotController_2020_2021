@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.drivecontrol;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -12,15 +12,8 @@ import com.spartronics4915.lib.T265Camera;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.coyote.geometry.Pose;
 import org.firstinspires.ftc.teamcode.coyote.path.Path;
-import org.firstinspires.ftc.teamcode.coyote.path.PathPoint;
-import org.firstinspires.ftc.teamcode.drivecontrol.Angle;
-import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
-import org.firstinspires.ftc.teamcode.drivecontrol.RobotUtil;
-import org.firstinspires.ftc.teamcode.drivecontrol.Vector2d;
 
-import static org.firstinspires.ftc.teamcode.drivecontrol.DriveModule.RotateModuleMode.DO_NOT_ROTATE_MODULES;
-import static org.firstinspires.ftc.teamcode.drivecontrol.DriveModule.RotateModuleMode.ROTATE_MODULES;
-import static org.firstinspires.ftc.teamcode.opmodes.TestCameraT265.slamra;
+import static org.firstinspires.ftc.teamcode.opmodes.ultimategoal.TestCameraT265.slamra;
 
 public class AutoHelper {
 
