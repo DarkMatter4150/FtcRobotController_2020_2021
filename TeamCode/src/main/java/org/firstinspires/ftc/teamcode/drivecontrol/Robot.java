@@ -96,8 +96,9 @@ public class Robot {
      * Claw positions, open and closed
      */
     public static class IntakeServoPos {
-        static double OPEN = 0.83d; //TODO figure values
-        static double CLOSED = 1.0d;
+        static double UP = 0.2d; //TODO figure values
+        static double MIDDLE = 0.55d;
+        static double DOWN = 0.85d;
     }
 
     /**
@@ -107,10 +108,13 @@ public class Robot {
      */
     public void setIntakeServo(boolean open) {
         if (open) {
-            boxLifter.setPosition(IntakeServoPos.OPEN);
+            boxLifter.setPosition(IntakeServoPos.MIDDLE);
         } else {
-            boxLifter.setPosition(IntakeServoPos.CLOSED);
+            boxLifter.setPosition(IntakeServoPos.DOWN);
         }
+    }
+    public void initIntakeServo() {
+        boxLifter.setPosition(IntakeServoPos.UP);
     }
 
 

@@ -12,7 +12,6 @@ import com.spartronics4915.lib.T265Camera;
 
 import static org.firstinspires.ftc.teamcode.opmodes.ultimategoal.TestCameraT265.slamra;
 
-@Disabled
 @TeleOp(name="Test T265 2", group="Iterative Opmode")
 public class TestCamera2T265 extends OpMode
 {
@@ -57,8 +56,8 @@ public class TestCamera2T265 extends OpMode
 
         dashboard.sendTelemetryPacket(packet);
 
-        telemetry.addData("X", translation.getX());
-        telemetry.addData("Y", translation.getY());
+        telemetry.addData("X", -translation.getY());
+        telemetry.addData("Y", -translation.getX());
         telemetry.addData("Rotation", rotation.getDegrees());
         telemetry.update();
     }

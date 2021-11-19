@@ -22,7 +22,7 @@ public class FreightFrenzyPipeline extends OpenCvPipeline {
         NONE
     }
 
-    private int width = 320; // width of the image
+    private int width; // width of the image
     BarcodeLocation location;
     Telemetry telemetry;
 
@@ -60,8 +60,8 @@ public class FreightFrenzyPipeline extends OpenCvPipeline {
         /*Scalar lowHSV = new Scalar(0, 100, 90);
         Scalar highHSV = new Scalar(255, 180, 180); */
 
-        Scalar lowHSV = new Scalar(120, 40, 60); // lower bound HSV for yellow
-        Scalar highHSV = new Scalar(160, 255, 255); // higher bound HSV for yellow
+        Scalar lowHSV = new Scalar(120, 40, 50); // lower bound HSV for yellow
+        Scalar highHSV = new Scalar(170, 255, 255); // higher bound HSV for yellow
         Mat thresh = new Mat();
 
         // We'll get a black and white image. The white regions represent the regular stones.
@@ -93,39 +93,40 @@ public class FreightFrenzyPipeline extends OpenCvPipeline {
         // cover left and/or right side of the image
         double left_x = 0.33 * width;
         double right_x = 0.66 * width;
+        double middle_x = 0.5 * width;
         boolean left = false; // true if regular stone found on the left side
         boolean right = false; // "" "" on the right side
         boolean middle = false; // "" "" on the right side
         for (int i = 0; i != boundRect.length; i++) {
             // draw red bounding rectangles on mat
             // the mat has been converted to HSV so we need to use HSV as well
-            location = BarcodeLocation.NONE;
-            if (boundRect[i].height >= 50 && boundRect[i].width >= 50) {
+            //location = BarcodeLocation.RIGHT;
+            if (boundRect[i].height >= 100 && boundRect[i].width >= 80) {
                 Imgproc.rectangle(mat, boundRect[i], new Scalar(255, 0, 0));
                 Imgproc.rectangle(input, boundRect[i], new Scalar(255, 0, 0));
 
                 int pos = boundRect[i].x + (boundRect[i].width/2);
-                if (pos > right_x) {
-                    right = true;
-                    location = BarcodeLocation.RIGHT;
-                }
-                else if (pos >= left_x && pos <= right_x) {
+                if (pos >= middle_x) {
                     middle = true;
                     location = BarcodeLocation.MIDDLE;
                 }
-                else if (pos < left_x) {
+                else if (pos < middle_x) {
                     left = true;
                     location = BarcodeLocation.LEFT;
                 }
-                else {
-                    location = BarcodeLocation.NONE;
-                }
+                /*else {
+                    right = true;
+                    location = BarcodeLocation.RIGHT;
+                }*/
 
 
                 telemetry.addData("X value", boundRect[i].x);
                 telemetry.addData("X width", boundRect[i].width);
                 telemetry.addData("X height", boundRect[i].height);
                 telemetry.addData("pos", pos);
+            }
+            else {
+                location = BarcodeLocation.RIGHT;
             }
 
         }
@@ -134,7 +135,7 @@ public class FreightFrenzyPipeline extends OpenCvPipeline {
         telemetry.update();
         */
 
-        return thresh; // return the mat with rectangles drawn
+        return input; // return the mat with rectangles drawn
     }
 
     public BarcodeLocation getLocation() {

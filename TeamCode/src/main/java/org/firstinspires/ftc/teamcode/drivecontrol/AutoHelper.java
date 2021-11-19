@@ -164,8 +164,8 @@ public class AutoHelper {
 
         dashboard.sendTelemetryPacket(packet);
 
-        currentPose.x = startingPose.x + -translation.getY();
-        currentPose.y = startingPose.y + translation.getX();
+        currentPose.x = startingPose.x + -translation.getX();
+        currentPose.y = startingPose.y + -translation.getY();
         currentPose.angle = startingPose.angle - rotation.getDegrees();
 
         telemetry.addData("X", currentPose.x);

@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.spartronics4915.lib.T265Camera;
 
-@Disabled
 @TeleOp(name="Test T265", group="Iterative Opmode")
 public class TestCameraT265 extends OpMode
 {
@@ -56,7 +55,7 @@ public class TestCameraT265 extends OpMode
 
         dashboard.sendTelemetryPacket(packet);
         telemetry.addData("X", translation.getX());
-        telemetry.addData("Y", translation.getY());
+        telemetry.addData("Y", -translation.getY());
         telemetry.addData("Rotation", rotation.getDegrees());
         telemetry.update();
     }

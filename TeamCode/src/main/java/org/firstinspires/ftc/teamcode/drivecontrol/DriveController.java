@@ -507,7 +507,7 @@ public class DriveController {
         moduleRight.setDrivingStyle(toRobotCentric);
     }
 
-    public void rotateRobot(Angle targetAngle, double power, LinearOpMode linearOpMode) {
+    public void rotateRobot(Angle targetAngle, double power, LinearOpMode linearOpMode, double timeout) {
         double startTime = System.currentTimeMillis();
         rotateModules(Vector2d.FORWARD, false, DEFAULT_TIMEOUT_ROT_MODULES, linearOpMode);
 
@@ -516,7 +516,7 @@ public class DriveController {
         boolean isNegativeRotation = robot.getRobotHeading().directionTo(targetAngle) == Angle.Direction.CLOCKWISE;
 
         double absHeadingDiff = robot.getRobotHeading().getDifference(targetAngle);
-        while (absHeadingDiff > ALLOWED_MODULE_ROT_ERROR && linearOpMode.opModeIsActive() && iterations < MAX_ITERATIONS_ROBOT_ROTATE /*&& System.currentTimeMillis() - startTime < ROTATE_ROBOT_TIMEOUT*/) {
+        while (absHeadingDiff > ALLOWED_MODULE_ROT_ERROR && linearOpMode.opModeIsActive() && iterations < MAX_ITERATIONS_ROBOT_ROTATE && System.currentTimeMillis() - startTime < timeout) {
             robot.updateBulkData();
             //updateSLAMNav();
             absHeadingDiff = robot.getRobotHeading().getDifference(targetAngle);
@@ -536,8 +536,8 @@ public class DriveController {
         update(Vector2d.ZERO, 0);
     }
 
-    public void rotateRobot(Angle targetAngle, LinearOpMode linearOpMode) {
-        rotateRobot(targetAngle, 0.4, linearOpMode);
+    public void rotateRobot(Angle targetAngle, LinearOpMode linearOpMode, double timeout) {
+        rotateRobot(targetAngle, 0.4, linearOpMode, timeout);
     }
 
 

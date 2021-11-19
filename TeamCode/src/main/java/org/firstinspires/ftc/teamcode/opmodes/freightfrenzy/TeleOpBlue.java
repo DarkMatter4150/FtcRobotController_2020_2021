@@ -1,17 +1,15 @@
 package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy;
 
-import org.firstinspires.ftc.teamcode.drivecontrol.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.drivecontrol.Angle;
 import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
 import org.firstinspires.ftc.teamcode.drivecontrol.Vector2d;
 
-import org.firstinspires.ftc.teamcode.drivecontrol.Angle;
 
-
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "TeleOp")
-public class TeleOp extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOpBlue", group = "TeleOp")
+public class TeleOpBlue extends OpMode {
     Robot robot;
     public final double DEADBAND_MAG_NORMAL = 0.1;
     public final double DEADBAND_MAG_SLOW_MODE = 0.03;
@@ -185,7 +183,7 @@ public class TeleOp extends OpMode {
 
 
         if (xButton) {
-            robot.setDuckSpinnerPower(0.5F);
+            robot.setDuckSpinnerPower(-0.5F);
         }
         else {
             robot.setDuckSpinnerPower((float) (-rightTrigger2*.78));
@@ -213,14 +211,14 @@ public class TeleOp extends OpMode {
         if (yButton) {
             duckTimer = timer.milliseconds();
             while (timer.milliseconds() - duckTimer < 1100 && !dpadDown2) {
-                float speed = (float) (.0009*(timer.milliseconds() - duckTimer)+.1);
+                float speed = (float) -(.0009*(timer.milliseconds() - duckTimer)+.1);
                 robot.setDuckSpinnerPower(-speed);
             }
             while (timer.milliseconds() - duckTimer < 1600 && timer.milliseconds() - duckTimer >= 1100 && !dpadDown2) {
-                robot.setDuckSpinnerPower(-1);
+                robot.setDuckSpinnerPower(1);
             }
             while (timer.milliseconds() - duckTimer < 1650 && timer.milliseconds() - duckTimer >= 1600 && !dpadDown2) {
-                robot.setDuckSpinnerPower((float)0.1);
+                robot.setDuckSpinnerPower((float)-0.1);
             }
         }
     }
