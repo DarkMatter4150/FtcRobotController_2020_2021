@@ -20,7 +20,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 @Config
 @Autonomous(name = "Red Left", group = "Linear Opmode")
-public class RedLeftAuto extends LinearOpMode {
+public class
+RedLeftAuto extends LinearOpMode {
 
     public static double SPEED = .5;
     public static double PVALUE = .05;
@@ -28,7 +29,7 @@ public class RedLeftAuto extends LinearOpMode {
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    Pose startingPose = new Pose(-47.5, 0, 0);
+    Pose startingPose = new Pose(-35.5, 0, 0);
     Pose currentPose = new Pose().copy(startingPose);
 
     public Path current_path;

@@ -96,9 +96,9 @@ public class Robot {
      * Claw positions, open and closed
      */
     public static class IntakeServoPos {
-        static double UP = 0.2d; //TODO figure values
+        static double UP = 0.25d; //TODO figure values
         static double MIDDLE = 0.55d;
-        static double DOWN = 0.85d;
+        static double DOWN = 0.86d;
     }
 
     /**
