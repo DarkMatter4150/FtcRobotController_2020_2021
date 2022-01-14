@@ -165,6 +165,15 @@ public class Drivetrain extends DarkMatterMecanumDrive implements AbstractSubsys
         return new TrajectoryBuilder(startPose, startHeading, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
     }
 
+    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed, double maxVelo, double maxAccel) {
+        MinVelocityConstraint myVelConstraint = new MinVelocityConstraint(Arrays.asList(
+                new AngularVelocityConstraint(maxAccel),
+                new MecanumVelocityConstraint(maxVelo, TRACK_WIDTH)
+        ));
+        ProfileAccelerationConstraint myAccelConstraint = new ProfileAccelerationConstraint(maxAccel);
+        return new TrajectoryBuilder(startPose, reversed, myVelConstraint, myAccelConstraint);
+    }
+
     public TrajectorySequenceBuilder trajectorySequenceBuilder(Pose2d startPose) {
         return new TrajectorySequenceBuilder(
                 startPose,
@@ -172,7 +181,6 @@ public class Drivetrain extends DarkMatterMecanumDrive implements AbstractSubsys
                 MAX_ANG_VEL, MAX_ANG_ACCEL
         );
     }
-
 
     public void turnAsync(double angle) {
         trajectorySequenceRunner.followTrajectorySequenceAsync(

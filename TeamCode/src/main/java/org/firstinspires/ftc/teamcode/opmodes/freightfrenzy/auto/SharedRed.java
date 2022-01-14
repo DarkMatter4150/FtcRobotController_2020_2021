@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy.auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -20,6 +24,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 @Autonomous(name = "RedRight OpenCVTesting", preselectTeleOp = "Red TeleOp")
@@ -28,33 +33,33 @@ public class SharedRed extends BaseOpMode {
     OpenCvWebcam webcam;
     FreightFrenzyPipeline pipeline;
 
-     /**
+    /**
      * Runs when the OpMode initializes
      */
 
-     @Override
-     public  void setup() {
-         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+    @Override
+    public  void setup() {
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
-         pipeline = new FreightFrenzyPipeline(640, telemetry);
-         webcam.setPipeline(pipeline);
+        pipeline = new FreightFrenzyPipeline(640, telemetry);
+        webcam.setPipeline(pipeline);
 
-         webcam.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
-         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-             @Override
-             public void onOpened() {
-                 webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
-             }
+        webcam.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+            }
 
-             @Override
-             public void onError(int errorCode) {
-             }
-         });
+            @Override
+            public void onError(int errorCode) {
+            }
+        });
 
-         telemetry.addLine("Waiting for start");
-         telemetry.update();
-     }
+        telemetry.addLine("Waiting for start");
+        telemetry.update();
+    }
 
     @Override
     public void preRunLoop() {
@@ -63,7 +68,7 @@ public class SharedRed extends BaseOpMode {
 
         ElapsedTime autoTimer = new ElapsedTime();
         double average = 0;
-        Integer reps = 0;
+        double reps = 0;
         while (opModeIsActive() && autoTimer.milliseconds() <= 2500)
         {
             telemetry.addData("Analysis: ", pipeline.getLocation());
@@ -84,21 +89,23 @@ public class SharedRed extends BaseOpMode {
             sleep(50);
         }
 
-        float location = (float) (average/reps);
+        double location = (average/reps);
 
         if (location >= 2.5) {
             rightAuto();
         }
         else if (location < 2.5 && location >= 1.5) {
             //middle
+            rightAuto();
         }
         else {
-            leftAuto();
+            //leftAuto();
+            rightAuto();
         }
     }
 
 
-/**
+    /**
      * Main OpMode loop, automatically updates the robot
      */
 
@@ -151,25 +158,43 @@ public class SharedRed extends BaseOpMode {
     }
 
     public void rightAuto() {
-        robot.bucket.setPosition(Bucket.Positions.FORWARD);
 
-        Trajectory toAllianceHub = robot.drivetrain.trajectoryBuilder(robot.drivetrain.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-12,-46, Math.toRadians(90)))
+        TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(-6,-44, Math.toRadians(90)))
+                .turn(Math.toRadians(190))
                 .build();
-        robot.drivetrain.followTrajectory(toAllianceHub);
-        robot.drivetrain.turn(Math.toRadians(190));
+        robot.drivetrain.followTrajectorySequence(toAllianceHub);
+        //robot.drivetrain.turn(Math.toRadians(190));
+
+        Trajectory toAllianceHub2 = robot.drivetrain.trajectoryBuilder(robot.drivetrain.getPoseEstimate(), true, 10, 6)
+                .lineTo(new Vector2d(-14,-27))
+                .build();
+        robot.drivetrain.followTrajectory(toAllianceHub2);
+
+        TrajectorySequence toAllianceHub3 = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
+                .lineTo(new Vector2d(-14,-27)).setReversed(true).setVelConstraint(new MinVelocityConstraint(Arrays.asList(
+                        new AngularVelocityConstraint(3.0),
+                        new MecanumVelocityConstraint(3.0, 12)
+                ))).setAccelConstraint(new ProfileAccelerationConstraint(3.0))
+                .build();
+        //robot.drivetrain.followTrajectorySequence(toAllianceHub3);
+
 
         robot.lift.setTarget(Lift2.Points.HIGH);
         robot.lift.update();
         sleep(250);
-        robot.bucket.setPosition(Bucket.Positions.DUMP_HIGH);
-        sleep(750);
-        robot.intake.setPower(-0.75);
+        robot.bucket.setPosition(Bucket.Positions.FORWARD);
+        sleep(2000);
+        robot.bucket.setPosition(Bucket.Positions.AUTO_HIGH);
+        sleep(1000);
+        robot.intake.setPower(-0.5);
         sleep(750);
         robot.intake.setPower(0);
+        sleep(1000);
         robot.bucket.setPosition(Bucket.Positions.FORWARD);
-        robot.lift.setTarget(Lift2.Points.LOW);
+        robot.lift.setTarget(Lift2.Points.MIN);
         robot.lift.update();
+        sleep(250);
 
 
 
@@ -184,12 +209,12 @@ public class SharedRed extends BaseOpMode {
         //robot.carousel.setPower(0);
 
         TrajectorySequence toWarehouse = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(3,-43, Math.toRadians(0)))
+                .lineTo(new Vector2d(-7,-30))
+                .lineToLinearHeading(new Pose2d(0,-43, Math.toRadians(0)))
                 .lineToLinearHeading(new Pose2d(40,-43, Math.toRadians(0)))
                 .build();
-        //robot.drivetrain.followTrajectorySequence(toWarehouse);
+        robot.drivetrain.followTrajectorySequence(toWarehouse);
     }
 
 
 }
-
