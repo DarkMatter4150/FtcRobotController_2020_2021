@@ -1,24 +1,3 @@
-/*
-The MIT License (MIT)
-
-Copyright © 2021 Checkmate Robotics
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
-associated documentation files (the “Software”), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the
-following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial
-portions of the Software.
-
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
-LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -30,17 +9,16 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.Carousel;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Lift;
-import org.firstinspires.ftc.teamcode.robot.subsystems.Lift2;
 import org.firstinspires.ftc.teamcode.robot.subsystems.RealsenseLoader;
 import org.firstinspires.ftc.teamcode.robot.util.LynxModuleUtil;
 
 /**
  * The 2021-2022 robot class
  */
-public class CheckmateRobot extends AbstractRobot {
+public class FreightFrenzyRobot extends AbstractRobot {
     public final Drivetrain drivetrain;
     public final Carousel carousel;
-    public final Lift2 lift;
+    public final Lift lift;
     public final Intake intake;
     public final Bucket bucket;
 
@@ -49,7 +27,7 @@ public class CheckmateRobot extends AbstractRobot {
      * Set up the robot and initialize the subsystems you want to use
      * @param hardwareMap Passed in from the op mode
      */
-    public CheckmateRobot(HardwareMap hardwareMap) {
+    public FreightFrenzyRobot(HardwareMap hardwareMap) {
         super();
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
@@ -76,7 +54,7 @@ public class CheckmateRobot extends AbstractRobot {
         addSubsystem(bucket);
 
         // Set up the lift (it needs access to the bucket)
-        lift = new Lift2(hardwareMap,bucket,intake);
+        lift = new Lift(hardwareMap,bucket,intake);
         addSubsystem(lift);
     }
 }

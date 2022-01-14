@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.Range
 import org.firstinspires.ftc.teamcode.robot.HardwareNames.Motors
 import org.firstinspires.ftc.teamcode.robot.abstracts.AbstractSubsystem
 import kotlin.math.PI
+import kotlin.math.abs
 
 @Config
 class Lift(hardwareMap: HardwareMap, private val bucket: Bucket, private val intake: Intake) : AbstractSubsystem {
@@ -19,89 +20,44 @@ class Lift(hardwareMap: HardwareMap, private val bucket: Bucket, private val int
     // Keep track of the last position the motor was set to
     private var lastPosition = 0.0
 
-    private var tolerance: Int = 50
+    var currentPosition: Int = 0
+    var direction: Double = 1.0
+    var speed: Double = 0.0
+    var height: Int = 0
+    var smoothMode: Boolean = false
+    var equation: Double = 0.0
+
+    private var tolerance: Int = 100
 
     // This is weird because of the dashboard
     companion object {
-        @JvmField var liftBounds = LiftBounds(0.0, 26.0)
-        @JvmField var liftSetPoints = LiftSetPoints(0.0,12.0, 5000.0, 21.0)
-        @JvmField var runIntakeThreshold = 5.2
+        @JvmField var liftBounds = LiftBounds(0.0, 34990.0)
+        @JvmField var liftSetPoints = LiftSetPoints(3000.0, 30000.0, 34700.0)
     }
     data class LiftBounds(@JvmField var min: Double, @JvmField var max: Double)
     data class LiftSetPoints(
-        @JvmField var min: Double, @JvmField var low: Double, @JvmField var mid: Double, @JvmField var high: Double)
+        @JvmField var low: Double, @JvmField var mid: Double, @JvmField var high: Double)
 
     enum class Points {
         LOW, MID, HIGH, MIN, MAX
     }
 
-    // Multiplier for the height of the lift
-    private val spoolDiameter = 2 // inches
-    private val encoderTicksPerRev = 8192
-    private val ticksPerInch = 1600.0
-
-    // Latches to prevent calling functions multiple times per triggering event
-    private var zeroPositionLatch = false
-    private var runIntakeLatch = false
-
     override fun update() {
-        val tempHeight = height
-
-        if (!liftMotor1.isBusy) {
-            if (runIntakeLatch) {
-                runIntakeLatch = false
-                // When the lift stops moving, stop the intake
-                intake.power = 0.0
-            }
-        } else {
-            if (tempHeight < lastPosition && tempHeight < runIntakeThreshold
-                && !runIntakeLatch) {
-                runIntakeLatch = true
-                // When the lift starts moving down below the threshold, run the intake
-                intake.power = .5
-            }
-        }
-
-        if (!liftMotor1.isBusy && tempHeight == 0.0) {
-            if (!zeroPositionLatch) {
-                zeroPositionLatch = true
-                // When the lift stops moving at the 0 point, set the set the bucket position
-                //  to ZERO
-                bucket.position = Bucket.Positions.FORWARD
-            }
-        } else {
-            zeroPositionLatch = false
-        }
+        currentPosition = -encoder.currentPosition
+        runToPosition(height)
     }
 
-    var height: Double
-        set(value) {
-            // If this value is different from the last
-            if (height != value) {
-                lastPosition = height
-                // Calculate the ticks
-                val positionTicks = (
-                        Range.clip(
-                            value, liftBounds.min, liftBounds.max
-                        ) * ticksPerInch).toInt()
-                bucket.position = Bucket.Positions.BACKWARD
-                //runToPosition(positionTicks)
-            }
-        }
-        get() = (-encoder.currentPosition / ticksPerInch)
 
     var target: Points? = null
         set(value) {
             field = value
             when (value) {
-                Points.MIN -> height = liftBounds.min
-                Points.LOW -> height = liftSetPoints.low
-                Points.MID -> height = liftSetPoints.mid
-                Points.HIGH -> height = liftSetPoints.high
-                Points.MAX -> height = liftBounds.max
+                Points.MIN -> height = liftBounds.min.toInt()
+                Points.LOW -> height = liftSetPoints.low.toInt()
+                Points.MID -> height = liftSetPoints.mid.toInt()
+                Points.HIGH -> height = liftSetPoints.high.toInt()
+                Points.MAX -> height = liftBounds.max.toInt()
             }
-
-            //runToPosition(height)
         }
 
     init {
@@ -115,10 +71,9 @@ class Lift(hardwareMap: HardwareMap, private val bucket: Bucket, private val int
         }
 
         // Set it to run to a target position and hold it
-        liftMotor1.targetPosition = 0
         liftMotor1.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         liftMotor1.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-        liftMotor1.power = 1.0
+        liftMotor1.power = 0.0
 
         // Initialize the motor
         liftMotor2 = hardwareMap.get(DcMotorEx::class.java, Motors.LIFT2.name)
@@ -130,10 +85,9 @@ class Lift(hardwareMap: HardwareMap, private val bucket: Bucket, private val int
         }
 
         // Set it to run to a target position and hold it
-        liftMotor2.targetPosition = 0
         liftMotor2.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         liftMotor2.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-        liftMotor2.power = 1.0
+        liftMotor2.power = 0.0
 
         encoder = hardwareMap.get(DcMotorEx::class.java, Motors.LEFT_FRONT.name)
         encoder.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
@@ -141,22 +95,30 @@ class Lift(hardwareMap: HardwareMap, private val bucket: Bucket, private val int
     }
 
     private fun runToPosition(position: Int) {
-        var direction: Double
-        direction = 1.0
-        var speed: Double
-        speed = 0.3
-        if ((position - height) > 0 && Math.abs(position - height) > tolerance) {
-            direction = 1.0
+        //equation = ((0.00002)*abs(abs(position) - abs(currentPosition))) + 0.3
+        if ((abs(0.1*(abs(position) - abs(currentPosition)))+400) != 0.0) {
+            equation = ((-400.0)/(abs(0.1*(abs(position) - abs(currentPosition)))+400.0)) + 1.09
         }
-        if ((position - height) < 0 && Math.abs(position - height) > tolerance) {
-            direction = -1.0
-        }
-        else  {
-            direction = 0.0
+        else {
+            equation = ((0.00002)*abs(abs(position) - abs(currentPosition))) + 0.3
         }
 
-        liftMotor1.velocity = direction * speed
-        liftMotor2.velocity = direction * speed
+
+        if ((position - currentPosition) > 0 && abs(abs(position) - abs(currentPosition)) > tolerance) {
+            direction = 1.0
+            speed = equation
+        }
+        else if ((position - currentPosition) < 0 && abs(abs(position) - abs(currentPosition)) > tolerance) {
+            direction = -1.0
+            speed = equation
+        }
+        else  {
+            if (!smoothMode) {
+                speed = 0.0
+            }
+
+        }
+
         liftMotor1.power = direction * speed
         liftMotor2.power = direction * speed
     }

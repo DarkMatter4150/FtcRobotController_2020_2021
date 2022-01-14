@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy.auto;
+package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy.auto.other;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -29,6 +29,7 @@ import static org.firstinspires.ftc.teamcode.robot.subsystems.drivetrain.DriveCo
 
 import java.util.Locale;
 import java.util.Objects;
+@Disabled
 @Autonomous(preselectTeleOp = "Red TeleOp")
 public class RedLeft2 extends BaseOpMode {
     Pose2d startPose = new Pose2d(9, -63, Math.toRadians(90));

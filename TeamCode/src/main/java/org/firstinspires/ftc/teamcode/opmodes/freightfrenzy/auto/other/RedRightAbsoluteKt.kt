@@ -1,4 +1,4 @@
-/*
+package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy.auto.other/*
 package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy.auto
 
 import com.acmerobotics.roadrunner.geometry.Pose2d

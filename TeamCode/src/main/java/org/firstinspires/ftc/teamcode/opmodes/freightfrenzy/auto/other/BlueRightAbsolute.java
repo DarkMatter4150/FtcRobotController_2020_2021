@@ -1,4 +1,4 @@
-
+package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy.auto.other;/*
 package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -11,29 +11,29 @@ import org.firstinspires.ftc.teamcode.robot.CheckmateRobot;
 import org.firstinspires.ftc.teamcode.robot.subsystems.drivetrain.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.robot.util.PositionUtil;
 
-
+*/
 /*
  * This is an example of a more complex path to really test the tuning.
- */
+ *//*
 
 
 @SuppressWarnings("unused")
 @Autonomous(group = "drive")
-public class RedLeftAbsolute extends LinearOpMode {
+public class BlueRightAbsolute extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         CheckmateRobot robot = new CheckmateRobot(hardwareMap);
-        Pose2d startPose = new Pose2d(-39, -63, Math.toRadians(90));
-        waitForStart();
+        Pose2d startPose = new Pose2d(-39, 63, Math.toRadians(-90));
         PositionUtil.set(startPose);
         robot.drivetrain.setPoseEstimate(startPose);
+        waitForStart();
 
         if (isStopRequested()) return;
 
         sleep(3000);
 
         Trajectory toAllianceHub = robot.drivetrain.trajectoryBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(-11,-45))
+                .lineToConstantHeading(new Vector2d(11,45))
                 .build();
         robot.drivetrain.followTrajectory(toAllianceHub);
 
@@ -73,4 +73,4 @@ public class RedLeftAbsolute extends LinearOpMode {
         return robot.drivetrain.getPoseEstimate().getHeading();
     }
 }
-
+*/
