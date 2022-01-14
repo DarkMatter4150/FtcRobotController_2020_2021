@@ -26,6 +26,7 @@ class Bucket(hardwareMap: HardwareMap) : AbstractSubsystem {
         // The position when the bucket is all the way down
         DUMP(1.0),
         DUMP_HIGH(0.75),
+        AUTO_HIGH(0.85),
         // The position when the bucket is initialized
         INIT(0.7);
     }
