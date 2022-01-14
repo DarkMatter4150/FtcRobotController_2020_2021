@@ -10,6 +10,18 @@
 
 
 // Custom definitions may go here
+buildscript {
+    ext.kotlin_version = '1.5.31'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+apply plugin: "kotlin-android"
 
 // Include common definitions from above.
 apply from: '../build.common.gradle'
@@ -17,42 +29,26 @@ apply from: '../build.dependencies.gradle'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
+    androidResources {
+        noCompress 'tflite'
+    }
 }
 
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
-}
-dependencies {
-    //NOTE: this is the correct version, the below screenshot is outdated
-    implementation 'org.openftc:rev-extensions-2:1.2'
+
+    implementation 'org.apache.commons:commons-math3:3.6.1'
+
+    implementation 'com.acmerobotics.roadrunner:core:0.5.3'
+
+    implementation 'org.openftc:easyopencv:1.5.1'
+
+    // Realsense wrapper dependency
+    implementation 'com.spartronics4915.lib:ftc265:2.1.9'
 }
 
 repositories {
-    jcenter()
-
-    maven {
-        url "https://maven.0x778.tk"
-    }
-    maven { url "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
-
-    mavenCentral()
-}
-
-dependencies {
-    // This will get the latest compatible version
-    implementation 'com.spartronics4915.lib:ftc265:2.1.7'
-    implementation 'org.openftc:rev-extensions-2:1.2'
-
-    // TODO Bill: Had to remove because they were causing an error with resources:
-    // TODO C:\Users\Bill\.gradle\caches\transforms-2\files-2.1\85d86ad1681edc5ad46b44e92265cc70\core-1.7.0\res\values\values.xml:105:5-114:25: AAPT: error: resource android:attr/lStar not found.
-    // TODO both of these cause the error, so the ftclib package/aar must be using core-1.7.0 somehow
-//    implementation 'com.arcrobotics:ftclib:1.1.6'
-//    implementation 'com.arcrobotics.ftclib:vision:1.1.0'
-}
-
-allprojects {
-    repositories {
-        jcenter()
-    }
+    // Realsense wrapper repo
+    maven { url = "https://maven.0x778.tk" }
 }
