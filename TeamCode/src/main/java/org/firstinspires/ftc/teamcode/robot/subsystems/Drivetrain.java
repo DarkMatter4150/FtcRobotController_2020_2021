@@ -37,7 +37,6 @@ import androidx.annotation.Nullable;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
-import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -60,7 +59,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.robot.CheckmateRobot;
+import org.firstinspires.ftc.teamcode.robot.FreightFrenzyRobot;
 import org.firstinspires.ftc.teamcode.robot.HardwareNames;
 import org.firstinspires.ftc.teamcode.robot.abstracts.AbstractSubsystem;
 import org.firstinspires.ftc.teamcode.robot.abstracts.SuperController;
@@ -349,7 +348,7 @@ public class Drivetrain extends DarkMatterMecanumDrive implements AbstractSubsys
     @Override
     public void cleanup() { }
 
-    public void fieldOrientedDrive(CheckmateRobot robot, SuperController gp1, @Nullable Telemetry telemetry) {
+    public void fieldOrientedDrive(FreightFrenzyRobot robot, SuperController gp1, @Nullable Telemetry telemetry) {
         double angle = robot.drivetrain.getIMUHeading();
         double scaler = Range.clip(((1 - Math.abs(gp1.rightTrigger.rawValue.invoke())) + 0.2),-1,1);
 

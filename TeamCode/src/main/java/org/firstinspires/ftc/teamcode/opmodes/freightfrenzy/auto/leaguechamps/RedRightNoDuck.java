@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy.auto;
+package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy.auto.leaguechamps;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -8,16 +8,14 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstra
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.robot.abstracts.BaseOpMode;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Bucket;
 import org.firstinspires.ftc.teamcode.robot.subsystems.FreightFrenzyPipeline;
-import org.firstinspires.ftc.teamcode.robot.subsystems.Lift2;
+import org.firstinspires.ftc.teamcode.robot.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.robot.subsystems.drivetrain.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.robot.util.PoseUtil;
 import org.firstinspires.ftc.teamcode.robot.util.PositionUtil;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -27,11 +25,12 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
-@Autonomous(name = "RedRight OpenCVTesting", preselectTeleOp = "Red TeleOp")
-public class SharedRed extends BaseOpMode {
+@Autonomous(name = "Red Right No Duck", preselectTeleOp = "Red TeleOp")
+public class RedRightNoDuck extends BaseOpMode {
     Pose2d startPose = new Pose2d(9, -63, Math.toRadians(90));
     OpenCvWebcam webcam;
     FreightFrenzyPipeline pipeline;
+    public final long delay = 0;
 
     /**
      * Runs when the OpMode initializes
@@ -92,15 +91,18 @@ public class SharedRed extends BaseOpMode {
         double location = (average/reps);
 
         if (location >= 2.5) {
+            sleep(delay);
             rightAuto();
         }
         else if (location < 2.5 && location >= 1.5) {
-            //middle
+            //middleAuto();
+            sleep(delay);
             rightAuto();
         }
         else {
             //leftAuto();
-            rightAuto();
+            sleep(delay);
+            leftAuto();
         }
     }
 
@@ -140,7 +142,7 @@ public class SharedRed extends BaseOpMode {
         robot.bucket.setPosition(Bucket.Positions.INIT);
 
 
-        TrajectorySequence toDuck = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
+        /*TrajectorySequence toDuck = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
                 .lineToLinearHeading(new Pose2d(-60,-47, Math.toRadians(0)))
                 .lineToLinearHeading(new Pose2d(-67,-51, Math.toRadians(0)))
                 .build();
@@ -148,7 +150,7 @@ public class SharedRed extends BaseOpMode {
 
         robot.carousel.setPower(0.4);
         sleep(4000);
-        robot.carousel.setPower(0);
+        robot.carousel.setPower(0);*/
 
         TrajectorySequence toWarehouse = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
                 .lineToLinearHeading(new Pose2d(3,-43, Math.toRadians(0)))
@@ -180,7 +182,7 @@ public class SharedRed extends BaseOpMode {
         //robot.drivetrain.followTrajectorySequence(toAllianceHub3);
 
 
-        robot.lift.setTarget(Lift2.Points.HIGH);
+        robot.lift.setTarget(Lift.Points.HIGH);
         robot.lift.update();
         sleep(250);
         robot.bucket.setPosition(Bucket.Positions.FORWARD);
@@ -192,9 +194,11 @@ public class SharedRed extends BaseOpMode {
         robot.intake.setPower(0);
         sleep(1000);
         robot.bucket.setPosition(Bucket.Positions.FORWARD);
-        robot.lift.setTarget(Lift2.Points.MIN);
+        robot.lift.setTarget(Lift.Points.MIN);
         robot.lift.update();
         sleep(250);
+        robot.bucket.setPosition(Bucket.Positions.INIT);
+        robot.update();
 
 
 

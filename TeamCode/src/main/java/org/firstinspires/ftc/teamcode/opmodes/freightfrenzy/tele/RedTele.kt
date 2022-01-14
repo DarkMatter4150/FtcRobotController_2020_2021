@@ -1,20 +1,14 @@
 package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy.tele
 
 import com.acmerobotics.dashboard.config.Config
-import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
-import com.qualcomm.robotcore.util.Range
 import org.firstinspires.ftc.teamcode.robot.abstracts.BaseOpMode
 import org.firstinspires.ftc.teamcode.robot.util.PositionUtil
 import org.firstinspires.ftc.teamcode.robot.abstracts.Triggerables.TriggerableCallback
-import org.firstinspires.ftc.teamcode.robot.subsystems.Lift
 import org.firstinspires.ftc.teamcode.robot.subsystems.Bucket
-import org.firstinspires.ftc.teamcode.robot.subsystems.Lift2
-import org.firstinspires.ftc.teamcode.robot.util.Angle
-import org.firstinspires.ftc.teamcode.robot.util.Vector2d
+import org.firstinspires.ftc.teamcode.robot.subsystems.Lift
 import java.util.*
-import kotlin.math.abs
 
 @Config
 @TeleOp(name = "Red TeleOp")
@@ -58,10 +52,10 @@ class RedTele : BaseOpMode() {
 
         // Dpad does set points
 
-        gp2.dpadUp.onActivate = TriggerableCallback { robot.lift.target = Lift2.Points.HIGH }
-        gp2.dpadRight.onActivate = TriggerableCallback { robot.lift.target = Lift2.Points.LOW }
-        gp2.dpadLeft.onActivate = TriggerableCallback { robot.lift.target = Lift2.Points.MID }
-        gp2.dpadDown.onActivate = TriggerableCallback { robot.lift.target = Lift2.Points.MIN }
+        gp2.dpadUp.onActivate = TriggerableCallback { robot.lift.target = Lift.Points.HIGH }
+        gp2.dpadRight.onActivate = TriggerableCallback { robot.lift.target = Lift.Points.LOW }
+        gp2.dpadLeft.onActivate = TriggerableCallback { robot.lift.target = Lift.Points.MID }
+        gp2.dpadDown.onActivate = TriggerableCallback { robot.lift.target = Lift.Points.MIN }
 
         // X wiggles the bucket
         gp2.x.onActivate = TriggerableCallback {

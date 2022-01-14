@@ -1,39 +1,41 @@
-package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy.auto;/*
-package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy.auto;
+
+package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy.auto.other;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.robot.CheckmateRobot;
+import org.firstinspires.ftc.teamcode.robot.FreightFrenzyRobot;
 import org.firstinspires.ftc.teamcode.robot.subsystems.drivetrain.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.robot.util.PositionUtil;
 
-*/
+
 /*
  * This is an example of a more complex path to really test the tuning.
- *//*
+ */
 
 
 @SuppressWarnings("unused")
+@Disabled
 @Autonomous(group = "drive")
-public class BlueRightAbsolute extends LinearOpMode {
+public class RedLeftAbsolute extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        CheckmateRobot robot = new CheckmateRobot(hardwareMap);
-        Pose2d startPose = new Pose2d(-39, 63, Math.toRadians(-90));
+        FreightFrenzyRobot robot = new FreightFrenzyRobot(hardwareMap);
+        Pose2d startPose = new Pose2d(-39, -63, Math.toRadians(90));
+        waitForStart();
         PositionUtil.set(startPose);
         robot.drivetrain.setPoseEstimate(startPose);
-        waitForStart();
 
         if (isStopRequested()) return;
 
         sleep(3000);
 
         Trajectory toAllianceHub = robot.drivetrain.trajectoryBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(11,45))
+                .lineToConstantHeading(new Vector2d(-11,-45))
                 .build();
         robot.drivetrain.followTrajectory(toAllianceHub);
 
@@ -63,14 +65,14 @@ public class BlueRightAbsolute extends LinearOpMode {
         robot.cleanup();
     }
 
-    public double getX(CheckmateRobot robot) {
+    public double getX(FreightFrenzyRobot robot) {
         return robot.drivetrain.getPoseEstimate().getX();
     }
-    public double getY(CheckmateRobot robot) {
+    public double getY(FreightFrenzyRobot robot) {
         return robot.drivetrain.getPoseEstimate().getY();
     }
-    public double getRot(CheckmateRobot robot) {
+    public double getRot(FreightFrenzyRobot robot) {
         return robot.drivetrain.getPoseEstimate().getHeading();
     }
 }
-*/
+
