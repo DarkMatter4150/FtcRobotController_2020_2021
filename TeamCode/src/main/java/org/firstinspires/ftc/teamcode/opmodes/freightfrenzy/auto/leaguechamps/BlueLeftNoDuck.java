@@ -25,9 +25,9 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
-@Autonomous(name = "Red Right No Duck", preselectTeleOp = "Red TeleOp")
-public class RedRightNoDuck extends BaseOpMode {
-    Pose2d startPose = new Pose2d(9, -63, Math.toRadians(90));
+@Autonomous(name = "Blue Left No Duck", preselectTeleOp = "Blue TeleOp")
+public class BlueLeftNoDuck extends BaseOpMode {
+    Pose2d startPose = new Pose2d(-33, -63, Math.toRadians(90));
     OpenCvWebcam webcam;
     FreightFrenzyPipeline pipeline;
     public final long delay = 0;
@@ -39,7 +39,7 @@ public class RedRightNoDuck extends BaseOpMode {
     @Override
     public  void setup() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 2"), cameraMonitorViewId);
 
         pipeline = new FreightFrenzyPipeline(640, telemetry);
         webcam.setPipeline(pipeline);
@@ -92,18 +92,18 @@ public class RedRightNoDuck extends BaseOpMode {
 
         if (location >= 2.5) {
             sleep(delay);
-            rightAuto();
+            middleAuto();
         }
         else if (location < 1.5 && location >= 0.5) {
             //middleAuto();
             sleep(delay);
-            middleAuto();
+            leftAuto();
         }
         else {
             //leftAuto();
             sleep(delay);
-            middleAuto();
-            //leftAuto();
+            //middleAuto();
+            rightAuto();
         }
     }
 
@@ -152,12 +152,13 @@ public class RedRightNoDuck extends BaseOpMode {
         robot.carousel.setPower(0.4);
         sleep(4000);
         robot.carousel.setPower(0);*/
+
         double yNew = robot.drivetrain.getPoseEstimate().getY() - 5;
 
         TrajectorySequence toWarehouse = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineTo(new Vector2d(-7,yNew))
-                .lineToLinearHeading(new Pose2d(3,-43, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(40,-43, Math.toRadians(0)))
+                .lineTo(new Vector2d(-21,yNew))
+                .lineToLinearHeading(new Pose2d(-40,-43, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-87,-43, Math.toRadians(0)))
                 .build();
         robot.drivetrain.followTrajectorySequence(toWarehouse);
     }
@@ -219,10 +220,12 @@ public class RedRightNoDuck extends BaseOpMode {
         //sleep(4000);
         //robot.carousel.setPower(0);
 
+        double yNew2 = robot.drivetrain.getPoseEstimate().getY() - 5;
+
         TrajectorySequence toWarehouse = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineTo(new Vector2d(-7,-30))
-                .lineToLinearHeading(new Pose2d(0,-53, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(40,-53, Math.toRadians(0)))
+                .lineTo(new Vector2d(-21,yNew2))
+                .lineToLinearHeading(new Pose2d(-40,-43, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-87,-43, Math.toRadians(0)))
                 .build();
         robot.drivetrain.followTrajectorySequence(toWarehouse);
     }
@@ -280,10 +283,12 @@ public class RedRightNoDuck extends BaseOpMode {
         //sleep(4000);
         //robot.carousel.setPower(0);
 
+        double yNew2 = robot.drivetrain.getPoseEstimate().getY() - 5;
+
         TrajectorySequence toWarehouse = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineTo(new Vector2d(-7,-30))
-                .lineToLinearHeading(new Pose2d(0,-53, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(40,-53, Math.toRadians(0)))
+                .lineTo(new Vector2d(-21,yNew2))
+                .lineToLinearHeading(new Pose2d(-40,-43, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-87,-43, Math.toRadians(0)))
                 .build();
         robot.drivetrain.followTrajectorySequence(toWarehouse);
     }
