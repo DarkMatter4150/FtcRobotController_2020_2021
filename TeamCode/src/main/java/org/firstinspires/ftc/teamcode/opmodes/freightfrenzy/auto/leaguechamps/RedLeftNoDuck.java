@@ -25,9 +25,9 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
-@Autonomous(name = "Red Right No Duck", preselectTeleOp = "Red TeleOp")
-public class RedRightNoDuck extends BaseOpMode {
-    Pose2d startPose = new Pose2d(9, -63, Math.toRadians(90));
+@Autonomous(name = "Red Left No Duck", preselectTeleOp = "Red TeleOp")
+public class RedLeftNoDuck extends BaseOpMode {
+    Pose2d startPose = new Pose2d(-41, -63, Math.toRadians(90));
     OpenCvWebcam webcam;
     FreightFrenzyPipeline pipeline;
     public final long delay = 0;
@@ -102,8 +102,8 @@ public class RedRightNoDuck extends BaseOpMode {
         else {
             //leftAuto();
             sleep(delay);
-            middleAuto();
-            //leftAuto();
+            //middleAuto();
+            leftAuto();
         }
     }
 
@@ -152,6 +152,7 @@ public class RedRightNoDuck extends BaseOpMode {
         robot.carousel.setPower(0.4);
         sleep(4000);
         robot.carousel.setPower(0);*/
+
         double yNew = robot.drivetrain.getPoseEstimate().getY() - 5;
 
         TrajectorySequence toWarehouse = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
