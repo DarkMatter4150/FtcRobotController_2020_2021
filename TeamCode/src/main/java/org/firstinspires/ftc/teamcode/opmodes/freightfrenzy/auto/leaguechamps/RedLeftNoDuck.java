@@ -30,7 +30,7 @@ public class RedLeftNoDuck extends BaseOpMode {
     Pose2d startPose = new Pose2d(-41, -63, Math.toRadians(90));
     OpenCvWebcam webcam;
     FreightFrenzyPipeline pipeline;
-    public final long delay = 0;
+    public final long delay = 5000;
 
     /**
      * Runs when the OpMode initializes
@@ -58,6 +58,16 @@ public class RedLeftNoDuck extends BaseOpMode {
 
         telemetry.addLine("Waiting for start");
         telemetry.update();
+        int initAvg = 0;
+        int initReps = 0;
+        while (!opModeIsActive() && !isStopRequested()) {
+            telemetry.addData("Position", pipeline.getPosition());
+            telemetry.addData("Avg", (double)initAvg / (double) initReps);
+            telemetry.update();
+            initReps++;
+            initAvg+= pipeline.getPosition();
+            sleep(100);
+        }
     }
 
     @Override
@@ -68,18 +78,15 @@ public class RedLeftNoDuck extends BaseOpMode {
         ElapsedTime autoTimer = new ElapsedTime();
         double average = 0;
         double reps = 0;
-        while (opModeIsActive() && autoTimer.milliseconds() <= 2500)
-        {
-            telemetry.addData("Analysis: ", pipeline.getLocation());
-            telemetry.addData("Avg: ", average/reps);
+        while (opModeIsActive() && autoTimer.milliseconds() <= 2500) {
+            //telemetry.addData("Analysis: ", pipeline.getLocation());
+            telemetry.addData("Avg: ", (double)average/reps);
             telemetry.update();
 
-            if (pipeline.getLocation() == FreightFrenzyPipeline.BarcodeLocation.RIGHT) {
-                average+=3;
-                reps++;
-            }
-            else if (pipeline.getLocation() == FreightFrenzyPipeline.BarcodeLocation.MIDDLE) {
-                average+=1;
+
+
+            if (pipeline.getPosition() > 0) {
+                average+= pipeline.getPosition();
                 reps++;
             }
             else {
@@ -88,19 +95,29 @@ public class RedLeftNoDuck extends BaseOpMode {
             sleep(50);
         }
 
+        if (reps == 0) {
+            reps++;
+        }
+
         double location = (average/reps);
 
         if (location >= 2.5) {
+            telemetry.addData("Running Right Auto ", "1");
+            telemetry.update();
             sleep(delay);
             rightAuto();
         }
         else if (location < 1.5 && location >= 0.5) {
             //middleAuto();
+            telemetry.addData("Running Middle Auto ", "1");
+            telemetry.update();
             sleep(delay);
             middleAuto();
         }
         else {
             //leftAuto();
+            telemetry.addData("Running Left Auto ", "1");
+            telemetry.update();
             sleep(delay);
             //middleAuto();
             leftAuto();

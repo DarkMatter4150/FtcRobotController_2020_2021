@@ -24,6 +24,7 @@ public class FreightFrenzyPipeline extends OpenCvPipeline {
     private int width; // width of the image
     BarcodeLocation location;
     Telemetry telemetry;
+    int position;
 
     public FreightFrenzyPipeline(int width, Telemetry telemetry) {
         this.width = width;
@@ -108,15 +109,18 @@ public class FreightFrenzyPipeline extends OpenCvPipeline {
                 if (pos <= middle_x) {
                     middle = true;
                     location = BarcodeLocation.MIDDLE;
+                    position = 1;
                 }
                 else if (pos > middle_x) {
                     right = true;
                     location = BarcodeLocation.RIGHT;
+                    position = 3;
                 }
-                /*else {
-                    right = true;
-                    location = BarcodeLocation.RIGHT;
-                }*/
+                else {
+                    //right = true;
+                    //location = BarcodeLocation.RIGHT;
+                    position = 0;
+                }
 
 
                 telemetry.addData("X value", boundRect[i].x);
@@ -126,6 +130,7 @@ public class FreightFrenzyPipeline extends OpenCvPipeline {
             }
             else {
                 location = BarcodeLocation.LEFT;
+                //position = 0;
             }
 
         }
@@ -139,5 +144,9 @@ public class FreightFrenzyPipeline extends OpenCvPipeline {
 
     public BarcodeLocation getLocation() {
         return this.location;
+    }
+
+    public int getPosition() {
+        return this.position;
     }
 }

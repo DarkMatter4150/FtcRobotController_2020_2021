@@ -58,6 +58,17 @@ public class BlueRightNoDuck extends BaseOpMode {
 
         telemetry.addLine("Waiting for start");
         telemetry.update();
+
+        int initAvg = 0;
+        int initReps = 0;
+        while (!opModeIsActive() && !isStopRequested()) {
+            telemetry.addData("Position", pipeline.getPosition());
+            telemetry.addData("Avg", (double)initAvg / (double) initReps);
+            telemetry.update();
+            initReps++;
+            initAvg+= pipeline.getPosition();
+            sleep(100);
+        }
     }
 
     @Override
