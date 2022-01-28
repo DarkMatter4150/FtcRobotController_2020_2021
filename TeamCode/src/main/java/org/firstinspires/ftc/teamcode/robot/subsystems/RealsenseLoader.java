@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import android.os.Environment;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.robot.abstracts.AbstractSubsystem;
@@ -21,5 +23,9 @@ public class RealsenseLoader implements AbstractSubsystem {
 
 
     @Override
-    public void cleanup() { }
+    public void cleanup() {
+        assert RealsenseManager.slamera != null;
+        RealsenseManager.slamera.exportRelocalizationMap(Environment.DIRECTORY_DOWNLOADS);
+        RealsenseManager.slamera.stop();
+    }
 }
