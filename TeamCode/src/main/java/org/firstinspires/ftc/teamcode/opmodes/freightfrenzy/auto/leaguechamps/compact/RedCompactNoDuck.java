@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy.auto.leaguechamps;
+package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy.auto.leaguechamps.compact;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -25,8 +25,12 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
-@Autonomous(name = "Red Right No Duck", preselectTeleOp = "Red TeleOp")
-public class RedRightNoDuck extends BaseOpMode {
+@Autonomous(name = "Red Compact No Duck", preselectTeleOp = "Red TeleOp")
+public class RedCompactNoDuck extends BaseOpMode {
+    //STARTING LOCATION
+    //COORDINATES POSITIVE THETA IS CCW
+    //-X is down
+    //NEGATIVE Y is Right
     Pose2d startPose = new Pose2d(9, -63, Math.toRadians(90));
     OpenCvWebcam webcam;
     FreightFrenzyPipeline pipeline;
@@ -148,33 +152,24 @@ public class RedRightNoDuck extends BaseOpMode {
     }
 
     public void leftAuto() {
-        robot.bucket.setPosition(Bucket.Positions.FORWARD);
 
-        Trajectory toAllianceHub = robot.drivetrain.trajectoryBuilder(robot.drivetrain.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-12,-46, Math.toRadians(90)))
+        TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(15,-45, Math.toRadians(180)))
+                .strafeRight(27)
                 .build();
-        robot.drivetrain.followTrajectory(toAllianceHub);
+        robot.drivetrain.followTrajectorySequence(toAllianceHub);
 
+        robot.bucket.setPosition(Bucket.Positions.FORWARD);
+        sleep(500);
         robot.intake.setPower(-0.6);
         sleep(750);
         robot.intake.setPower(0);
         robot.bucket.setPosition(Bucket.Positions.INIT);
 
-
-        /*TrajectorySequence toDuck = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-60,-47, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(-67,-51, Math.toRadians(0)))
-                .build();
-        robot.drivetrain.followTrajectorySequence(toDuck);
-        robot.carousel.setPower(0.4);
-        sleep(4000);
-        robot.carousel.setPower(0);*/
-        double yNew = robot.drivetrain.getPoseEstimate().getY() - 5;
-
         TrajectorySequence toWarehouse = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineTo(new Vector2d(-7,yNew))
-                .lineToLinearHeading(new Pose2d(3,-43, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(40,-43, Math.toRadians(0)))
+                .lineTo(new Vector2d(16,-43))
+                .lineTo(new Vector2d(50,-43))
+                .turn(Math.toRadians(-100))
                 .build();
         robot.drivetrain.followTrajectorySequence(toWarehouse);
     }
@@ -182,30 +177,21 @@ public class RedRightNoDuck extends BaseOpMode {
     public void rightAuto() {
 
         TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-14,-47, Math.toRadians(90)))
-                .turn(Math.toRadians(190))
+                .lineToLinearHeading(new Pose2d(3,-45, Math.toRadians(0)))
+                .strafeLeft(24)
+                .back(8)
                 .build();
         robot.drivetrain.followTrajectorySequence(toAllianceHub);
-        //robot.drivetrain.turn(Math.toRadians(190));
 
-        double yNew = robot.drivetrain.getPoseEstimate().getY() + 5;
-
-        Trajectory toAllianceHub2 = robot.drivetrain.trajectoryBuilder(robot.drivetrain.getPoseEstimate(), true, 10, 6)
-                .lineTo(new Vector2d(-14,yNew))
-                .build();
-        robot.drivetrain.followTrajectory(toAllianceHub2);
-
-        TrajectorySequence toAllianceHub3 = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineTo(new Vector2d(-14,-30)).setReversed(true).setVelConstraint(new MinVelocityConstraint(Arrays.asList(
-                        new AngularVelocityConstraint(3.0),
-                        new MecanumVelocityConstraint(3.0, 12)
-                ))).setAccelConstraint(new ProfileAccelerationConstraint(3.0))
-                .build();
-        //robot.drivetrain.followTrajectorySequence(toAllianceHub3);
-
+        robot.bucket.setPosition(Bucket.Positions.FORWARD);
+        sleep(500);
 
         robot.lift.setTarget(Lift.Points.HIGH);
         robot.lift.update();
+        while (robot.lift.getCurrentPosition() < 34000) {
+            robot.lift.update();
+        }
+        robot.lift.setSpeed(0);
         sleep(250);
         robot.bucket.setPosition(Bucket.Positions.FORWARD);
         sleep(2000);
@@ -225,45 +211,28 @@ public class RedRightNoDuck extends BaseOpMode {
         robot.bucket.setPosition(Bucket.Positions.INIT);
 
 
-
-        TrajectorySequence toDuck = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-60,-55, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(-67,-60, Math.toRadians(0)))
-                .build();
-        //robot.drivetrain.followTrajectorySequence(toDuck);
-
-        //robot.carousel.setPower(0.4);
-        //sleep(4000);
-        //robot.carousel.setPower(0);
-
         TrajectorySequence toWarehouse = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineTo(new Vector2d(-7,-30))
-                .lineToLinearHeading(new Pose2d(0,-53, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(40,-53, Math.toRadians(0)))
+                .lineTo(new Vector2d(0,-43))
+                .lineTo(new Vector2d(48,-43))
+                .turn(Math.toRadians(100))
                 .build();
         robot.drivetrain.followTrajectorySequence(toWarehouse);
     }
     public void middleAuto() {
 
         TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-14,-47, Math.toRadians(90)))
-                .turn(Math.toRadians(190))
+                .lineToLinearHeading(new Pose2d(3,-45, Math.toRadians(0)))
+                .strafeLeft(25)
+                .back(5.5)
                 .build();
         robot.drivetrain.followTrajectorySequence(toAllianceHub);
-        //robot.drivetrain.turn(Math.toRadians(190));
 
-        double yNew = robot.drivetrain.getPoseEstimate().getY() + 5;
+        robot.bucket.setPosition(Bucket.Positions.FORWARD);
+        sleep(500);
 
-        Trajectory toAllianceHub2 = robot.drivetrain.trajectoryBuilder(robot.drivetrain.getPoseEstimate(), true, 10, 6)
-                .lineTo(new Vector2d(-14,yNew))
-                .build();
-        robot.drivetrain.followTrajectory(toAllianceHub2);
-
-
-
-        robot.lift.setTarget(Lift.Points.MID);
+        robot.lift.setTarget(Lift.Points.HIGH);
         robot.lift.update();
-        while (robot.lift.getCurrentPosition() < 29700) {
+        while (robot.lift.getCurrentPosition() < 34000) {
             robot.lift.update();
         }
         robot.lift.setSpeed(0);
@@ -286,21 +255,10 @@ public class RedRightNoDuck extends BaseOpMode {
         robot.bucket.setPosition(Bucket.Positions.INIT);
 
 
-
-        TrajectorySequence toDuck = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-60,-55, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(-67,-60, Math.toRadians(0)))
-                .build();
-        //robot.drivetrain.followTrajectorySequence(toDuck);
-
-        //robot.carousel.setPower(0.4);
-        //sleep(4000);
-        //robot.carousel.setPower(0);
-
         TrajectorySequence toWarehouse = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineTo(new Vector2d(-7,-30))
-                .lineToLinearHeading(new Pose2d(0,-53, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(40,-53, Math.toRadians(0)))
+                .lineTo(new Vector2d(0,-43))
+                .lineTo(new Vector2d(48,-43))
+                .turn(Math.toRadians(100))
                 .build();
         robot.drivetrain.followTrajectorySequence(toWarehouse);
     }
