@@ -21,6 +21,7 @@ public class FreightFrenzyRobot extends AbstractRobot {
     public final Lift lift;
     public final Intake intake;
     public final Bucket bucket;
+    public final RealsenseLoader odometry;
 
 
     /**
@@ -35,7 +36,8 @@ public class FreightFrenzyRobot extends AbstractRobot {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        addSubsystem(new RealsenseLoader(hardwareMap));
+        odometry = new RealsenseLoader(hardwareMap);
+        addSubsystem(odometry);
 
         // Set up the drivetrain
         drivetrain = new Drivetrain(hardwareMap);
