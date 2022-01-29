@@ -3,11 +3,6 @@ package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy.auto.leaguechamps.c
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
-import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -17,23 +12,23 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.Bucket;
 import org.firstinspires.ftc.teamcode.robot.subsystems.FreightFrenzyPipeline;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.robot.subsystems.drivetrain.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.robot.subsystems.realsenseloader.RealsenseManager;
 import org.firstinspires.ftc.teamcode.robot.util.PositionUtil;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
-@Autonomous(name = "Red Compact No Duck", preselectTeleOp = "Red TeleOp")
-public class RedCompactNoDuck extends BaseOpMode {
+
+@Autonomous(name = "Red Compact Duck", preselectTeleOp = "Red TeleOp")
+public class RedCompactDuck extends BaseOpMode {
     //STARTING LOCATION
     //COORDINATES POSITIVE THETA IS CCW
     //-X is down
     //NEGATIVE Y is Right
-    Pose2d startPose = new Pose2d(9, -63, Math.toRadians(90));
+    Pose2d startPose = new Pose2d(-41, -63, Math.toRadians(90));
+    ElapsedTime duck;
     OpenCvWebcam webcam;
     FreightFrenzyPipeline pipeline;
     public final long delay = 0;
@@ -43,13 +38,13 @@ public class RedCompactNoDuck extends BaseOpMode {
      */
 
     @Override
-    public  void setup() {
+    public void setup() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
         pipeline = new FreightFrenzyPipeline(640, telemetry);
         webcam.setPipeline(pipeline);
-
+        duck = new ElapsedTime();
         webcam.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -69,10 +64,10 @@ public class RedCompactNoDuck extends BaseOpMode {
         int initReps = 0;
         while (!opModeIsActive() && !isStopRequested()) {
             telemetry.addData("Position", pipeline.getPosition());
-            telemetry.addData("Avg", (double)initAvg / (double) initReps);
+            telemetry.addData("Avg", (double) initAvg / (double) initReps);
             telemetry.update();
             initReps++;
-            initAvg+= pipeline.getPosition();
+            initAvg += pipeline.getPosition();
             sleep(100);
         }
     }
@@ -88,17 +83,15 @@ public class RedCompactNoDuck extends BaseOpMode {
         double reps = 0;
         while (opModeIsActive() && autoTimer.milliseconds() <= 2500) {
             //telemetry.addData("Analysis: ", pipeline.getLocation());
-            telemetry.addData("Avg: ", (double)average/reps);
+            telemetry.addData("Avg: ", (double) average / reps);
             telemetry.update();
 
 
-
             if (pipeline.getPosition() > 0) {
-                average+= pipeline.getPosition();
+                average += pipeline.getPosition();
                 reps++;
-            }
-            else {
-                average+=0;
+            } else {
+                average += 0;
             }
             sleep(50);
         }
@@ -107,22 +100,20 @@ public class RedCompactNoDuck extends BaseOpMode {
             reps++;
         }
 
-        double location = (average/reps);
+        double location = (average / reps);
 
         if (location >= 2.5) {
             telemetry.addData("Running Right Auto ", "1");
             telemetry.update();
             sleep(delay);
             rightAuto();
-        }
-        else if (location < 1.5 && location >= 0.5) {
+        } else if (location < 1.5 && location >= 0.5) {
             //middleAuto();
             telemetry.addData("Running Middle Auto ", "1");
             telemetry.update();
             sleep(delay);
             middleAuto();
-        }
-        else {
+        } else {
             //leftAuto();
             telemetry.addData("Running Left Auto ", "1");
             telemetry.update();
@@ -147,7 +138,7 @@ public class RedCompactNoDuck extends BaseOpMode {
         telemetry.addData("x", position.getX());
         telemetry.addData("y", position.getY());
         telemetry.addData("h", Math.toDegrees(position.getHeading()));
-        telemetry.addData("runtime",String.format(Locale.ENGLISH,"%fs",getRuntime()));
+        telemetry.addData("runtime", String.format(Locale.ENGLISH, "%fs", getRuntime()));
         telemetry.addData("vX", velocity.getX());
         telemetry.addData("vY", velocity.getY());
         telemetry.addData("vH", Math.toDegrees(velocity.getHeading()));
@@ -156,35 +147,131 @@ public class RedCompactNoDuck extends BaseOpMode {
 
     public void leftAuto() {
 
+        TrajectorySequence toDuckSpinner = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(-36, -46, Math.toRadians(0)))
+                .back(36)
+                .strafeRight(5)
+                .build();
+        robot.drivetrain.followTrajectorySequence(toDuckSpinner);
+
+        robot.carousel.setPower(.5);
+        sleep(3000);
+        robot.carousel.setPower(0);
+        sleep(500);
+
         TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(15,-45, Math.toRadians(180)))
-                .strafeRight(27)
+                .forward(10)
+                .lineToLinearHeading(new Pose2d(-47, -20, Math.toRadians(0)))
+                .forward(2)
                 .build();
         robot.drivetrain.followTrajectorySequence(toAllianceHub);
 
         robot.bucket.setPosition(Bucket.Positions.FORWARD);
         sleep(500);
-        robot.intake.setPower(-0.6);
-        sleep(750);
+        robot.intake.setPower(-0.7);
+        sleep(2000);
         robot.intake.setPower(0);
         robot.bucket.setPosition(Bucket.Positions.INIT);
 
-        TrajectorySequence toWarehouse = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineTo(new Vector2d(16,-43))
-                .lineTo(new Vector2d(50,-43))
-                .turn(Math.toRadians(-100))
+        TrajectorySequence toStorage = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(-73, -32, Math.toRadians(0)))
                 .build();
-        robot.drivetrain.followTrajectorySequence(toWarehouse);
+        robot.drivetrain.followTrajectorySequence(toStorage);
     }
 
     public void rightAuto() {
 
+        TrajectorySequence toDuckSpinner = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(-36, -46, Math.toRadians(0)))
+                .back(36)
+                .strafeRight(5)
+                .build();
+        robot.drivetrain.followTrajectorySequence(toDuckSpinner);
+
+        robot.carousel.setPower(.5);
+        sleep(3000);
+        robot.carousel.setPower(0);
+        sleep(500);
+
         TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(3,-44, Math.toRadians(0)))
-                .strafeLeft(24.5)
-                .back(5)
+                .forward(10)
+                .lineToLinearHeading(new Pose2d(-47, -20, Math.toRadians(0)))
+                .turn(Math.toRadians(190))
                 .build();
         robot.drivetrain.followTrajectorySequence(toAllianceHub);
+
+        robot.bucket.setPosition(Bucket.Positions.FORWARD);
+        sleep(500);
+
+        robot.lift.setTarget(Lift.Points.HIGH);
+        robot.lift.update();
+        while (robot.lift.getCurrentPosition() < 33800) {
+            robot.lift.update();
+            telemetry.addData("Lift Height", robot.lift.getCurrentPosition());
+            telemetry.update();
+        }
+
+        Trajectory toAllianceHub2 = robot.drivetrain.trajectoryBuilder(robot.drivetrain.getPoseEstimate(), true)
+                .back(4)
+                .build();
+        robot.drivetrain.followTrajectory(toAllianceHub2);
+
+        robot.lift.setSpeed(0);
+        sleep(250);
+        robot.bucket.setPosition(Bucket.Positions.FORWARD);
+
+        sleep(250);
+        robot.bucket.setPosition(Bucket.Positions.FORWARD);
+        sleep(2000);
+        robot.bucket.setPosition(Bucket.Positions.AUTO_HIGH);
+        sleep(1000);
+        robot.intake.setPower(-0.55);
+        sleep(1500);
+        robot.intake.setPower(0);
+        sleep(1000);
+        robot.bucket.setPosition(Bucket.Positions.FORWARD);
+        robot.lift.setTarget(Lift.Points.MIN);
+        robot.lift.update();
+        while (robot.lift.getCurrentPosition() > 100) {
+            robot.lift.update();
+            robot.lift.setSpeed(.3);
+            telemetry.addData("Lift Height", robot.lift.getCurrentPosition());
+            telemetry.update();
+        }
+        robot.lift.setSpeed(0);
+        robot.bucket.setPosition(Bucket.Positions.INIT);
+
+        Trajectory toStorage = robot.drivetrain.trajectoryBuilder(robot.drivetrain.getPoseEstimate())
+                .lineTo(new Vector2d(-60, -32))
+                .build();
+        robot.drivetrain.followTrajectory(toStorage);
+    }
+
+    public void middleAuto() {
+
+        TrajectorySequence toDuckSpinner = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(-36, -46, Math.toRadians(0)))
+                .back(36)
+                .strafeRight(5)
+                .build();
+        robot.drivetrain.followTrajectorySequence(toDuckSpinner);
+
+        robot.carousel.setPower(.5);
+        sleep(3000);
+        robot.carousel.setPower(0);
+        sleep(500);
+
+        TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
+                .forward(15)
+                .lineToLinearHeading(new Pose2d(-47, -22, Math.toRadians(0)))
+                .turn(Math.toRadians(190))
+                .build();
+        robot.drivetrain.followTrajectorySequence(toAllianceHub);
+
+        Trajectory toAllianceHub2 = robot.drivetrain.trajectoryBuilder(robot.drivetrain.getPoseEstimate(), true)
+                .back(1)
+                .build();
+        robot.drivetrain.followTrajectory(toAllianceHub2);
 
         robot.bucket.setPosition(Bucket.Positions.FORWARD);
         sleep(500);
@@ -199,60 +286,14 @@ public class RedCompactNoDuck extends BaseOpMode {
         robot.lift.setSpeed(0);
         sleep(250);
         robot.bucket.setPosition(Bucket.Positions.FORWARD);
-        sleep(2000);
-        robot.bucket.setPosition(Bucket.Positions.AUTO_HIGH);
-        sleep(1000);
-        robot.intake.setPower(-0.55);
-        sleep(750);
-        robot.intake.setPower(0);
-        sleep(1000);
-        robot.bucket.setPosition(Bucket.Positions.FORWARD);
-        robot.lift.setTarget(Lift.Points.MIN);
-        robot.lift.update();
-        while (robot.lift.getCurrentPosition() > 100) {
-            robot.lift.update();
-            telemetry.addData("Lift Height", robot.lift.getCurrentPosition());
-            telemetry.update();
-        }
-        robot.lift.setSpeed(0);
-        robot.bucket.setPosition(Bucket.Positions.INIT);
 
-
-        TrajectorySequence toWarehouse = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineTo(new Vector2d(0,-43))
-                .lineTo(new Vector2d(48,-43))
-                .turn(Math.toRadians(100))
-                .build();
-        robot.drivetrain.followTrajectorySequence(toWarehouse);
-    }
-    public void middleAuto() {
-
-        TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(3,-44, Math.toRadians(0)))
-                .strafeLeft(24.5)
-                .back(4)
-                .build();
-        robot.drivetrain.followTrajectorySequence(toAllianceHub);
-
-        robot.bucket.setPosition(Bucket.Positions.FORWARD);
-        sleep(500);
-
-        robot.lift.setHeight(27500);
-        robot.lift.update();
-        while (robot.lift.getCurrentPosition() < 27200) {
-            robot.lift.update();
-            telemetry.addData("Lift Height", robot.lift.getCurrentPosition());
-            telemetry.update();
-        }
-        robot.lift.setHeight(robot.lift.getCurrentPosition());
-        robot.lift.setSpeed(0);
         sleep(250);
         robot.bucket.setPosition(Bucket.Positions.FORWARD);
         sleep(2000);
         robot.bucket.setPosition(Bucket.Positions.AUTO_LOW);
         sleep(1000);
-        robot.intake.setPower(-0.7);
-        sleep(750);
+        robot.intake.setPower(-0.55);
+        sleep(1500);
         robot.intake.setPower(0);
         sleep(1000);
         robot.bucket.setPosition(Bucket.Positions.FORWARD);
@@ -260,16 +301,15 @@ public class RedCompactNoDuck extends BaseOpMode {
         robot.lift.update();
         while (robot.lift.getCurrentPosition() > 100) {
             robot.lift.update();
+            telemetry.addData("Lift Height", robot.lift.getCurrentPosition());
+            telemetry.update();
         }
         robot.lift.setSpeed(0);
         robot.bucket.setPosition(Bucket.Positions.INIT);
 
-
-        TrajectorySequence toWarehouse = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineTo(new Vector2d(0,-43))
-                .lineTo(new Vector2d(48,-43))
-                .turn(Math.toRadians(100))
+        Trajectory toStorage = robot.drivetrain.trajectoryBuilder(robot.drivetrain.getPoseEstimate())
+                .lineTo(new Vector2d(-60, -32))
                 .build();
-        robot.drivetrain.followTrajectorySequence(toWarehouse);
+        robot.drivetrain.followTrajectory(toStorage);
     }
 }
