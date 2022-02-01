@@ -223,7 +223,7 @@ public class BlueCompactNoDuck extends BaseOpMode {
 
         TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
                 .lineToLinearHeading(new Pose2d(3,44, Math.toRadians(0)))
-                .strafeRight(24.5)
+                .strafeRight(25)
                 .back(4)
                 .build();
         robot.drivetrain.followTrajectorySequence(toAllianceHub);
