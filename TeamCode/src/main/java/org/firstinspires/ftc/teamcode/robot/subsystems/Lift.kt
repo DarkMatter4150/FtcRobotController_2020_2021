@@ -12,7 +12,7 @@ import kotlin.math.PI
 import kotlin.math.abs
 
 @Config
-class Lift(hardwareMap: HardwareMap, private val bucket: Bucket, private val intake: Intake) : AbstractSubsystem {
+class Lift(hardwareMap: HardwareMap, private val bucket: Bucket, private val intake: Intake, private val capper: Capper) : AbstractSubsystem {
     val liftMotor1: DcMotorEx
     val liftMotor2: DcMotorEx
     val encoder: DcMotorEx
@@ -109,7 +109,7 @@ class Lift(hardwareMap: HardwareMap, private val bucket: Bucket, private val int
             speed = equation
         }
         else if ((position - currentPosition) < 0 && abs(abs(position) - abs(currentPosition)) > tolerance) {
-            direction = -1.0
+            direction = -0.7
             speed = equation
         }
         else  {
@@ -119,7 +119,13 @@ class Lift(hardwareMap: HardwareMap, private val bucket: Bucket, private val int
 
         }
 
-        liftMotor1.power = direction * speed
-        liftMotor2.power = direction * speed
+        if (capper.armPosition != Capper.ArmPositions.DOWN) {// && bucket.position != Bucket.Positions.BACKWARD) {
+            liftMotor1.power = direction * speed
+            liftMotor2.power = direction * speed
+        }
+        else {
+            speed = 0.0
+            height = currentPosition;
+        }
     }
 }

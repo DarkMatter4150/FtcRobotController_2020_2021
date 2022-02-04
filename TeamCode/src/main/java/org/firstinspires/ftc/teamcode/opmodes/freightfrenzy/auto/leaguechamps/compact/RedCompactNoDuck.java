@@ -252,7 +252,7 @@ public class RedCompactNoDuck extends BaseOpMode {
         robot.bucket.setPosition(Bucket.Positions.AUTO_LOW);
         sleep(1000);
         robot.intake.setPower(-0.7);
-        sleep(750);
+        sleep(2000);
         robot.intake.setPower(0);
         sleep(1000);
         robot.bucket.setPosition(Bucket.Positions.FORWARD);

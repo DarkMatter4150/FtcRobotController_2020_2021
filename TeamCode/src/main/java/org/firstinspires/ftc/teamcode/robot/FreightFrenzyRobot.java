@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.robot.abstracts.AbstractRobot;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Bucket;
+import org.firstinspires.ftc.teamcode.robot.subsystems.Capper;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Carousel;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Intake;
@@ -22,6 +23,7 @@ public class FreightFrenzyRobot extends AbstractRobot {
     public final Intake intake;
     public final Bucket bucket;
     public final RealsenseLoader odometry;
+    public final Capper capper;
 
 
     /**
@@ -55,8 +57,12 @@ public class FreightFrenzyRobot extends AbstractRobot {
         bucket = new Bucket(hardwareMap);
         addSubsystem(bucket);
 
+        capper = new Capper(hardwareMap);
+        addSubsystem(capper);
+
         // Set up the lift (it needs access to the bucket)
-        lift = new Lift(hardwareMap,bucket,intake);
+        lift = new Lift(hardwareMap,bucket,intake,capper);
         addSubsystem(lift);
+
     }
 }
