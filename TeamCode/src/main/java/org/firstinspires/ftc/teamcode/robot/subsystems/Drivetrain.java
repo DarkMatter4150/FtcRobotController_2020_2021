@@ -204,7 +204,7 @@ public class Drivetrain extends DarkMatterMecanumDrive implements AbstractSubsys
 
     public void followTrajectory(Trajectory trajectory) {
         followTrajectoryAsync(trajectory);
-        waitForIdle();// Maddy was here mwahahahaha
+        waitForIdle();
     }
 
     public void followTrajectorySequenceAsync(org.firstinspires.ftc.teamcode.robot.subsystems.drivetrain.trajectorysequence.TrajectorySequence trajectorySequence) {
@@ -348,7 +348,7 @@ public class Drivetrain extends DarkMatterMecanumDrive implements AbstractSubsys
     @Override
     public void cleanup() { }
 
-    public void fieldOrientedDrive(FreightFrenzyRobot robot, SuperController gp1, @Nullable Telemetry telemetry) {
+    public void fieldOrientedDrive(FreightFrenzyRobot robot, SuperController gp1) {
         double angle = robot.drivetrain.getIMUHeading();
         double scaler = Range.clip(((1 - Math.abs(gp1.rightTrigger.rawValue.invoke())) + 0.2),-1,1);
 
@@ -377,10 +377,6 @@ public class Drivetrain extends DarkMatterMecanumDrive implements AbstractSubsys
         }
 
         robot.drivetrain.setMotorPowers(frontLeft, backLeft, backRight, frontRight);
-
-        if (telemetry != null) {
-            telemetry.addData("Heading: ", angle);
-        }
     }
     public void resetIMU() {
         imu.initialize(parameters);

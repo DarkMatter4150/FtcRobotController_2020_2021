@@ -77,7 +77,9 @@ public class HardwareNames {
     public enum Servos {
 
         BUCKET ("intakeServo",-1,1, false),
-        INTAKESERVO ("intakeServo",-1,1, false);
+        INTAKESERVO ("intakeServo",-1,1, false),
+        ARM ("armServo",-1,1, false),
+        CLAW ("clawServo",-1,1, false);
 
         public final String name;
         public final double upperLimit;

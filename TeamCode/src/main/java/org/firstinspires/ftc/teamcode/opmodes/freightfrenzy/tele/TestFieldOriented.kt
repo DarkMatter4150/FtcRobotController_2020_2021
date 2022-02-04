@@ -10,6 +10,6 @@ class TestFieldOriented : BaseOpMode() {
         gp1.y.onActivate = TriggerableCallback { robot.drivetrain.resetIMU() }
     }
     override fun runLoop() {
-        robot.drivetrain.fieldOrientedDrive(robot, gp1, telemetry)
+        robot.drivetrain.fieldOrientedDrive(robot, gp1)
     }
 }
