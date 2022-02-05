@@ -31,6 +31,7 @@ public class BlueCompactNoDuck extends BaseOpMode {
     OpenCvWebcam webcam;
     FreightFrenzyPipeline pipeline;
     public final long delay = 0;
+    ElapsedTime timer = new ElapsedTime();
 
     /**
      * Runs when the OpMode initializes
@@ -224,16 +225,17 @@ public class BlueCompactNoDuck extends BaseOpMode {
         TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
                 .lineToLinearHeading(new Pose2d(3,44, Math.toRadians(0)))
                 .strafeRight(25)
-                .back(4)
+                .back(3.75)
                 .build();
         robot.drivetrain.followTrajectorySequence(toAllianceHub);
 
         robot.bucket.setPosition(Bucket.Positions.FORWARD);
         sleep(500);
 
-        robot.lift.setHeight(27500);
+        robot.lift.setHeight(28600);
         robot.lift.update();
-        while (robot.lift.getCurrentPosition() < 27200) {
+        timer.reset();
+        while (robot.lift.getCurrentPosition() < 28198 && timer.milliseconds() <= 3000) {
             robot.lift.update();
             telemetry.addData("Lift Height", robot.lift.getCurrentPosition());
             telemetry.update();

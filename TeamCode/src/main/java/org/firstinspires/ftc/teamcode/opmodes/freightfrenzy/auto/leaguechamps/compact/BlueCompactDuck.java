@@ -32,6 +32,7 @@ public class BlueCompactDuck extends BaseOpMode {
     OpenCvWebcam webcam;
     FreightFrenzyPipeline pipeline;
     public final long delay = 0;
+    ElapsedTime timer = new ElapsedTime();
 
     /**
      * Runs when the OpMode initializes
@@ -164,7 +165,7 @@ public class BlueCompactDuck extends BaseOpMode {
         TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
                 .strafeLeft(10)
                 .lineToLinearHeading(new Pose2d(-47, 18, Math.toRadians(0)))
-                .forward(3)
+                .forward(3.65)
                 .build();
         robot.drivetrain.followTrajectorySequence(toAllianceHub);
 
@@ -176,7 +177,7 @@ public class BlueCompactDuck extends BaseOpMode {
         robot.bucket.setPosition(Bucket.Positions.INIT);
 
         TrajectorySequence toStorage = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-73, 31, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-69, 26, Math.toRadians(0)))
                 .build();
         robot.drivetrain.followTrajectorySequence(toStorage);
     }
@@ -196,13 +197,13 @@ public class BlueCompactDuck extends BaseOpMode {
         sleep(500);
 
         TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .strafeLeft(20)
+                .strafeLeft(18)
                 .turn(Math.toRadians(-100))
                 .build();
         robot.drivetrain.followTrajectorySequence(toAllianceHub);
 
         Trajectory toAllianceHub2 = robot.drivetrain.trajectoryBuilder(robot.drivetrain.getPoseEstimate(), true)
-                .lineToLinearHeading(new Pose2d(-29, 20, Math.toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(-29, 21, Math.toRadians(-180)))
                 .build();
         robot.drivetrain.followTrajectory(toAllianceHub2);
 
@@ -228,9 +229,9 @@ public class BlueCompactDuck extends BaseOpMode {
 
         sleep(250);
         robot.bucket.setPosition(Bucket.Positions.FORWARD);
-        sleep(2000);
-        robot.bucket.setPosition(Bucket.Positions.AUTO_HIGH);
         sleep(1000);
+        robot.bucket.setPosition(Bucket.Positions.AUTO_HIGH);
+        sleep(750);
         robot.intake.setPower(-0.55);
         sleep(1500);
         robot.intake.setPower(0);
@@ -248,7 +249,7 @@ public class BlueCompactDuck extends BaseOpMode {
         robot.bucket.setPosition(Bucket.Positions.INIT);
 
         Trajectory toStorage = robot.drivetrain.trajectoryBuilder(robot.drivetrain.getPoseEstimate())
-                .lineTo(new Vector2d(-55, 32.5))
+                .lineTo(new Vector2d(-55, 33))
                 .build();
         robot.drivetrain.followTrajectory(toStorage);
     }
@@ -281,16 +282,17 @@ public class BlueCompactDuck extends BaseOpMode {
         robot.bucket.setPosition(Bucket.Positions.FORWARD);
         sleep(500);
 
-        robot.lift.setHeight(27500);
+        robot.lift.setHeight(28600);
         robot.lift.update();
-        while (robot.lift.getCurrentPosition() < 27200) {
+        timer.reset();
+        while (robot.lift.getCurrentPosition() < 28198 && timer.milliseconds() <= 2000) {
             robot.lift.update();
             telemetry.addData("Lift Height", robot.lift.getCurrentPosition());
             telemetry.update();
         }
 
         Trajectory toAllianceHub3 = robot.drivetrain.trajectoryBuilder(robot.drivetrain.getPoseEstimate(), true)
-                .back(3)
+                .back(4)
                 .build();
         robot.drivetrain.followTrajectory(toAllianceHub3);
 
@@ -300,10 +302,10 @@ public class BlueCompactDuck extends BaseOpMode {
 
         sleep(250);
         robot.bucket.setPosition(Bucket.Positions.FORWARD);
-        sleep(2000);
-        robot.bucket.setPosition(Bucket.Positions.AUTO_LOW);
         sleep(1000);
-        robot.intake.setPower(-0.55);
+        robot.bucket.setPosition(Bucket.Positions.AUTO_LOW);
+        sleep(750);
+        robot.intake.setPower(-0.45);
         sleep(1500);
         robot.intake.setPower(0);
         sleep(1000);

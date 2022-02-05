@@ -37,6 +37,7 @@ public class RedCompactNoDuck extends BaseOpMode {
     OpenCvWebcam webcam;
     FreightFrenzyPipeline pipeline;
     public final long delay = 0;
+    ElapsedTime timer = new ElapsedTime();
 
     /**
      * Runs when the OpMode initializes
@@ -181,7 +182,7 @@ public class RedCompactNoDuck extends BaseOpMode {
 
         TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
                 .lineToLinearHeading(new Pose2d(3,-44, Math.toRadians(0)))
-                .strafeLeft(24.5)
+                .strafeLeft(22.5)
                 .back(5)
                 .build();
         robot.drivetrain.followTrajectorySequence(toAllianceHub);
@@ -229,7 +230,7 @@ public class RedCompactNoDuck extends BaseOpMode {
 
         TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
                 .lineToLinearHeading(new Pose2d(3,-44, Math.toRadians(0)))
-                .strafeLeft(24.5)
+                .strafeLeft(21.75)
                 .back(4)
                 .build();
         robot.drivetrain.followTrajectorySequence(toAllianceHub);
@@ -237,9 +238,10 @@ public class RedCompactNoDuck extends BaseOpMode {
         robot.bucket.setPosition(Bucket.Positions.FORWARD);
         sleep(500);
 
-        robot.lift.setHeight(27500);
+        robot.lift.setHeight(26600);
         robot.lift.update();
-        while (robot.lift.getCurrentPosition() < 27200) {
+        timer.reset();
+        while (robot.lift.getCurrentPosition() < 26198 && timer.milliseconds() <= 1000) {
             robot.lift.update();
             telemetry.addData("Lift Height", robot.lift.getCurrentPosition());
             telemetry.update();
