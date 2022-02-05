@@ -32,6 +32,7 @@ public class RedCompactDuck extends BaseOpMode {
     OpenCvWebcam webcam;
     FreightFrenzyPipeline pipeline;
     public final long delay = 0;
+    ElapsedTime timer = new ElapsedTime();
 
     /**
      * Runs when the OpMode initializes
@@ -174,7 +175,7 @@ public class RedCompactDuck extends BaseOpMode {
         robot.bucket.setPosition(Bucket.Positions.INIT);
 
         TrajectorySequence toStorage = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-73, -32, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-73, -30, Math.toRadians(0)))
                 .build();
         robot.drivetrain.followTrajectorySequence(toStorage);
     }
@@ -205,7 +206,8 @@ public class RedCompactDuck extends BaseOpMode {
 
         robot.lift.setTarget(Lift.Points.HIGH);
         robot.lift.update();
-        while (robot.lift.getCurrentPosition() < 33800) {
+        timer.reset();
+        while (robot.lift.getCurrentPosition() < 33800 && timer.milliseconds() <= 2000) {
             robot.lift.update();
             telemetry.addData("Lift Height", robot.lift.getCurrentPosition());
             telemetry.update();
@@ -222,13 +224,13 @@ public class RedCompactDuck extends BaseOpMode {
 
         sleep(250);
         robot.bucket.setPosition(Bucket.Positions.FORWARD);
-        sleep(2000);
-        robot.bucket.setPosition(Bucket.Positions.AUTO_HIGH);
         sleep(1000);
+        robot.bucket.setPosition(Bucket.Positions.AUTO_HIGH);
+        sleep(750);
         robot.intake.setPower(-0.55);
         sleep(1500);
         robot.intake.setPower(0);
-        sleep(1000);
+        sleep(750);
         robot.bucket.setPosition(Bucket.Positions.FORWARD);
         robot.lift.setTarget(Lift.Points.MIN);
         robot.lift.update();
@@ -242,7 +244,7 @@ public class RedCompactDuck extends BaseOpMode {
         robot.bucket.setPosition(Bucket.Positions.INIT);
 
         Trajectory toStorage = robot.drivetrain.trajectoryBuilder(robot.drivetrain.getPoseEstimate())
-                .lineTo(new Vector2d(-60, -32))
+                .lineTo(new Vector2d(-60, -30))
                 .build();
         robot.drivetrain.followTrajectory(toStorage);
     }
@@ -262,14 +264,14 @@ public class RedCompactDuck extends BaseOpMode {
         sleep(500);
 
         TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .forward(15)
-                .lineToLinearHeading(new Pose2d(-47, -22, Math.toRadians(0)))
+                .forward(17)
+                .lineToLinearHeading(new Pose2d(-47, -19, Math.toRadians(0)))
                 .turn(Math.toRadians(190))
                 .build();
         robot.drivetrain.followTrajectorySequence(toAllianceHub);
 
         Trajectory toAllianceHub2 = robot.drivetrain.trajectoryBuilder(robot.drivetrain.getPoseEstimate(), true)
-                .back(1)
+                .back(4)
                 .build();
         robot.drivetrain.followTrajectory(toAllianceHub2);
 
@@ -278,7 +280,10 @@ public class RedCompactDuck extends BaseOpMode {
 
         robot.lift.setTarget(Lift.Points.HIGH);
         robot.lift.update();
-        while (robot.lift.getCurrentPosition() < 33800) {
+        robot.lift.setHeight(27600);
+        robot.lift.update();
+        timer.reset();
+        while (robot.lift.getCurrentPosition() < 27198 && timer.milliseconds() <= 1500) {
             robot.lift.update();
             telemetry.addData("Lift Height", robot.lift.getCurrentPosition());
             telemetry.update();
@@ -289,13 +294,13 @@ public class RedCompactDuck extends BaseOpMode {
 
         sleep(250);
         robot.bucket.setPosition(Bucket.Positions.FORWARD);
-        sleep(2000);
-        robot.bucket.setPosition(Bucket.Positions.AUTO_LOW);
         sleep(1000);
+        robot.bucket.setPosition(Bucket.Positions.AUTO_LOW);
+        sleep(750);
         robot.intake.setPower(-0.55);
         sleep(1500);
         robot.intake.setPower(0);
-        sleep(1000);
+        sleep(750);
         robot.bucket.setPosition(Bucket.Positions.FORWARD);
         robot.lift.setTarget(Lift.Points.MIN);
         robot.lift.update();
