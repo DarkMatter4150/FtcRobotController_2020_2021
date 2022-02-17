@@ -64,9 +64,12 @@ import org.firstinspires.ftc.teamcode.robot.HardwareNames;
 import org.firstinspires.ftc.teamcode.robot.abstracts.AbstractSubsystem;
 import org.firstinspires.ftc.teamcode.robot.abstracts.SuperController;
 import org.firstinspires.ftc.teamcode.robot.subsystems.drivetrain.DarkMatterMecanumDrive;
+import org.firstinspires.ftc.teamcode.robot.subsystems.drivetrain.localizers.BiLocalizer;
 import org.firstinspires.ftc.teamcode.robot.subsystems.drivetrain.localizers.RealsenseLocalizer;
+import org.firstinspires.ftc.teamcode.robot.subsystems.drivetrain.localizers.TrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.robot.subsystems.drivetrain.trajectorysequence.SuperTrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.robot.subsystems.drivetrain.trajectorysequence.TrajectorySequenceBuilder;
+import org.firstinspires.ftc.teamcode.robot.util.Encoder;
 import org.firstinspires.ftc.teamcode.robot.util.LynxModuleUtil;
 
 import java.util.ArrayList;
@@ -96,6 +99,9 @@ public class Drivetrain extends DarkMatterMecanumDrive implements AbstractSubsys
     private final DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private final List<DcMotorEx> motors;
 
+    private Encoder bl;
+    private Encoder br;
+
     private final BNO055IMU imu;
     private final VoltageSensor batteryVoltageSensor;
     BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -123,6 +129,9 @@ public class Drivetrain extends DarkMatterMecanumDrive implements AbstractSubsys
         rightRear = hardwareMap.get(DcMotorEx.class, HardwareNames.Motors.RIGHT_REAR.name);
         rightFront = hardwareMap.get(DcMotorEx.class, HardwareNames.Motors.RIGHT_FRONT.name);
 
+        br = new Encoder(rightRear);
+        bl = new Encoder(leftRear);
+
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
         for (DcMotorEx motor : motors) {
@@ -147,7 +156,8 @@ public class Drivetrain extends DarkMatterMecanumDrive implements AbstractSubsys
         }
 
         // DONE: if desired, use setLocalizer() to change the localization method
-        setLocalizer(new RealsenseLocalizer(hardwareMap));
+        //setLocalizer(new RealsenseLocalizer(hardwareMap)); //original, camera only loclizer
+        setLocalizer(new BiLocalizer(hardwareMap));
 
         trajectorySequenceRunner = new SuperTrajectorySequenceRunner(follower, HEADING_PID);
     }
@@ -301,6 +311,37 @@ public class Drivetrain extends DarkMatterMecanumDrive implements AbstractSubsys
         rightRear.setPower(v2);
         rightFront.setPower(v3);
     }
+
+    public double getEncoderValues(int which) {
+
+        if (which == 0) {
+            return bl.getCurrentPosition();
+        }
+        else {
+            return br.getCurrentPosition();
+        }
+
+    }
+
+    public void resetEncoderValues(int which) {
+
+        if (which == 0) {
+            leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+        else if (which == 1){
+            rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+        else {
+            leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+    }
+
 
     @Override
     public double getRawExternalHeading() {

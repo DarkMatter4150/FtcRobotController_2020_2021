@@ -25,7 +25,7 @@ public class RealsenseLoader implements AbstractSubsystem {
     @Override
     public void cleanup() {
         assert RealsenseManager.slamera != null;
-        RealsenseManager.slamera.exportRelocalizationMap(Environment.DIRECTORY_DOWNLOADS);
+        //RealsenseManager.slamera.exportRelocalizationMap(Environment.DIRECTORY_DOWNLOADS);
         RealsenseManager.slamera.stop();
     }
 }
