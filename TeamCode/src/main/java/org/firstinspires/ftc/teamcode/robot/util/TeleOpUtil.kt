@@ -122,7 +122,7 @@ object TeleOpUtil {
 
         gp2.leftTrigger.whileActive =
             TriggerableCallback { robot.intake.power =
-                -gp2.leftTrigger.rawValue.invoke().toDouble() * 0.45
+                -gp2.leftTrigger.rawValue.invoke().toDouble() * 0.8
             }
 
         gp2.leftTrigger.onDeactivate =

@@ -31,8 +31,8 @@ class Lift(hardwareMap: HardwareMap, private val bucket: Bucket, private val int
 
     // This is weird because of the dashboard
     companion object {
-        @JvmField var liftBounds = LiftBounds(0.0, 34990.0)
-        @JvmField var liftSetPoints = LiftSetPoints(3000.0, 30000.0, 34700.0)
+        @JvmField var liftBounds = LiftBounds(0.0, 35000.0)
+        @JvmField var liftSetPoints = LiftSetPoints(3000.0, 30000.0, 35000.0)
     }
     data class LiftBounds(@JvmField var min: Double, @JvmField var max: Double)
     data class LiftSetPoints(

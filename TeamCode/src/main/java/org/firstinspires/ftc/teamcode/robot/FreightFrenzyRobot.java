@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.Carousel;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.robot.subsystems.OdometryDeploy;
 import org.firstinspires.ftc.teamcode.robot.subsystems.RealsenseLoader;
 import org.firstinspires.ftc.teamcode.robot.util.LynxModuleUtil;
 
@@ -24,6 +25,7 @@ public class FreightFrenzyRobot extends AbstractRobot {
     public final Bucket bucket;
     public final RealsenseLoader odometry;
     public final Capper capper;
+    public final OdometryDeploy deployer;
 
 
     /**
@@ -63,6 +65,10 @@ public class FreightFrenzyRobot extends AbstractRobot {
         // Set up the lift (it needs access to the bucket)
         lift = new Lift(hardwareMap,bucket,intake,capper);
         addSubsystem(lift);
+
+        //Add the odometry deployer subsystem
+        deployer = new OdometryDeploy(hardwareMap);
+        addSubsystem(deployer);
 
     }
 }

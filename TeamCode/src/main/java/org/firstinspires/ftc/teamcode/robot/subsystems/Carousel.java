@@ -57,13 +57,13 @@ public class Carousel implements AbstractSubsystem {
         if (alliance.equalsIgnoreCase("blue")) {
             duckTimer = timer.milliseconds();
             while (timer.milliseconds() - duckTimer < 1100 && !gp2.rightBumper.getActive()) {
-                float speed = (float) (.0009 * (timer.milliseconds() - duckTimer) + .1);
+                float speed = (float) (.0008 * (timer.milliseconds() - duckTimer) + .1);
                 setPower(-speed);
             }
-            while (timer.milliseconds() - duckTimer < 1600 && timer.milliseconds() - duckTimer >= 1100 && !gp2.rightBumper.getActive()) {
+            while (timer.milliseconds() - duckTimer < 1800 && timer.milliseconds() - duckTimer >= 1100 && !gp2.rightBumper.getActive()) {
                 setPower(-1);
             }
-            while (timer.milliseconds() - duckTimer < 1650 && timer.milliseconds() - duckTimer >= 1600 && !gp2.rightBumper.getActive()) {
+            while (timer.milliseconds() - duckTimer < 1850 && timer.milliseconds() - duckTimer >= 1800 && !gp2.rightBumper.getActive()) {
                 setPower((float) 0.1);
             }
             setPower(0);
@@ -71,13 +71,13 @@ public class Carousel implements AbstractSubsystem {
         else {
             duckTimer = timer.milliseconds();
             while (timer.milliseconds() - duckTimer < 1100 && !gp2.rightBumper.getActive()) {
-                float speed = (float) -(.0009*(timer.milliseconds() - duckTimer)+.1);
+                float speed = (float) -(.0008*(timer.milliseconds() - duckTimer)+.1);
                 setPower(-speed);
             }
-            while (timer.milliseconds() - duckTimer < 1600 && timer.milliseconds() - duckTimer >= 1100 && !gp2.rightBumper.getActive()) {
+            while (timer.milliseconds() - duckTimer < 1800 && timer.milliseconds() - duckTimer >= 1100 && !gp2.rightBumper.getActive()) {
                 setPower(1);
             }
-            while (timer.milliseconds() - duckTimer < 1650 && timer.milliseconds() - duckTimer >= 1600 && !gp2.rightBumper.getActive()) {
+            while (timer.milliseconds() - duckTimer < 1850 && timer.milliseconds() - duckTimer >= 1800 && !gp2.rightBumper.getActive()) {
                 setPower((float) -0.1);
             }
             setPower(0);

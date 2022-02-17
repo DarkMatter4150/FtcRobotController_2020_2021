@@ -56,9 +56,9 @@ public class HardwareNames {
     }
 
     public enum Encoders {
-        LEFT ("leftRear", true),
-        FRONT ("leftFront", false),
-        RIGHT ("rightRear", false),
+        LEFT ("fl", true),
+        FRONT ("fr", false),
+        RIGHT ("br", false),
         LIFT1 ("lift1", false),
         LIFT2 ("lift2", true);
 
@@ -79,7 +79,10 @@ public class HardwareNames {
         BUCKET ("intakeServo",-1,1, false),
         INTAKESERVO ("intakeServo",-1,1, false),
         ARM ("armServo",-1,1, false),
-        CLAW ("clawServo",-1,1, false);
+        CLAW ("clawServo",-1,1, false),
+        LEFT ("leftServo",-1,1, false),
+        RIGHT ("rightServo",-1,1, false),
+        BACK ("backServo",-1,1, false);
 
         public final String name;
         public final double upperLimit;

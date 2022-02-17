@@ -157,7 +157,7 @@ public class BlueCompactDuck extends BaseOpMode {
                 .build();
         robot.drivetrain.followTrajectorySequence(toDuckSpinner);
 
-        robot.carousel.setPower(-0.5);
+        robot.carousel.setPower(-0.4);
         sleep(3000);
         robot.carousel.setPower(0);
         sleep(500);
@@ -191,7 +191,7 @@ public class BlueCompactDuck extends BaseOpMode {
                 .build();
         robot.drivetrain.followTrajectorySequence(toDuckSpinner);
 
-        robot.carousel.setPower(-0.5);
+        robot.carousel.setPower(-0.4);
         sleep(3000);
         robot.carousel.setPower(0);
         sleep(500);
@@ -203,7 +203,7 @@ public class BlueCompactDuck extends BaseOpMode {
         robot.drivetrain.followTrajectorySequence(toAllianceHub);
 
         Trajectory toAllianceHub2 = robot.drivetrain.trajectoryBuilder(robot.drivetrain.getPoseEstimate(), true)
-                .lineToLinearHeading(new Pose2d(-29, 21, Math.toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(-29, 20, Math.toRadians(-180)))
                 .build();
         robot.drivetrain.followTrajectory(toAllianceHub2);
 
@@ -263,7 +263,7 @@ public class BlueCompactDuck extends BaseOpMode {
                 .build();
         robot.drivetrain.followTrajectorySequence(toDuckSpinner);
 
-        robot.carousel.setPower(-0.5);
+        robot.carousel.setPower(-0.4);
         sleep(3000);
         robot.carousel.setPower(0);
         sleep(500);

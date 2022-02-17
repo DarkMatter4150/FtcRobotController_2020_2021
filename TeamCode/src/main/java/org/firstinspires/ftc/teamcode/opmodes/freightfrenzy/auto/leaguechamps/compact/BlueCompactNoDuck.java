@@ -153,7 +153,7 @@ public class BlueCompactNoDuck extends BaseOpMode {
 
         TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
                 .lineToLinearHeading(new Pose2d(17,45, Math.toRadians(180)))
-                .strafeLeft(27)
+                 .strafeLeft(24)
                 .build();
         robot.drivetrain.followTrajectorySequence(toAllianceHub);
 
@@ -176,7 +176,7 @@ public class BlueCompactNoDuck extends BaseOpMode {
 
         TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
                 .lineToLinearHeading(new Pose2d(3,44, Math.toRadians(0)))
-                .strafeRight(24.5)
+                .strafeRight(21.5)
                 .back(5)
                 .build();
         robot.drivetrain.followTrajectorySequence(toAllianceHub);
@@ -197,7 +197,7 @@ public class BlueCompactNoDuck extends BaseOpMode {
         sleep(2000);
         robot.bucket.setPosition(Bucket.Positions.AUTO_HIGH);
         sleep(1000);
-        robot.intake.setPower(-0.55);
+        robot.intake.setPower(-0.62);
         sleep(750);
         robot.intake.setPower(0);
         sleep(1000);
@@ -224,7 +224,7 @@ public class BlueCompactNoDuck extends BaseOpMode {
 
         TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
                 .lineToLinearHeading(new Pose2d(3,44, Math.toRadians(0)))
-                .strafeRight(25)
+                .strafeRight(21.5)
                 .back(3.75)
                 .build();
         robot.drivetrain.followTrajectorySequence(toAllianceHub);
