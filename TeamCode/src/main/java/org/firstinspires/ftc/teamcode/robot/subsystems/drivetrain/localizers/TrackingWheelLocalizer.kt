@@ -29,13 +29,13 @@ class TrackingWheelLocalizer(hardwareMap: HardwareMap) : ThreeTrackingWheelLocal
         Pose2d(FORWARD_OFFSET, 0.0, Math.toRadians(90.0)) // front
     )
 ) {
-    private val leftEncoder: Encoder
-    private val rightEncoder: Encoder
-    private val backEncoder: Encoder
+     val leftEncoder: Encoder
+     val rightEncoder: Encoder
+     val backEncoder: Encoder
     override fun getWheelPositions(): List<Double> {
         return listOf(
             encoderTicksToInches(leftEncoder.currentPosition.toDouble()) * X_MULTIPLIER,
-            encoderTicksToInches(rightEncoder.currentPosition.toDouble()) * X_MULTIPLIER,
+            encoderTicksToInches(rightEncoder.currentPosition.toDouble()) * -X_MULTIPLIER,
             encoderTicksToInches(backEncoder.currentPosition.toDouble()) * Y_MULTIPLIER
         )
     }
@@ -58,8 +58,8 @@ class TrackingWheelLocalizer(hardwareMap: HardwareMap) : ThreeTrackingWheelLocal
         @JvmField var WHEEL_RADIUS = 0.944882 // in, = 24 mm
         @JvmField var GEAR_RATIO = 1.0 // output (wheel) speed / input (encoder) speed
         @JvmField
-        var LATERAL_DISTANCE = 8.12153 // in; distance between the left and right wheels
-        @JvmField var FORWARD_OFFSET = -4.0 // in; offset of the lateral wheel
+        var LATERAL_DISTANCE = 14.75 // in; distance between the left and right wheels
+        @JvmField var FORWARD_OFFSET = -6.6 // in; offset of the lateral wheel
         @JvmField var X_MULTIPLIER = 1.0 // Multiplier in the X direction
         @JvmField var Y_MULTIPLIER = 1.0 // Multiplier in the Y direction
 

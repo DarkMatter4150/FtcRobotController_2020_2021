@@ -56,7 +56,7 @@ public class HardwareNames {
     }
 
     public enum Encoders {
-        LEFT ("fl", true),
+        LEFT ("bl", true),
         FRONT ("fr", false),
         RIGHT ("br", false),
         LIFT1 ("lift1", false),

@@ -22,12 +22,12 @@ class OdometryDeploy(hardwareMap: HardwareMap) : AbstractSubsystem {
     enum class ServoPositions(@JvmField val position: Double) {
         // Positions where the Odo pods are retracted
         RIGHT_UP(0.0),
-        LEFT_UP(0.0),
+        LEFT_UP(1.0),
         BACK_UP(0.0),
         // Positions where the Odo pods are extended to track
-        RIGHT_DOWN(0.0),
-        LEFT_DOWN(0.0),
-        BACK_DOWN(0.0);
+        RIGHT_DOWN(1.0),
+        LEFT_DOWN(-1.0),
+        BACK_DOWN(1.0);
     }
 
     /**
@@ -72,13 +72,23 @@ class OdometryDeploy(hardwareMap: HardwareMap) : AbstractSubsystem {
         }
 
         // Set the position to the rest position
-        rightPosition = ServoPositions.RIGHT_DOWN
-        leftPosition = ServoPositions.LEFT_DOWN
-        backPosition = ServoPositions.BACK_UP
+        down()
         /*
         leftServo.position = ServoPositions.LEFT_DOWN.position
         rightServo.position = ServoPositions.RIGHT_DOWN.position
         backServo.position = ServoPositions.BACK_UP.position
          */
+    }
+
+    fun up() {
+        rightPosition = ServoPositions.RIGHT_UP
+        leftPosition = ServoPositions.LEFT_UP
+        backPosition = ServoPositions.BACK_UP
+    }
+
+    fun down() {
+        rightPosition = ServoPositions.RIGHT_DOWN
+        leftPosition = ServoPositions.LEFT_DOWN
+        backPosition = ServoPositions.BACK_DOWN
     }
 }

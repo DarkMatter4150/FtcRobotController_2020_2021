@@ -40,6 +40,7 @@ import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
@@ -101,6 +102,7 @@ public class Drivetrain extends DarkMatterMecanumDrive implements AbstractSubsys
 
     private Encoder bl;
     private Encoder br;
+    private Encoder fr;
 
     private final BNO055IMU imu;
     private final VoltageSensor batteryVoltageSensor;
@@ -131,6 +133,9 @@ public class Drivetrain extends DarkMatterMecanumDrive implements AbstractSubsys
 
         br = new Encoder(rightRear);
         bl = new Encoder(leftRear);
+        fr = new Encoder(rightFront);
+
+
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -157,6 +162,7 @@ public class Drivetrain extends DarkMatterMecanumDrive implements AbstractSubsys
 
         // DONE: if desired, use setLocalizer() to change the localization method
         //setLocalizer(new RealsenseLocalizer(hardwareMap)); //original, camera only loclizer
+        //setLocalizer(new TrackingWheelLocalizer(hardwareMap));
         setLocalizer(new BiLocalizer(hardwareMap));
 
         trajectorySequenceRunner = new SuperTrajectorySequenceRunner(follower, HEADING_PID);
@@ -317,10 +323,11 @@ public class Drivetrain extends DarkMatterMecanumDrive implements AbstractSubsys
         if (which == 0) {
             return bl.getCurrentPosition();
         }
-        else {
+        else if (which == 1 ){
             return br.getCurrentPosition();
+        } else {
+            return fr.getCurrentPosition();
         }
-
     }
 
     public void resetEncoderValues(int which) {
@@ -338,6 +345,8 @@ public class Drivetrain extends DarkMatterMecanumDrive implements AbstractSubsys
             leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
     }
@@ -422,4 +431,5 @@ public class Drivetrain extends DarkMatterMecanumDrive implements AbstractSubsys
     public void resetIMU() {
         imu.initialize(parameters);
     }
+
 }

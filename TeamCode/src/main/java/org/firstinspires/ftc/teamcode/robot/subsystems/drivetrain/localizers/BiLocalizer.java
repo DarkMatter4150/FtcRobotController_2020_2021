@@ -22,7 +22,7 @@ public class BiLocalizer implements Localizer {
     private final TrackingWheelLocalizer trackingWheelLocalizer;
 
     private ConfidenceTracker confidenceTracker = ConfidenceTracker.HIGH;
-    private TrackerType activeTracker = TrackerType.WHEELS;
+    TrackerType activeTracker = TrackerType.WHEELS;
 
     /**
      * Keeps track of what the latest confidence was. If the confidence just turned to HIGH,
@@ -54,7 +54,7 @@ public class BiLocalizer implements Localizer {
     @NonNull
     @Override
     public Pose2d getPoseEstimate() {
-        if (confidenceTracker == ConfidenceTracker.HIGH) {
+        if (activeTracker == TrackerType.SLAM) {
             return realsenseLocalizer.getPoseEstimate();
         } else {
             return trackingWheelLocalizer.getPoseEstimate();
@@ -80,7 +80,12 @@ public class BiLocalizer implements Localizer {
     public Pose2d getPoseVelocity() {
         // Using the camera's pose velocity because it takes the
         // tracking wheels into consideration when generating it
-        return realsenseLocalizer.getPoseVelocity();
+
+        if (activeTracker == TrackerType.SLAM) {
+            return realsenseLocalizer.getPoseVelocity();
+        } else {
+            return trackingWheelLocalizer.getPoseVelocity();
+        }
     }
 
     /**
@@ -100,19 +105,6 @@ public class BiLocalizer implements Localizer {
         T265Camera.CameraUpdate update = realsenseLocalizer.getRawUpdate();
 
         // Update the pose of the least confident localizer
-
-        switch (update.confidence) {
-            case Failed:
-            case Low:
-            case Medium:
-                confidenceTracker = ConfidenceTracker.LOW;
-                break;
-            default:
-                if (confidenceTracker == ConfidenceTracker.LOW) {
-                    realsenseLocalizer.setPoseEstimate(trackingWheelLocalizer.getPoseEstimate());
-                    confidenceTracker = ConfidenceTracker.HIGH;
-                }
-        }
     }
 
     public void setTracker(TrackerType tracker) {
