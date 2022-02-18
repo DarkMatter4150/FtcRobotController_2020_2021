@@ -17,6 +17,7 @@ class BlueTele : BaseOpMode() {
 
     override fun setup() {
         manipulate(robot,gp1,gp2,timer, AllianceColor.BLUE)
+        robot.deployer.up()
     }
 
     override fun runLoop() {

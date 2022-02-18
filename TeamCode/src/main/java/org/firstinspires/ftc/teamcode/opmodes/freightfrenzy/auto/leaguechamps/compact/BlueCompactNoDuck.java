@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy.auto.leaguechamps.c
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -21,6 +22,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.Locale;
 import java.util.Objects;
 
+@Disabled
 @Autonomous(name = "Blue Compact No Duck", preselectTeleOp = "Blue TeleOp")
 public class BlueCompactNoDuck extends BaseOpMode {
     //STARTING LOCATION

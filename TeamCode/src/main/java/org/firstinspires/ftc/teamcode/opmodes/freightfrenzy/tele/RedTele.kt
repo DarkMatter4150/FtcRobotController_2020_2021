@@ -17,6 +17,7 @@ class RedTele : BaseOpMode() {
 
     override fun setup() {
         manipulate(robot,gp1,gp2,timer, AllianceColor.RED)
+        robot.deployer.up()
     }
 
     override fun runLoop() {

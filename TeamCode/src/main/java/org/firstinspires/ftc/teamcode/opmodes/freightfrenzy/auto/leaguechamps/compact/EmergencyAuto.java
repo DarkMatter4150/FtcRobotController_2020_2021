@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy.auto.leaguechamps.compact;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -9,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.robot.FreightFrenzyRobot;
 import org.firstinspires.ftc.teamcode.robot.util.Encoder;
 
+@Disabled
 @Autonomous
 public class EmergencyAuto extends LinearOpMode {
     FreightFrenzyRobot robot;

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.freightfrenzy.tele
 
 import com.acmerobotics.dashboard.config.Config
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.robot.abstracts.BaseOpMode
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.robot.util.TeleOpUtil.manipulate
 import org.firstinspires.ftc.teamcode.robot.util.TeleOpUtil.updatePosition
 import java.util.*
 
+@Disabled
 @Config
 @TeleOp(name = "Odo TeleOp")
 class OdoTele : BaseOpMode() {
