@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -22,6 +23,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.Locale;
 import java.util.Objects;
 
+@Disabled
 @Autonomous(name = "Odo Red Compact Duck", preselectTeleOp = "Red TeleOp")
 public class RedCompactDuckOdo extends BaseOpMode {
     //STARTING LOCATION
@@ -106,6 +108,8 @@ public class RedCompactDuckOdo extends BaseOpMode {
 
         double location = (average / reps);
 
+        /*
+
         if (location >= 2.5) {
             telemetry.addData("Running Right Auto ", "1");
             telemetry.update();
@@ -125,6 +129,14 @@ public class RedCompactDuckOdo extends BaseOpMode {
             //middleAuto();
             leftAuto();
         }
+
+         */
+
+        duckSpinnerMovement();
+        TrajectorySequence toStorage = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(-62, -30, Math.toRadians(0)))
+                .build();
+        robot.drivetrain.followTrajectorySequence(toStorage);
     }
 
 
