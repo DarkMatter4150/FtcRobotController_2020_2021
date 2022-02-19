@@ -24,13 +24,13 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.Locale;
 import java.util.Objects;
 
-@Autonomous(name = "Odo Red Compact Duck", preselectTeleOp = "Red TeleOp")
-public class RedCompactDuckOdo extends BaseOpMode {
+@Autonomous(name = "Odo Blue Compact Duck", preselectTeleOp = "Blue TeleOp")
+public class BlueCompactDuckOdo extends BaseOpMode {
     //STARTING LOCATION
     //COORDINATES POSITIVE THETA IS CCW
     //-X is down
     //NEGATIVE Y is Right
-    Pose2d startPose = new Pose2d(-41, -63, Math.toRadians(90));
+    Pose2d startPose = new Pose2d(-41, 63, Math.toRadians(-90));
     ElapsedTime duck;
     OpenCvWebcam webcam;
     FreightFrenzyPipeline pipeline;
@@ -46,7 +46,7 @@ public class RedCompactDuckOdo extends BaseOpMode {
         robot.drivetrain.resetEncoderValues(2);
         robot.drivetrain.setLocalizer(new TrackingWheelLocalizer(hardwareMap));
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 2"), cameraMonitorViewId);
 
         pipeline = new FreightFrenzyPipeline(640, telemetry);
         webcam.setPipeline(pipeline);
@@ -108,26 +108,26 @@ public class RedCompactDuckOdo extends BaseOpMode {
 
         double location = (average / reps);
 
-        
-
         if (location >= 2.5) {
             telemetry.addData("Running Right Auto ", "1");
             telemetry.update();
             sleep(delay);
-            rightAuto();
-        } else if (location < 1.5 && location >= 0.5) {
+            middleAuto();
+        }
+        else if (location < 1.5 && location >= 0.5) {
             //middleAuto();
             telemetry.addData("Running Middle Auto ", "1");
             telemetry.update();
             sleep(delay);
-            middleAuto();
-        } else {
+            leftAuto();
+        }
+        else {
             //leftAuto();
             telemetry.addData("Running Left Auto ", "1");
             telemetry.update();
             sleep(delay);
             //middleAuto();
-            leftAuto();
+            rightAuto();
         }
 
         toStorage();
@@ -158,8 +158,8 @@ public class RedCompactDuckOdo extends BaseOpMode {
     public void leftAuto() {
 
         TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-35,-45, Math.toRadians(0)))
-                .strafeLeft(23)
+                .lineToLinearHeading(new Pose2d(-34,45, Math.toRadians(0)))
+                .strafeRight(23)
                 .build();
         robot.drivetrain.followTrajectorySequence(toAllianceHub);
 
@@ -170,37 +170,15 @@ public class RedCompactDuckOdo extends BaseOpMode {
         robot.intake.setPower(0);
         robot.bucket.setPosition(Bucket.Positions.INIT);
 
-        /*
-        TrajectorySequence toWarehouse = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineTo(new Vector2d(10,-45))
-                //.lineTo(new Vector2d(43,-43))
-                //.turn(Math.toRadians(-100))
-                .build();
-        robot.drivetrain.followTrajectorySequence(toWarehouse);
-        robot.deployer.up();
-        robot.drivetrain.setLocalizer(new RealsenseLocalizer(hardwareMap));
-        sleep(2000);
-
-
-
-
-        TrajectorySequence toWarehouse2 = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                //.lineTo(new Vector2d(10,-45))
-                .lineTo(new Vector2d(robot.drivetrain.getPoseEstimate().getX(),robot.drivetrain.getPoseEstimate().getY()+35))
-                .turn(Math.toRadians(-100))
-                .build();
-        robot.drivetrain.followTrajectorySequence(toWarehouse2);
-        */
-
         duckSpinnerMovement(true);
     }
 
     public void rightAuto() {
 
         TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-35,-44, Math.toRadians(180)))
-                .strafeRight(22.5)
-                .back(3)
+                .lineToLinearHeading(new Pose2d(-35,44, Math.toRadians(180)))
+                .strafeLeft(20.5)
+                .back(4)
                 .build();
         robot.drivetrain.followTrajectorySequence(toAllianceHub);
 
@@ -241,8 +219,8 @@ public class RedCompactDuckOdo extends BaseOpMode {
     public void middleAuto() {
 
         TrajectorySequence toAllianceHub = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-35,-42, Math.toRadians(180)))
-                .lineToLinearHeading(new Pose2d(-33,-20, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-35,42, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-33,22, Math.toRadians(180)))
                 //.forward(1.5)
                 .build();
         robot.drivetrain.followTrajectorySequence(toAllianceHub);
@@ -288,7 +266,8 @@ public class RedCompactDuckOdo extends BaseOpMode {
         if (side)
         {
             TrajectorySequence toDuckSpinner = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                    .strafeRight(27)
+                    .strafeLeft(27)
+                    .turn(Math.toRadians(-100))
                     //.lineToLinearHeading(new Pose2d(-39, -50, Math.toRadians(0)))
                     //.lineToLinearHeading(new Pose2d(-60 , -46, Math.toRadians(0)))
                     .build();
@@ -297,8 +276,8 @@ public class RedCompactDuckOdo extends BaseOpMode {
         else
         {
             TrajectorySequence toDuckSpinner = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                    .strafeLeft(25)
-                    .turn(Math.toRadians(180))
+                    .strafeRight(25)
+                    .turn(Math.toRadians(100))
                     //.lineToLinearHeading(new Pose2d(-39, -50, Math.toRadians(0)))
                     //.lineToLinearHeading(new Pose2d(-60 , -46, Math.toRadians(0)))
                     .build();
@@ -307,12 +286,12 @@ public class RedCompactDuckOdo extends BaseOpMode {
 
         Trajectory toDuckSpinner2 = robot.drivetrain.trajectoryBuilder(robot.drivetrain.getPoseEstimate(),true)
                 //.lineToLinearHeading(new Pose2d(-41, -46, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(-62 , -55, Math.toRadians(17)))
-                //.strafeLeft(6)
+                .lineToLinearHeading(new Pose2d(-63 , 58, Math.toRadians(-90)))
+                //.strafeRight(6)
                 .build();
         robot.drivetrain.followTrajectory(toDuckSpinner2);
 
-        robot.carousel.setPower(.5);
+        robot.carousel.setPower(-.5);
         sleep(3000);
         robot.carousel.setPower(0);
         sleep(500);
@@ -321,7 +300,7 @@ public class RedCompactDuckOdo extends BaseOpMode {
     public void toStorage()
     {
         TrajectorySequence toStorage = robot.drivetrain.trajectorySequenceBuilder(robot.drivetrain.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-62, -32, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-67, 35, Math.toRadians(-90)))
                 .build();
         robot.drivetrain.followTrajectorySequence(toStorage);
     }
