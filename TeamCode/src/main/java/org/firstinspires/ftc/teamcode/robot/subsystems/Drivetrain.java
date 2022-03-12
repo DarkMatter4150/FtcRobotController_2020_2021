@@ -162,8 +162,8 @@ public class Drivetrain extends DarkMatterMecanumDrive implements AbstractSubsys
 
         // DONE: if desired, use setLocalizer() to change the localization method
         //setLocalizer(new RealsenseLocalizer(hardwareMap)); //original, camera only loclizer
-        //setLocalizer(new TrackingWheelLocalizer(hardwareMap));
-        setLocalizer(new BiLocalizer(hardwareMap));
+        setLocalizer(new TrackingWheelLocalizer(hardwareMap));
+        //setLocalizer(new BiLocalizer(hardwareMap));
 
         trajectorySequenceRunner = new SuperTrajectorySequenceRunner(follower, HEADING_PID);
     }
@@ -327,6 +327,18 @@ public class Drivetrain extends DarkMatterMecanumDrive implements AbstractSubsys
             return br.getCurrentPosition();
         } else {
             return fr.getCurrentPosition();
+        }
+    }
+
+    public Encoder getEncoder(int which) {
+
+        if (which == 0) {
+            return bl;
+        }
+        else if (which == 1 ){
+            return br;
+        } else {
+            return fr;
         }
     }
 
